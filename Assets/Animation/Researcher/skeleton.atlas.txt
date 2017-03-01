@@ -1,0 +1,349 @@
+
+skeleton.png
+size: 2048,256
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Agent/Head
+  rotate: false
+  xy: 211, 2
+  size: 105, 120
+  orig: 105, 120
+  offset: 0, 0
+  index: -1
+Agent/Leg_Straight
+  rotate: true
+  xy: 2, 2
+  size: 45, 90
+  orig: 45, 90
+  offset: 0, 0
+  index: -1
+Agent/LowerArm_Left
+  rotate: true
+  xy: 771, 132
+  size: 35, 65
+  orig: 35, 65
+  offset: 0, 0
+  index: -1
+Agent/LowerArm_Right
+  rotate: false
+  xy: 1816, 179
+  size: 40, 75
+  orig: 40, 75
+  offset: 0, 0
+  index: -1
+Agent/LowerLeg
+  rotate: true
+  xy: 1366, 132
+  size: 45, 65
+  orig: 45, 65
+  offset: 0, 0
+  index: -1
+Agent/Torso
+  rotate: false
+  xy: 2, 49
+  size: 100, 205
+  orig: 100, 205
+  offset: 0, 0
+  index: -1
+Agent/UpperArm_Left
+  rotate: true
+  xy: 1940, 177
+  size: 35, 75
+  orig: 35, 75
+  offset: 0, 0
+  index: -1
+Agent/UpperArm_Right
+  rotate: true
+  xy: 1858, 219
+  size: 35, 80
+  orig: 35, 80
+  offset: 0, 0
+  index: -1
+Agent/UpperLeg
+  rotate: false
+  xy: 176, 17
+  size: 30, 45
+  orig: 30, 45
+  offset: 0, 0
+  index: -1
+Bag
+  rotate: false
+  xy: 104, 2
+  size: 70, 60
+  orig: 70, 60
+  offset: 0, 0
+  index: -1
+Bottom
+  rotate: true
+  xy: 2017, 174
+  size: 80, 20
+  orig: 80, 20
+  offset: 0, 0
+  index: -1
+Criminal/Bottom
+  rotate: false
+  xy: 1130, 157
+  size: 80, 20
+  orig: 80, 20
+  offset: 0, 0
+  index: -1
+Criminal/Head
+  rotate: false
+  xy: 318, 2
+  size: 105, 120
+  orig: 105, 120
+  offset: 0, 0
+  index: -1
+Criminal/Leg_Straight
+  rotate: true
+  xy: 495, 127
+  size: 45, 90
+  orig: 45, 90
+  offset: 0, 0
+  index: -1
+Criminal/LowerArm_Left
+  rotate: true
+  xy: 838, 132
+  size: 35, 65
+  orig: 35, 65
+  offset: 0, 0
+  index: -1
+Criminal/LowerArm_Right
+  rotate: true
+  xy: 1940, 214
+  size: 40, 75
+  orig: 40, 75
+  offset: 0, 0
+  index: -1
+Criminal/LowerLeg
+  rotate: true
+  xy: 532, 3
+  size: 45, 65
+  orig: 45, 65
+  offset: 0, 0
+  index: -1
+Criminal/Sit_LeftArm
+  rotate: true
+  xy: 1344, 179
+  size: 75, 95
+  orig: 75, 95
+  offset: 0, 0
+  index: -1
+Criminal/Sit_Leg
+  rotate: false
+  xy: 916, 169
+  size: 105, 85
+  orig: 105, 85
+  offset: 0, 0
+  index: -1
+Criminal/Sit_RightArm
+  rotate: true
+  xy: 1538, 169
+  size: 85, 95
+  orig: 85, 95
+  offset: 0, 0
+  index: -1
+Criminal/Torso
+  rotate: true
+  xy: 495, 174
+  size: 80, 145
+  orig: 80, 145
+  offset: 0, 0
+  index: -1
+Criminal/UpperArm_Left
+  rotate: true
+  xy: 1212, 142
+  size: 35, 75
+  orig: 35, 75
+  offset: 0, 0
+  index: -1
+Criminal/UpperArm_Right
+  rotate: false
+  xy: 1779, 164
+  size: 35, 90
+  orig: 35, 90
+  offset: 0, 0
+  index: -1
+Criminal/UpperLeg
+  rotate: true
+  xy: 1039, 137
+  size: 30, 45
+  orig: 30, 45
+  offset: 0, 0
+  index: -1
+Hat
+  rotate: false
+  xy: 789, 169
+  size: 125, 85
+  orig: 125, 85
+  offset: 0, 0
+  index: -1
+Head
+  rotate: false
+  xy: 425, 2
+  size: 105, 120
+  orig: 105, 120
+  offset: 0, 0
+  index: -1
+Leg_Straight
+  rotate: false
+  xy: 1732, 164
+  size: 45, 90
+  orig: 45, 90
+  offset: 0, 0
+  index: -1
+LowerArm_Left
+  rotate: true
+  xy: 905, 132
+  size: 35, 65
+  orig: 35, 65
+  offset: 0, 0
+  index: -1
+LowerArm_Right
+  rotate: false
+  xy: 532, 50
+  size: 40, 75
+  orig: 40, 75
+  offset: 0, 0
+  index: -1
+LowerLeg
+  rotate: false
+  xy: 1587, 102
+  size: 45, 65
+  orig: 45, 65
+  offset: 0, 0
+  index: -1
+OverSeer/Head_Eye
+  rotate: false
+  xy: 211, 124
+  size: 140, 130
+  orig: 140, 130
+  offset: 0, 0
+  index: -1
+OverSeer/Head_noEye
+  rotate: false
+  xy: 353, 124
+  size: 140, 130
+  orig: 140, 130
+  offset: 0, 0
+  index: -1
+OverSeer/Leg_Straight
+  rotate: true
+  xy: 587, 132
+  size: 40, 90
+  orig: 40, 90
+  offset: 0, 0
+  index: -1
+OverSeer/LowerArm_Left
+  rotate: true
+  xy: 972, 132
+  size: 35, 65
+  orig: 35, 65
+  offset: 0, 0
+  index: -1
+OverSeer/LowerArm_Right
+  rotate: true
+  xy: 1289, 137
+  size: 40, 75
+  orig: 40, 75
+  offset: 0, 0
+  index: -1
+OverSeer/LowerLeg
+  rotate: true
+  xy: 1634, 112
+  size: 45, 65
+  orig: 45, 65
+  offset: 0, 0
+  index: -1
+OverSeer/Torso
+  rotate: false
+  xy: 104, 64
+  size: 105, 190
+  orig: 105, 190
+  offset: 0, 0
+  index: -1
+OverSeer/UpperArm_Left
+  rotate: true
+  xy: 1433, 132
+  size: 35, 75
+  orig: 35, 75
+  offset: 0, 0
+  index: -1
+OverSeer/UpperArm_Right
+  rotate: true
+  xy: 1858, 182
+  size: 35, 80
+  orig: 35, 80
+  offset: 0, 0
+  index: -1
+OverSeer/UpperLeg
+  rotate: false
+  xy: 1701, 112
+  size: 30, 45
+  orig: 30, 45
+  offset: 0, 0
+  index: -1
+Sit_LeftArm
+  rotate: true
+  xy: 1247, 179
+  size: 75, 95
+  orig: 75, 95
+  offset: 0, 0
+  index: -1
+Sit_Leg
+  rotate: false
+  xy: 1023, 169
+  size: 105, 85
+  orig: 105, 85
+  offset: 0, 0
+  index: -1
+Sit_RightArm
+  rotate: true
+  xy: 1441, 169
+  size: 85, 95
+  orig: 85, 95
+  offset: 0, 0
+  index: -1
+String_Left
+  rotate: false
+  xy: 1635, 159
+  size: 95, 95
+  orig: 95, 95
+  offset: 0, 0
+  index: -1
+String_Right
+  rotate: true
+  xy: 1130, 179
+  size: 75, 115
+  orig: 75, 115
+  offset: 0, 0
+  index: -1
+Torso
+  rotate: true
+  xy: 642, 174
+  size: 80, 145
+  orig: 80, 145
+  offset: 0, 0
+  index: -1
+UpperArm_Left
+  rotate: true
+  xy: 1510, 132
+  size: 35, 75
+  orig: 35, 75
+  offset: 0, 0
+  index: -1
+UpperArm_Right
+  rotate: true
+  xy: 679, 137
+  size: 35, 90
+  orig: 35, 90
+  offset: 0, 0
+  index: -1
+UpperLeg
+  rotate: false
+  xy: 1733, 117
+  size: 30, 45
+  orig: 30, 45
+  offset: 0, 0
+  index: -1

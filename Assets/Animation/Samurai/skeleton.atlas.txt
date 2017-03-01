@@ -1,0 +1,181 @@
+
+skeleton.png
+size: 2048,256
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Back_Bottom
+  rotate: true
+  xy: 1592, 166
+  size: 80, 115
+  orig: 80, 115
+  offset: 0, 0
+  index: -1
+Back_Foot
+  rotate: false
+  xy: 1005, 41
+  size: 30, 90
+  orig: 30, 90
+  offset: 0, 0
+  index: -1
+Front_Bottom
+  rotate: false
+  xy: 640, 66
+  size: 89, 126
+  orig: 89, 126
+  offset: 0, 0
+  index: -1
+Front_Cape
+  rotate: true
+  xy: 2, 14
+  size: 232, 287
+  orig: 232, 287
+  offset: 0, 0
+  index: -1
+Front_Chest
+  rotate: false
+  xy: 1034, 138
+  size: 148, 108
+  orig: 148, 108
+  offset: 0, 0
+  index: -1
+Front_Foot1
+  rotate: true
+  xy: 542, 2
+  size: 51, 107
+  orig: 51, 107
+  offset: 0, 0
+  index: -1
+Front_Head
+  rotate: true
+  xy: 846, 41
+  size: 90, 98
+  orig: 90, 98
+  offset: 0, 0
+  index: -1
+Front_Leg
+  rotate: false
+  xy: 542, 55
+  size: 96, 137
+  orig: 96, 137
+  offset: 0, 0
+  index: -1
+Front_Shoulder
+  rotate: false
+  xy: 1184, 162
+  size: 148, 84
+  orig: 148, 84
+  offset: 0, 0
+  index: -1
+Hand
+  rotate: false
+  xy: 1307, 104
+  size: 49, 56
+  orig: 49, 56
+  offset: 0, 0
+  index: -1
+Hand2
+  rotate: false
+  xy: 1358, 107
+  size: 50, 58
+  orig: 50, 58
+  offset: 0, 0
+  index: -1
+LowerArm
+  rotate: false
+  xy: 1037, 49
+  size: 49, 87
+  orig: 49, 87
+  offset: 0, 0
+  index: -1
+Satgat
+  rotate: false
+  xy: 737, 133
+  size: 295, 113
+  orig: 295, 113
+  offset: 0, 0
+  index: -1
+ShoulderPad
+  rotate: true
+  xy: 651, 3
+  size: 61, 73
+  orig: 61, 73
+  offset: 0, 0
+  index: -1
+Side_Bottom
+  rotate: true
+  xy: 1334, 167
+  size: 79, 132
+  orig: 79, 132
+  offset: 0, 0
+  index: -1
+Side_Cape
+  rotate: true
+  xy: 291, 5
+  size: 187, 249
+  orig: 187, 249
+  offset: 0, 0
+  index: -1
+Side_Chest
+  rotate: false
+  xy: 1825, 158
+  size: 113, 88
+  orig: 113, 88
+  offset: 0, 0
+  index: -1
+Side_Foot1
+  rotate: false
+  xy: 946, 34
+  size: 57, 97
+  orig: 57, 97
+  offset: 0, 0
+  index: -1
+Side_Foot2
+  rotate: true
+  xy: 1184, 110
+  size: 50, 121
+  orig: 50, 121
+  offset: 0, 0
+  index: -1
+Side_Head
+  rotate: true
+  xy: 1709, 152
+  size: 94, 114
+  orig: 94, 114
+  offset: 0, 0
+  index: -1
+Side_Leg1
+  rotate: true
+  xy: 1940, 158
+  size: 88, 103
+  orig: 88, 103
+  offset: 0, 0
+  index: -1
+Side_Leg2
+  rotate: true
+  xy: 1468, 166
+  size: 80, 122
+  orig: 80, 122
+  offset: 0, 0
+  index: -1
+Side_Shoulder
+  rotate: false
+  xy: 731, 43
+  size: 113, 88
+  orig: 113, 88
+  offset: 0, 0
+  index: -1
+Sword
+  rotate: false
+  xy: 291, 194
+  size: 444, 52
+  orig: 444, 52
+  offset: 0, 0
+  index: -1
+UpperArm
+  rotate: false
+  xy: 1088, 53
+  size: 49, 83
+  orig: 49, 83
+  offset: 0, 0
+  index: -1
