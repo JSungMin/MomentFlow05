@@ -15,6 +15,8 @@ public class PlayerAnim : MonoBehaviour {
 	SkeletonAnimation skel;
 	Player player;
 
+    private AudioSource audioSource;
+
 	enum Direction{
 		Left,
 		Right
@@ -46,7 +48,9 @@ public class PlayerAnim : MonoBehaviour {
 	void Start () {
 		player = GetComponent<Player> ();		
 		skel = GetComponentInChildren<SkeletonAnimation>();
-	}
+        audioSource = GetComponent<AudioSource>();
+
+    }
 
 	public void SetDir(bool isToLeft){
 		if (isToLeft) {
@@ -63,11 +67,19 @@ public class PlayerAnim : MonoBehaviour {
 
 	public void SetWalk(){
 		setAnimation (0, "Walk", true, 1);
-	}
+    }
 
 	// Update is called once per frame
 	void Update () {
-		if (!isCutScene) {
+        if (cur_animation == "Walk")
+        {
+            if (!audioSource.isPlaying)
+                audioSource.Play();
+        }
+        else
+            audioSource.Stop();
+
+        if (!isCutScene) {
 			var inputX = player.input.x;
 			var pastDir = dir;
 

@@ -42,7 +42,9 @@ public class Paging : MonoBehaviour {
 			EraseContent ();
 			StopCoroutine (showContent);
 			offset+=1;
-			StartCoroutine (showContent);
+            if (offset < contents.Count)
+                StartCoroutine(ShowContent());
+			//StartCoroutine (showContent);
 		}
 	}
 	public void PreviousPage(){
@@ -57,5 +59,10 @@ public class Paging : MonoBehaviour {
 	void Start(){
         showContent = ShowContent();
         //StartCoroutine(showContent);
+    }
+
+    public int GetContentCount()
+    {
+        return contents.Count;
     }
 }

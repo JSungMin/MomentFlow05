@@ -16,11 +16,21 @@ public class BubbleDialogue : MonoBehaviour
 		GetComponent<Paging> ().NextPage ();
 	}
 
+    public void NextPage()
+    {
+        GetComponent<Paging>().NextPage();
+    }
+
 	public void EndBubble(){
 		alpha.PlayReverse ();
 		position.PlayForward ();
 		GetComponent<Paging> ().StopShowContent ();
 	}
+
+    public int GetContentCount()
+    {
+        return GetComponent<Paging>().GetContentCount();
+    }
 
     private void Update()
     {

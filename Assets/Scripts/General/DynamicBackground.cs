@@ -33,4 +33,15 @@ public class DynamicBackground : MonoBehaviour
 
         isMove = true;
     }
+
+    public IEnumerator StopSlowly()
+    {
+        while(moveSpeed>0)
+        {
+            moveSpeed -= 0.01f;
+            yield return new WaitForSeconds(0.01f);
+        }
+
+        moveSpeed = 0.0f;
+    }
 }

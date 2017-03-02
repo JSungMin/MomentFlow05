@@ -8,6 +8,7 @@ public class OverSeer : MonoBehaviour
     private float gravity;
     private Controller2D controller;
 
+
     void ProcessMove()
     {
         velocity.y += gravity * Time.deltaTime;

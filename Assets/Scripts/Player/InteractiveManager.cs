@@ -101,8 +101,11 @@ public class InteractiveManager : MonoBehaviour {
 			}
 			if (nearObjList.Count >= 1) {
 				if (!nowInteract) {
-					nearObjList [index].GetComponent<BusStop> ().Interact ();
-					nowInteract = true;
+                    if (nearObjList[index].GetComponent<BusStop>() != null)
+                        nearObjList[index].GetComponent<BusStop>().Interact();
+                    if (nearObjList[index].GetComponent<BusSeat>() != null)
+                        nearObjList[index].GetComponent<BusSeat>().Interact();
+                    nowInteract = true;
 				}
 			}
 		}
