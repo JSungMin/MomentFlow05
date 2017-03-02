@@ -7,7 +7,7 @@ public class BusSeat : InteractObject
     private Player player;
     private PlayerAnim playerAnim;
 
-    private void MakeResearcherSit()
+    public void MakeResearcherSit()
     {
         if(isInteract)
         {
