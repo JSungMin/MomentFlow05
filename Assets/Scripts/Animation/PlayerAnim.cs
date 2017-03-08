@@ -103,11 +103,11 @@ public class PlayerAnim : MonoBehaviour {
 				setAnimation (0, characterName [characterIndex] + "_" + dir.ToString (), true, 1);
 			}
 
-			if (player.state == ObjectInfo.State.Walk) {
+			if (player.state == MyObject.State.Walk) {
 				setAnimation (0, "Walk", true, 1);
-			} else if(player.state == ObjectInfo.State.Sit){
+			} else if(player.state == MyObject.State.Sit){
 				setAnimation (0, "Sit", true, 1);
-			}else if(player.state == ObjectInfo.State.Idle){
+			}else if(player.state == MyObject.State.Idle){
 				setAnimation (0, "Idle", true, 1);
 			}
 		}

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Environment : MonoBehaviour {
+public class DeadZone : MonoBehaviour {
 
 	public LayerMask destroyLayer;
 
@@ -11,7 +11,7 @@ public class Environment : MonoBehaviour {
 		Debug.Log ("COl : " + col.gameObject.layer + "  :  " + destroyLayer);
 		if(col.gameObject.layer == LayerMask.NameToLayer("Player")){
 			Debug.Log ("In Trigger and layer");
-			col.GetComponent<ObjectInfo> ().Destroyed ();
+			col.GetComponent<MyObject> ().Destroyed ();
 		}
 	}
 

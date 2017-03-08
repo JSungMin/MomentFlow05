@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : ObjectInfo
+public class Player : MyObject
 {
 	public Animator animator;
 	public PlayerAnim anim;

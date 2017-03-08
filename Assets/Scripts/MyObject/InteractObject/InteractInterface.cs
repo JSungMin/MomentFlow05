@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InteractObject : MonoBehaviour {
+public class InteractInterface : MonoBehaviour {
 	public bool isInteract = false;
 
 	public delegate void InteractWithObject();

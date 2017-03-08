@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BusSeat : InteractObject
+public class BusSeat : InteractInterface
 {
     private Player player;
     private PlayerAnim playerAnim;

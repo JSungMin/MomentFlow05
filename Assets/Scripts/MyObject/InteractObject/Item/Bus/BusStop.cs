@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class BusStop : InteractObject {
+public class BusStop : InteractInterface {
 	public CutSceneUnit bus;
 	public BusController busController;
 

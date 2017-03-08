@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chair : InteractObject {
+public class Chair : InteractInterface {
 
 	public Player player;
 
 	public Vector3 direction;
 
 	public void SitDown(){
-		if (!isInteract&&player.state != ObjectInfo.State.Sit) {
-			player.state = ObjectInfo.State.Sit;
+		if (!isInteract&&player.state != MyObject.State.Sit) {
+			player.state = MyObject.State.Sit;
 			isInteract = true;
 		}
 	}
