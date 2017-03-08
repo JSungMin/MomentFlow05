@@ -89,32 +89,26 @@ public class PlayerAnim : MonoBehaviour {
 			} else if (inputX < 0) {
 				dir = Direction.Left;
 				transform.localScale = new Vector3 (-1, transform.localScale.y, transform.localScale.z);
-			}
+			} 
 
-			if (Input.GetKeyDown (KeyCode.Space)) {
+			/*if (Input.GetKeyDown (KeyCode.Space)) {
 				if (!isSit) {
 					setAnimation (0, "Sit", false, 1);
 					isSit = true;
 				}
-			}
+			}*/
 
 			if (pastDir != dir) {
 				skel.state.ClearTracks ();
 				setAnimation (0, characterName [characterIndex] + "_" + dir.ToString (), true, 1);
 			}
 
-			if (inputX != 0) {
-				if (isSit) {
-					isSit = false;
-					skel.skeleton.SetToSetupPose ();
-				}
+			if (player.state == ObjectInfo.State.Walk) {
 				setAnimation (0, "Walk", true, 1);
-			} else {
-				if (!isSit)
-					setAnimation (0, "Idle", true, 1);
-				else {
-					setAnimation (0, "Sit", true, 1);
-				}
+			} else if(player.state == ObjectInfo.State.Sit){
+				setAnimation (0, "Sit", true, 1);
+			}else if(player.state == ObjectInfo.State.Idle){
+				setAnimation (0, "Idle", true, 1);
 			}
 		}
 	}

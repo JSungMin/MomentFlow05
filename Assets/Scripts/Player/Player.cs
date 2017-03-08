@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : ObjectInfo
 {
 	public Animator animator;
-
+	public PlayerAnim anim;
 	private Controller2D controller;
 
 	public float jumpHeight = 10;
@@ -49,7 +49,11 @@ public class Player : MonoBehaviour
 		input = new Vector2 (Input.GetAxis ("Horizontal"), Input.GetAxis ("Vertical"));
 
 		timer = input.x == 0 ? 0 : timer + Time.deltaTime;
-
+		if (input.x != 0) {
+			state = State.Run;
+		} else {
+			state = State.Idle;
+		}
 		velocity.x += input.x*moveSpeed*moveStep.Evaluate(timer);
 		velocity.y += gravity * Time.deltaTime;
 	}
@@ -79,6 +83,11 @@ public class Player : MonoBehaviour
 
 	// Update is called once per frame
 	void Update () {
+
+		if (hp <= 0) {
+			Destroyed ();
+		}
+
 		ProcessGround ();
 		ProcessMove ();
 

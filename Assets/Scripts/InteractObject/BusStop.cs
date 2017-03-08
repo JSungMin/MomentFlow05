@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class BusStop : InteractObject {
 	public CutSceneUnit bus;
+	public BusController busController;
 
 	public TweenAlpha fadeOutCam;
 
@@ -12,6 +13,7 @@ public class BusStop : InteractObject {
 		if (!isInteract) {
 			Debug.Log ("Talk");
 			fadeOutCam.PlayForward ();
+			busController.state = BusController.BusState.Move;
 			isInteract = true;
 		}
 	}

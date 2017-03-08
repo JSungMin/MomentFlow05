@@ -38,7 +38,6 @@ public class FollowUpCamera : MonoBehaviour {
 			for (int i = 0; i < 3; i++) {
 				RaycastHit2D hit = Physics2D.Raycast (new Vector2 (max.x, min.y + len * ((float)i / (float)2)), Vector2.right, 1.6f,mask);
 				Debug.DrawLine (new Vector2 (max.x, min.y + len * ((float)i / (float)2)), new Vector2 (max.x, min.y + len * ((float)i / (float)2)) + Vector2.right*2);
-				//Debug.DrawLine (new Vector2 (max.x, min.y + len * ((float)i / (float)2)), new Vector2 (max.x, min.y + len * ((float)i / (float)2)) + Info.moveSpeed * Vector2.right * Time.deltaTime,Color.red);
 				if (hit.collider != null) {
 					
 				isToRight = true;
@@ -49,7 +48,6 @@ public class FollowUpCamera : MonoBehaviour {
 			for (int i = 0; i < 3; i++) {
 				RaycastHit2D hit = Physics2D.Raycast (new Vector2 (min.x, min.y + len * ((float)i / (float)2)), Vector2.left, 1.6f,mask);
 				Debug.DrawLine (new Vector2 (min.x, min.y + len * ((float)i / (float)2)), new Vector2 (max.x, min.y + len * ((float)i / (float)2)) + Vector2.left*2);
-				//Debug.DrawLine (new Vector2 (min.x, min.y + len * ((float)i / (float)2)),new Vector2 (min.x, min.y + len * ((float)i / (float)2)) + Info.moveSpeed * Vector2.left * Time.deltaTime,Color.red);
 				if (hit.collider != null) {
 				isToLeft = true;
 				} else {
