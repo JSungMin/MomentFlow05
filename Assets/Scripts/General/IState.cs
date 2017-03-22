@@ -22,13 +22,15 @@ public abstract class IState
 
     }
 
-    public void Walk(Transform t)
+	public void Walk(Transform t,Vector3 velocity)
     {
-        t.Translate(Vector3.right * 0.5f * Time.deltaTime);
+		t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
+		t.Translate(velocity * Time.deltaTime);
     }
 
     public abstract void OnStateEnter(GameObject obj);
     public abstract void OnStateStay(GameObject obj);
     public abstract void OnStateExit(GameObject obj);
-    public abstract EnemyState ChangeState(GameObject obj);
+	public abstract EnemyState ChangeState(EnemyState obj);
+	public abstract bool CheckState (GameObject obj);
 }

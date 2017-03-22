@@ -4,15 +4,7 @@ using UnityEngine;
 
 public  class IdleState : IState {
 
-    public IdleState(GameObject obj)
-    {
-        enemyObj = obj;
-    }
-
-    void Awake()
-    {
-
-    }
+	public IdleState(GameObject obj):base(obj){}
     
 	public override void OnStateEnter(GameObject obj){
 
@@ -23,9 +15,16 @@ public  class IdleState : IState {
 	public override void OnStateExit(GameObject obj){
 
 	}
-	public override EnemyState ChangeState(GameObject obj){
-		if (obj.transform.position.x >= obj.GetComponent<EnemyScript> ().playerObject.transform.position.x)
-			return EnemyState.Patrol;
-		return EnemyState.Idle;
+	public override EnemyState ChangeState(EnemyState nowState){
+		if (nowState == EnemyState.Patrol) {
+			OnStateStay (enemyObj);
+		} else {
+			if(CheckState(enemyObj))
+				OnStateEnter (enemyObj);
+		}
+		return EnemyState.Idle;	
+	}
+	public override bool CheckState (GameObject obj){
+		return true;
 	}
 }

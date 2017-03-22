@@ -11,8 +11,14 @@ public class EnemyScript : MonoBehaviour {
     public IState[] istate;
 
     public float holdDuration;
+	public float walkDuration;
 
 	public Vector3 velocity;
+
+	public void Awake(){
+		Debug.Log ("In Parent");
+		playerObject = GameObject.FindObjectOfType<Player> ();
+	}
 
 	public void Walk(){
 		transform.Translate (velocity * Time.deltaTime);
@@ -23,7 +29,7 @@ public class EnemyScript : MonoBehaviour {
 		Debug.Log("Play : Hold Animation");
 	}
 
-    protected IState GetState(EnemyState enemyState)
+	public IState GetState(EnemyState enemyState)
     {
         return istate[(int)enemyState];
     }
