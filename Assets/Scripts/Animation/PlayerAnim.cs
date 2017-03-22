@@ -91,13 +91,6 @@ public class PlayerAnim : MonoBehaviour {
 				transform.localScale = new Vector3 (-1, transform.localScale.y, transform.localScale.z);
 			} 
 
-			/*if (Input.GetKeyDown (KeyCode.Space)) {
-				if (!isSit) {
-					setAnimation (0, "Sit", false, 1);
-					isSit = true;
-				}
-			}*/
-
 			if (pastDir != dir) {
 				skel.state.ClearTracks ();
 				setAnimation (0, characterName [characterIndex] + "_" + dir.ToString (), true, 1);

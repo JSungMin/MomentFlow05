@@ -50,7 +50,7 @@ public class Player : MyObject
 
 		timer = input.x == 0 ? 0 : timer + Time.deltaTime;
 		if (input.x != 0) {
-			state = State.Run;
+			state = State.Walk;
 		} else {
 			state = State.Idle;
 		}
