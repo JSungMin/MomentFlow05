@@ -5,18 +5,12 @@ using UnityEngine.Events;
 
 public class EnemyScript : MonoBehaviour {
 
-	public Player playerObject {
-		protected set;
-		get;
-	}
-
-	public enum EnemyState{
-		Idle,
-		Patrol
-	}
+	public Player playerObject { protected set; get; }
+    
 	public EnemyState enemyState;
+    public IState[] istate;
 
-	public float holdDuration;
+    public float holdDuration;
 
 	public Vector3 velocity;
 
@@ -28,4 +22,9 @@ public class EnemyScript : MonoBehaviour {
 		//TODO:Set animation to animName
 		Debug.Log("Play : Hold Animation");
 	}
+
+    protected IState GetState(EnemyState enemyState)
+    {
+        return istate[(int)enemyState];
+    }
 }
