@@ -10,9 +10,6 @@ public class PatrolState : IState
 	public float walkDuration;
 	private float walkDurationTimer = 0;
 
-	private Vector3 dir;
-	private float speed;
-
 	public PatrolState (GameObject obj) : base (obj){}
 
 	public void InitPatrolInfo(Vector3 d, float s){
@@ -45,14 +42,14 @@ public class PatrolState : IState
 		
 	}
 	//현재 State가 Patrol인지를 따진 후, Stay or Enter를 호출한다.
-	public override EnemyState ChangeState(EnemyState nowState){
-		if (nowState == EnemyState.Patrol) {
+	public override State ChangeState(State nowState){
+		if (nowState == State.Patrol) {
 			OnStateStay (enemyObj);
 		} else {
 			if(CheckState(enemyObj))
 				OnStateEnter (enemyObj);
 		}
-		return EnemyState.Patrol;	
+		return State.Patrol;	
 	}
 	public override bool CheckState (GameObject obj){
 		return true;

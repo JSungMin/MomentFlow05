@@ -7,22 +7,22 @@ public  class IdleState : IState {
 	public IdleState(GameObject obj):base(obj){}
     
 	public override void OnStateEnter(GameObject obj){
-
+		Idle ();
 	}
 	public override void OnStateStay(GameObject obj){
-
+		Idle ();
 	}
 	public override void OnStateExit(GameObject obj){
-
+		Idle ();
 	}
-	public override EnemyState ChangeState(EnemyState nowState){
-		if (nowState == EnemyState.Patrol) {
+	public override State ChangeState(State nowState){
+		if (nowState == State.Patrol) {
 			OnStateStay (enemyObj);
 		} else {
 			if(CheckState(enemyObj))
 				OnStateEnter (enemyObj);
 		}
-		return EnemyState.Idle;	
+		return State.Idle;	
 	}
 	public override bool CheckState (GameObject obj){
 		return true;
