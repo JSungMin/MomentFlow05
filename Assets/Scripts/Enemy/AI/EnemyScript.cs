@@ -6,11 +6,13 @@ using UnityEngine.Events;
 public class EnemyScript : MonoBehaviour {
 
 	public Player playerObject { protected set; get; }
-    
+
 	public State enemyState;
     public IState[] istate;
 
 	public AnimationBase anim;
+
+	public bool canAlert;
 
     public float holdDuration;
 	public float walkDuration;
@@ -43,10 +45,19 @@ public class EnemyScript : MonoBehaviour {
 		InitEnemy ();
 	}
 
+	//this function will return IState
 	public IState GetState(State enemyState)
     {
         return istate[(int)enemyState];
     }
+	//this function will return derived class from IState
+	public T GetSpecifiedState<T>(State enemyState) where T:IState{
+		return ((T)GetState (enemyState));
+	}
+	//when Use below function then change state (also use OnStateEnter) or stay state (also use OnStateStay)
+	public void SetState(State newState){
+		enemyState = GetState (newState).ChangeState (enemyState);
+	}
 
 	float maxX,maxY;
 	float minX,minY;

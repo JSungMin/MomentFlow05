@@ -45,8 +45,8 @@ public class Enemy_Security : EnemyScript {
 				if (transitionDurationTimer >= transitionDuration) {
 					//Patrol State로 enemyState를 바꾸는 구문이다.
 					GetState (State.Idle).OnStateExit ();
-					enemyState = GetState (State.Patrol).ChangeState (enemyState);
-					((PatrolState)GetState (State.Patrol)).InitPatrolInfo (patrolDir, moveSpeed);
+					SetState (State.Patrol);
+					GetSpecifiedState<PatrolState>(State.Patrol).InitPatrolInfo (patrolDir, moveSpeed);
 					transitionDurationTimer = 0;
 				} else {
 					transitionDurationTimer += Time.deltaTime;
@@ -57,23 +57,24 @@ public class Enemy_Security : EnemyScript {
 			if (isFindPlayer != -1) {
 				if (transitionDurationTimer >= transitionDuration) {
 					findOutGauge = 50;
-					enemyState = GetState (State.Suspicious).ChangeState (enemyState);
-					((SuspiciousState)GetState (State.Suspicious)).InitSuspiciousInfo (playerObject.transform.position, moveSpeed);
+					SetState (State.Suspicious);
+					GetSpecifiedState<SuspiciousState>(State.Suspicious).InitSuspiciousInfo (playerObject.transform.position, moveSpeed);
 					transitionDurationTimer = 0;
 				} else {
 					transitionDurationTimer += Time.deltaTime;
 					anim.setAnimation (0, "Idle", true, 1);
 				}
 			} else {
-				enemyState = GetState (State.Patrol).ChangeState (enemyState);
+				SetState (State.Patrol);
 				isFindPlayer = Browse ();
 				findOutGauge = Mathf.Lerp(findOutGauge,0,Time.deltaTime*findOutGaugeIncrement*0.1f);
 			}
             break;
 		case State.Suspicious:
+			//When findOuGauge larger then 100 => Change state to Detection
 			if (findOutGauge >= 100) {
 				if (transitionDurationTimer >= transitionDuration) {
-					enemyState = GetState (State.Detection).ChangeState (enemyState);
+					SetState(State.Detection);  //then isDetection in IState[3] will be true 
 					transitionDurationTimer = 0;
 				} else {
 					transitionDurationTimer += Time.deltaTime;
@@ -82,21 +83,49 @@ public class Enemy_Security : EnemyScript {
 				findOutGauge = 100;
 				return;
 			}
+			//When findOutGauge smaller then 100 then => Play Suspicious with playing OnStateStay
+			SetState(State.Suspicious);
 
-			enemyState = GetState (State.Suspicious).ChangeState (enemyState);
+			//TODO : Make animation to 살금살금 걷기 but now 'Walk'
 			anim.setAnimation (0, "Walk", true, 1);
+
+			//Detect Object and Player Browse() return is distance between player and this enemy
+			//if can't find player then return -1
 			isFindPlayer = Browse ();
+
+			//if find out player then play below statement
 			if (isFindPlayer != -1) {
 				findOutGauge += (findOutGaugeIncrement / isFindPlayer) * Time.deltaTime;
-				((SuspiciousState)GetState (State.Suspicious)).InitSuspiciousInfo (playerObject.transform.position, moveSpeed);
-			} else {
-				if(((SuspiciousState)GetState (State.Suspicious)).CheckArrive()){
-					enemyState = GetState (State.Patrol).ChangeState (enemyState);
-					((PatrolState)GetState (State.Patrol)).InitPatrolInfo (patrolDir, moveSpeed);
+				GetSpecifiedState<SuspiciousState>(State.Suspicious).InitSuspiciousInfo (playerObject.transform.position, moveSpeed);
+			} 
+			else {
+				if(GetSpecifiedState<SuspiciousState>(State.Suspicious).CheckArrive()){
+					Debug.Log ("Can't Find Player");
+					SetState (State.Patrol);
+					GetSpecifiedState<PatrolState>(State.Patrol).InitPatrolInfo (patrolDir, moveSpeed);
 				}
 			}				
 			break;
 		case State.Detection:
+			//below statement will make this enemy state to Alert or Attack
+			SetState(State.Detection);
+			break;
+		case State.Alert:
+
+			break;
+		case State.Attack:
+
+			break;
+		case State.Escape:
+
+			break;
+		case State.Sturn:
+
+			break;
+		case State.Dead:
+
+			break;
+		case State.Sit:
 
 			break;
         }

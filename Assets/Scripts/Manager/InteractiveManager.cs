@@ -92,7 +92,7 @@ public class InteractiveManager : MonoBehaviour {
 		}
 
 		//Interact Part
-		if (Input.GetKey (KeyCode.E)) {
+		if (Input.GetKeyDown (KeyCode.E)) {
 			if (nearNpcList.Count >= 1) {
 				if (!nowInteract) {
 					nearNpcList[index].GetComponent<NPC> ().Interact();
@@ -101,11 +101,15 @@ public class InteractiveManager : MonoBehaviour {
 			}
 			if (nearObjList.Count >= 1) {
 				if (!nowInteract) {
-                    if (nearObjList[index].GetComponent<BusStop>() != null)
-                        nearObjList[index].GetComponent<BusStop>().Interact();
-                    if (nearObjList[index].GetComponent<BusSeat>() != null)
-                        nearObjList[index].GetComponent<BusSeat>().Interact();
-                    nowInteract = true;
+					if (nearObjList [index].GetComponent<InteractInterface> () != null)
+						nearObjList [index].GetComponent<InteractInterface> ().Interact ();
+					nowInteract = true;
+				} else {
+					if (nearObjList [index].GetComponent<InteractInterface> () != null) {
+						nowInteract = false;
+						nearObjList [index].GetComponent<InteractInterface> ().StopInteract ();
+						interactObject = null;
+					}
 				}
 			}
 		}

@@ -11,7 +11,6 @@ public class BusStop : InteractInterface {
 
 	public void CallBus(){
 		if (!isInteract) {
-			Debug.Log ("Talk");
 			fadeOutCam.PlayForward ();
 			busController.state = BusController.BusState.Move;
 			isInteract = true;
