@@ -26,31 +26,29 @@ public class SuspiciousState : IState {
 		return true;
 	}
 
-	public override void OnStateEnter(GameObject obj){
-		SurpriseStart ();
+	public override void OnStateEnter(){
 	}
 
-	public override void OnStateStay(GameObject obj){
-		Debug.Log (targetPos);
+	public override void OnStateStay(){
 		if(!CheckArrive()){
-			Walk (obj.transform, dir * speed);
+			Walk (enemyObj.transform, dir * speed);
 		}
 	}
 
-	public override void OnStateExit(GameObject obj){
+	public override void OnStateExit(){
 
 	}
 	//현재 State가 Patrol인지를 따진 후, Stay or Enter를 호출한다.
 	public override State ChangeState(State nowState){
 		if (nowState == State.Suspicious) {
-			OnStateStay (enemyObj);
+			OnStateStay ();
 		} else {
-			if(CheckState(enemyObj))
-				OnStateEnter (enemyObj);
+			if(CheckState())
+				OnStateEnter ();
 		}
 		return State.Suspicious;	
 	}
-	public override bool CheckState (GameObject obj){
+	public override bool CheckState (){
 		return true;
 	}
 }

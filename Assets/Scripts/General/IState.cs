@@ -42,20 +42,13 @@ public abstract class IState
 		t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
 		t.Translate(velocity * Time.deltaTime);
     }
-
-	public void SurpriseStart(){
-		enemyScript.anim.setAnimation (0,"Sit",false,1);
-		Debug.Log ("SurpriseStart");
-		//TODO:아래 함수로 바꿔야 함 아직 Surprise Animation이 없음
-		//enemyScript.anim.setAnimation (0,"Surprise",false,1);
-	}
 	public void LookAround(){
 
 	}
 
-    public abstract void OnStateEnter(GameObject obj);
-    public abstract void OnStateStay(GameObject obj);
-    public abstract void OnStateExit(GameObject obj);
+    public abstract void OnStateEnter();
+    public abstract void OnStateStay();
+    public abstract void OnStateExit();
 	public abstract State ChangeState(State obj);
-	public abstract bool CheckState (GameObject obj);
+	public abstract bool CheckState ();
 }

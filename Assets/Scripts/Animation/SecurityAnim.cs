@@ -21,10 +21,10 @@ public class SecurityAnim : AnimationBase {
 				
 				break;
 			case State.Suspicious:
-				setAnimation (0, "Walk", true, 1);
+				//setAnimation (0, "Walk", true, 1);
 				break;
 			case State.Detection:
-				setAnimation (0, "Run", true, 1);
+				//setAnimation (0, "Run", true, 1);
 				break;
 			case State.Alert:
 				setAnimation (0, "Alert", true, 1);

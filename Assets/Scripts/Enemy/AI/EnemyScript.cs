@@ -15,6 +15,9 @@ public class EnemyScript : MonoBehaviour {
     public float holdDuration;
 	public float walkDuration;
 
+	public float detectionDuration;
+	protected float detectionDurationTimer = 0;
+
 	public Vector3 velocity;
 
 	public float findOutGauge = 0;
@@ -70,7 +73,6 @@ public class EnemyScript : MonoBehaviour {
 
 			if(browseHits[i].collider!=null){
 				if(browseHits[i].collider.CompareTag("Player")){
-					Debug.Log ("Find Player");
 					return browseHits[i].distance;
 				}
 			}

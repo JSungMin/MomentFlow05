@@ -2,27 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public  class IdleState : IState {
+public class DetectionState : IState {
+	public bool isDetection = false;
 
-	public IdleState(GameObject obj):base(obj){}
-    
+	public DetectionState(GameObject obj) : base(obj){}
+
 	public override void OnStateEnter(){
-		Idle ();
+		isDetection = true;
 	}
+
 	public override void OnStateStay(){
-		Idle ();
+		
 	}
+
 	public override void OnStateExit(){
-		Idle ();
+
 	}
+	//현재 State가 Patrol인지를 따진 후, Stay or Enter를 호출한다.
 	public override State ChangeState(State nowState){
-		if (nowState == State.Patrol) {
+		if (nowState == State.Detection) {
 			OnStateStay ();
 		} else {
 			if(CheckState())
 				OnStateEnter ();
 		}
-		return State.Idle;	
+		return State.Detection;	
 	}
 	public override bool CheckState (){
 		return true;
