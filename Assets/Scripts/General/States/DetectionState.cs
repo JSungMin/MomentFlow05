@@ -12,11 +12,7 @@ public class DetectionState : IState {
 	}
 
 	public override void OnStateStay(){
-		if (enemyScript.canAlert) {
-			enemyScript.enemyState = enemyScript.GetState (State.Alert).ChangeState (enemyScript.enemyState);
-		} else {
-			enemyScript.enemyState = enemyScript.GetState (State.Attack).ChangeState (enemyScript.enemyState);
-		}
+		
 	}
 
 	public override void OnStateExit(){

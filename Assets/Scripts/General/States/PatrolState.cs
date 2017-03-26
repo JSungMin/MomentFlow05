@@ -20,21 +20,28 @@ public class PatrolState : IState
     public override void OnStateEnter(){
 		holdDuration = enemyObj.GetComponent<EnemyScript> ().holdDuration;
 		walkDuration = enemyObj.GetComponent<EnemyScript> ().walkDuration;
+		enemyScript.AimToForward ();
 	}
 
 	public override void OnStateStay(){
 		if (walkDurationTimer >= walkDuration) {
 			holdDurationTimer += Time.deltaTime;
-			Hold ();
-
+			Hold (enemyScript.charAnimName + "_Idle");
 			if (holdDurationTimer >= holdDuration) {
 				dir.x = -dir.x;
+				enemyObj.transform.localScale = new Vector3 (Mathf.Sign (dir.x) * Mathf.Abs(enemyObj.transform.localScale.x), enemyObj.transform.localScale.y,enemyObj.transform.localScale.z);
 				holdDurationTimer = 0;
 				walkDurationTimer = 0;
 			}
 		} else {
 			walkDurationTimer += Time.deltaTime;
-			Walk (enemyObj.transform,dir*speed);
+	
+			var bInfo = enemyScript.Browse (speed*Time.deltaTime);
+			if (bInfo.layer!=LayerMask.NameToLayer("Collision")) {
+				Walk (enemyScript.charAnimName + "_Walk", enemyObj.transform, dir * speed);
+			} else {
+				Hold (enemyScript.charAnimName + "_Idle");
+			}
 		}
 	}
 

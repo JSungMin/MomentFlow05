@@ -16,6 +16,12 @@ public enum State
 	Sit,  //9
 }
 
+public enum EnemyAttackType
+{
+	Gun = 0,
+	Sword
+}
+
 public class EnumPool
 {
 

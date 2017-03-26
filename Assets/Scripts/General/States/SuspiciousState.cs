@@ -20,18 +20,23 @@ public class SuspiciousState : IState {
 	}
 
 	public bool CheckArrive(){
-		if (Vector3.Distance (enemyObj.transform.position, targetPos) >= 0.025f) {
+		if (Vector3.Distance (enemyObj.transform.position, targetPos)>=0.3f) {
+			CalculateDirection ();
 			return false;
 		}
 		return true;
 	}
 
 	public override void OnStateEnter(){
+		CalculateDirection ();
+		enemyScript.findOutGauge = 50;
+		enemyObj.transform.localScale = new Vector3 (Mathf.Sign (dir.x) * Mathf.Abs(enemyObj.transform.localScale.x), enemyObj.transform.localScale.y,enemyObj.transform.localScale.z);
 	}
 
 	public override void OnStateStay(){
 		if(!CheckArrive()){
-			Walk (enemyObj.transform, dir * speed);
+			Walk (enemyScript.charAnimName + "_Suspicious_Walk",enemyObj.transform, dir * speed*0.5f);
+			enemyScript.AimToObject (targetPos);
 		}
 	}
 

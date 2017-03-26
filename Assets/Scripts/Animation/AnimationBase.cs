@@ -12,7 +12,7 @@ public class AnimationBase : MonoBehaviour {
 
 	public List<string> characterName;
 
-	protected SkeletonAnimation skel;
+	public SkeletonAnimation skel;
 
 	protected string cur_animation;
 

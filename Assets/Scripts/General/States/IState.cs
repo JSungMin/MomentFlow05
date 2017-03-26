@@ -7,15 +7,15 @@ public abstract class IState
     protected GameObject enemyObj;
     protected EnemyScript enemyScript;
 
-	protected Vector3 dir;
+	public Vector3 dir;
 	protected float speed;
 
     // TODO!!!!!!!!!!!!!!!!!!!!!!!!!!
     // 부모에서 awake를 구현하고 자식에서 따로 오버라이드 하지 않으면 아마 부모의 awake가 불릴걸? 시험해봐야함
-    public IState() { }
+	public IState(){ }
 
 
-    public IState(GameObject obj)
+	public IState(GameObject obj)
     {
         enemyObj = obj;
 		enemyScript = enemyObj.GetComponent<EnemyScript> ();
@@ -27,21 +27,24 @@ public abstract class IState
 		}
     }
 
-	public void Idle(){
-		enemyScript.anim.setAnimation (0, "Idle", true, 1);
+	public void Idle(string animName){
+		enemyScript.anim.setAnimation (0, animName, true, 1);
 	}
 
-    public void Hold()
+	public void Hold(string animName)
     {
-		enemyScript.anim.setAnimation (0, "Idle", true, 1);
+		enemyScript.anim.setAnimation (0, animName, true, 1);
     }
 
-	public void Walk(Transform t,Vector3 velocity)
+	public void Walk(string animName,Transform t,Vector3 velocity)
     {
-		enemyScript.anim.setAnimation (0, "Walk", true, 1);
+		enemyScript.anim.setAnimation (0, animName, true, 1);
 		t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
 		t.Translate(velocity * Time.deltaTime);
     }
+	public void Run(string animName, Transform t,Vector3 velocity){
+
+	}
 	public void LookAround(){
 
 	}

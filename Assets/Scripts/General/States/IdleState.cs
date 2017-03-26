@@ -7,13 +7,13 @@ public  class IdleState : IState {
 	public IdleState(GameObject obj):base(obj){}
     
 	public override void OnStateEnter(){
-		Idle ();
+		Idle (enemyScript.charAnimName + "_Idle");
 	}
 	public override void OnStateStay(){
-		Idle ();
+		Idle (enemyScript.charAnimName + "_Idle");
 	}
 	public override void OnStateExit(){
-		Idle ();
+		Idle (enemyScript.charAnimName + "_Idle");
 	}
 	public override State ChangeState(State nowState){
 		if (nowState == State.Patrol) {

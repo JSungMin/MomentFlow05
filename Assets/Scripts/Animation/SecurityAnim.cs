@@ -27,10 +27,10 @@ public class SecurityAnim : AnimationBase {
 				//setAnimation (0, "Run", true, 1);
 				break;
 			case State.Alert:
-				setAnimation (0, "Alert", true, 1);
+				//setAnimation (0, "Alert", true, 1);
 				break;
 			case State.Attack:
-				setAnimation (0, "Attack", true, 1);
+				//setAnimation (0,esrc.charAnimName + "_Shoot", true, 1);
 				break;
 			case State.Escape:
 				setAnimation (0, "Escape", true, 1);

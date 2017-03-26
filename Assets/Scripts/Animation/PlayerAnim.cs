@@ -50,8 +50,8 @@ public class PlayerAnim : AnimationBase {
 			} 
 
 			if (pastDir != dir) {
-				skel.state.ClearTracks ();
-				setAnimation (0, characterName [characterIndex] + "_" + dir.ToString (), true, 1);
+				//skel.state.ClearTracks ();
+				//setAnimation (0, characterName [characterIndex] + "_" + dir.ToString (), true, 1);
 			}
 
 			if (player.state == MyObject.State.Walk) {

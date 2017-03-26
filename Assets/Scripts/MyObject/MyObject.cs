@@ -31,6 +31,5 @@ public class MyObject : MonoBehaviour {
 
 	public void Destroyed(){
 		state = State.Dead;
-		Debug.Log ("Destroyed");
 	}
 }
