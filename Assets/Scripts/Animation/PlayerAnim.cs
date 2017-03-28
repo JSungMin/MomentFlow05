@@ -24,7 +24,7 @@ public class PlayerAnim : AnimationBase {
 	}
 
 	public void SetWalk(){
-		setAnimation (0, "Walk", true, 1);
+		setAnimation (0, "Run", true, 1);
     }
 
 	// Update is called once per frame
@@ -55,7 +55,7 @@ public class PlayerAnim : AnimationBase {
 			}
 
 			if (player.state == MyObject.State.Walk) {
-				setAnimation (0, "Walk", true, 1);
+				setAnimation (0, "Run", true, 1);
 			} else if(player.state == MyObject.State.Sit){
 				setAnimation (0, "Sit", true, 1);
 			}else if(player.state == MyObject.State.Idle){
