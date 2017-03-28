@@ -135,7 +135,7 @@ public class EnemyScript : MonoBehaviour {
 
 	public void AimToForward(){
 		if (aim_bone != null) {
-			GetComponentInChildren<SkeletonAnimation> ().skeleton.SetBonesToSetupPose ();
+			anim.skel.skeleton.SetBonesToSetupPose ();
 			aim_bone.GetComponent<SkeletonUtilityBone> ().mode = SkeletonUtilityBone.Mode.Follow;
 		}
 	}
