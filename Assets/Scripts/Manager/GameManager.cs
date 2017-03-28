@@ -21,14 +21,4 @@ public class GameManager : MonoBehaviour {
 			return instance;
 		}
 	}
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

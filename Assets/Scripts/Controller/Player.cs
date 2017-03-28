@@ -6,6 +6,9 @@ public class Player : MyObject
 {
 	public Animator animator;
 	public PlayerAnim anim;
+
+	public Transform playerHandTrans;
+
 	private Controller2D controller;
 
 	public float jumpHeight = 10;
@@ -68,8 +71,21 @@ public class Player : MyObject
 		}
 	}
 
-	public void OnCollisionEnter2D(Collision2D col){
-		
+	void ProcessTimeSwitching(){
+		if(Input.GetKeyDown(KeyCode.Tab)){
+			int toLayer = 0;
+			if (TimeLayer.GetTimeLayer (gameObject) == 0) {
+				toLayer = 1;
+			} else {
+				toLayer = 0;
+			}
+			GetComponent<TimeLayer> ().layerNum = toLayer;
+			TimeLayerManager.GetInstance.MoveObjectToLayer (gameObject, toLayer);
+			var equipItems = playerHandTrans.GetComponentsInChildren<TimeLayer> ();
+			for(int i =0;i<equipItems.Length;i++){
+				equipItems [i].layerNum = toLayer;
+			}	
+		}
 	}
 
 	// Use this for initialization
@@ -83,11 +99,10 @@ public class Player : MyObject
 
 	// Update is called once per frame
 	void Update () {
-
 		if (hp <= 0) {
 			Destroyed ();
 		}
-
+		ProcessTimeSwitching ();
 		ProcessGround ();
 		ProcessMove ();
 

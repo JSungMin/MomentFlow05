@@ -142,6 +142,9 @@ public class Enemy_Security : EnemyScript {
 				if (canAlert) {
 					GetSpecifiedState<AlertState> (State.Alert).InitAlertInfo (1);
 					SetState (State.Alert);
+				} else {
+					GetSpecifiedState<AttackState> (State.Attack).InitAttackInfo (EnemyAttackType.Gun, bullet, 3);
+					SetState (State.Attack);
 				}
 			}
 			break;

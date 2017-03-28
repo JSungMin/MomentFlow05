@@ -7,8 +7,8 @@ public class ThrowableObjectScript : InteractInterface {
 	private Transform playerHands;
 
 	private bool isGrabbed;
-	private RaycastHit2D[] hitsX;
-	private RaycastHit2D[] hitsY;
+	private RaycastHit2D[][] hitsX;
+	private RaycastHit2D[][] hitsY;
 
 	public LayerMask mask;
 	public LayerMask alertMask;
@@ -33,15 +33,18 @@ public class ThrowableObjectScript : InteractInterface {
 	
 		for(int i = 0;i<colliders.Length;i++){
 			var escr = colliders [i].GetComponent<EnemyScript> ();
+		
 			RaycastHit2D hit = Physics2D.Raycast (transform.position, (escr.transform.position - transform.position).normalized, alertRadius,mask);
 			Debug.DrawLine (transform.position, transform.position + (escr.transform.position - transform.position).normalized * alertRadius,Color.red);
 			if(null!=escr){
-				if (hit.collider.gameObject.layer != LayerMask.NameToLayer("Collision")) {
-					if (!escr.GetSpecifiedState<DetectionState> (State.Detection).isDetection) {
-						escr.GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo (transform.position, escr.moveSpeed * 0.5f);
-						escr.SetState (State.Suspicious);
-						escr.InitToTransition ();
-						Debug.Log (escr.name);
+				if(TimeLayer.EqualTimeLayer(escr.gameObject,gameObject)){
+					if (hit.collider.gameObject.layer != LayerMask.NameToLayer ("Collision")) {
+						if (!escr.GetSpecifiedState<DetectionState> (State.Detection).isDetection) {
+							escr.GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo (transform.position, escr.moveSpeed * 0.5f);
+							escr.SetState (State.Suspicious);
+							escr.InitToTransition ();
+							Debug.Log (escr.name);
+						}
 					}
 				}
 			}
@@ -76,13 +79,44 @@ public class ThrowableObjectScript : InteractInterface {
 		ReleaseObject ();
 		CalculateThrowVelocity ();
 	}
+	int findOutIndex=0;
+	public Collider2D FindOutNearestCollider(Collider2D[] cols){
+		float dis = 0;
+		List<Collider2D> colList = new List<Collider2D> ();
+
+		for(int i = 0;i<cols.Length;i++){
+			if(TimeLayer.EqualTimeLayer(cols[i].gameObject,gameObject)){
+				colList.Add (cols [i]);
+			}
+		}
+
+		if (colList.Count == 1)
+			return colList [0];
+		else if (colList.Count > 1) {
+			dis = Vector2.Distance (colList [0].transform.position, transform.position);
+		} else if (colList.Count == 0)
+			return null;
+
+		int index = 1;
+		for(int i = 1;i<colList.Count;i++){
+			var tmpDis = Vector2.Distance (colList [i].transform.position, transform.position);
+			if(tmpDis<=dis){
+				index = i;
+				dis = tmpDis;
+			}
+		}
+		findOutIndex = colList.IndexOf(colList[index]);
+		return colList [index];
+	}
+
 	float maxX,maxY;
 	float minX,minY;
 	float colXLen;
 	float colYLen;
+
 	public void RayCastByVelocity(){
-		hitsX = new RaycastHit2D[rayDensity];
-		hitsY = new RaycastHit2D[rayDensity];
+		hitsX = new RaycastHit2D[rayDensity][];
+		hitsY = new RaycastHit2D[rayDensity][];
 		maxX = GetComponent<Collider2D> ().bounds.max.x;
 		maxY = GetComponent<Collider2D> ().bounds.max.y;
 		minX = GetComponent<Collider2D> ().bounds.min.x;
@@ -92,39 +126,64 @@ public class ThrowableObjectScript : InteractInterface {
 		Vector2 yDir = Vector2.zero;
 
 		for(int i =0;i<rayDensity;i++){
+
+			Collider2D[] tmpColsX = new Collider2D[0];
+			Collider2D[] tmpColsY = new Collider2D[0];
 			if (velocity.x > 0) {
 				xDir = Vector2.right;
-				hitsX [i] = Physics2D.Raycast (
+				hitsX [i] = Physics2D.RaycastAll (
 					new Vector2 (maxX, minY + colYLen * (i / (rayDensity - 1))),
 					xDir,Mathf.Abs(velocity.x)*Time.deltaTime,mask);
+				tmpColsX = new Collider2D[hitsX[i].Length];
+				for(int j = 0;j<tmpColsX.Length;j++){
+					tmpColsX [j] = hitsX [i] [j].collider;
+				}
 			} else if(velocity.x<0){
 				xDir = Vector2.left;
-				hitsX [i] = Physics2D.Raycast (
+				hitsX [i] = Physics2D.RaycastAll (
 					new Vector2 (minX, minY + colYLen * (i / (rayDensity - 1))),
 					xDir,Mathf.Abs(velocity.x)*Time.deltaTime,mask);
+				tmpColsX = new Collider2D[hitsX[i].Length];
+				for(int j = 0;j<tmpColsX.Length;j++){
+					tmpColsX [j] = hitsX [i] [j].collider;
+				}
 			}
 
 			if (velocity.y > 0) {
 				yDir = Vector2.up;
-				hitsY [i] = Physics2D.Raycast (
+				hitsY [i] = Physics2D.RaycastAll(
 					new Vector2 (minX + colXLen * (i / (rayDensity - 1)), maxY),
 					yDir,Mathf.Abs(velocity.y)*Time.deltaTime,mask);
+				tmpColsY = new Collider2D[hitsY[i].Length];
+				for(int j = 0;j<tmpColsY.Length;j++){
+					tmpColsY [j] = hitsY [i] [j].collider;
+				}
+
 			} else if (velocity.y < 0) {
 				yDir = Vector2.down;
-				hitsY [i] = Physics2D.Raycast (
+				hitsY [i] = Physics2D.RaycastAll (
 					new Vector2 (minX + colXLen * (i / (rayDensity - 1)), minY),
 					yDir,Mathf.Abs(velocity.y)*Time.deltaTime,mask);
+				tmpColsY = new Collider2D[hitsY[i].Length];
+				for(int j = 0;j<tmpColsY.Length;j++){
+					tmpColsY [j] = hitsY [i] [j].collider;
+				}
 			}
+
 			Vector2 reflectVec = Vector2.zero;
-			if(hitsX[i].collider!=null){
+
+			var nearestX = FindOutNearestCollider (tmpColsX);
+			if (nearestX != null) {
 				if(Vector3.Magnitude(velocity)>=2)
 					AlertToNearEnemy ();
-				velocity += Vector2.Reflect (xDir*Mathf.Abs(velocity.x), hitsX [i].normal);
+				velocity += Vector2.Reflect (xDir*Mathf.Abs(velocity.x)*1.2f, hitsX [i][findOutIndex].normal);
 			}
-			if(hitsY[i].collider!=null){
+
+			var nearestY = FindOutNearestCollider (tmpColsY);
+			if(nearestY != null){
 				if(Vector3.Magnitude(velocity)>=2)
 					AlertToNearEnemy ();
-				velocity += Vector2.Reflect (yDir*Mathf.Abs(velocity.y), hitsY [i].normal);
+				velocity += Vector2.Reflect (yDir*Mathf.Abs(velocity.y), hitsY [i][findOutIndex].normal);
 			}
 		}
 	}
@@ -132,7 +191,7 @@ public class ThrowableObjectScript : InteractInterface {
 	// Use this for initialization
 	void Start () {
 		initRootTrans = transform.parent;
-		playerHands = GameObject.FindObjectOfType<Player> ().transform.GetChild (2);
+		playerHands = GameObject.FindObjectOfType<Player> ().transform.GetChild (1);
 		interact += GrabObject;
 		stopInteract += ReleaseObject;
 	}
@@ -141,8 +200,7 @@ public class ThrowableObjectScript : InteractInterface {
 		if(applyGravity){
 			velocity += Vector2.down * 9.8f * Time.deltaTime;
 		}
-		RayCastByVelocity ();
-		velocity.x = Mathf.Lerp (velocity.x, 0, Time.deltaTime * 3f);
+			
 
 		if(isGrabbed){
 			if (Input.GetMouseButtonDown (0)) {
@@ -150,7 +208,10 @@ public class ThrowableObjectScript : InteractInterface {
 			}
 		}
 
+		RayCastByVelocity ();
 		transform.Translate (velocity * Time.deltaTime);
+
+		velocity.x = Mathf.Lerp (velocity.x, 0, Time.deltaTime * 3f);
 
 	}
 }

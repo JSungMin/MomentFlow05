@@ -42,7 +42,7 @@ public class BusController : MonoBehaviour {
 				speed = 0;
 			}
 		}
-		tire01.transform.Rotate (Vector3.forward * speed * Time.deltaTime);
-		tire02.transform.Rotate (Vector3.forward * speed * Time.deltaTime);
+		tire01.transform.Rotate (-Vector3.forward * speed * Time.deltaTime);
+		tire02.transform.Rotate (-Vector3.forward * speed * Time.deltaTime);
 	}
 }

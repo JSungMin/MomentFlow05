@@ -21,6 +21,8 @@ public class EnemyScript : MonoBehaviour {
 	public GameObject aim_bone;
 	public GameObject bullet;
 
+	public FindOutGaugeScript findOutGaugeScr;
+
 	public float maxHp;
 	public float hp;
 
@@ -69,6 +71,11 @@ public class EnemyScript : MonoBehaviour {
 
 	public void Awake(){
 		Debug.Log ("In Parent");
+		if (findOutGaugeScr == null) {
+			Debug.LogError ("There is No FindOutGagueScirpt for this Enemy : " + gameObject.name);
+		} else {
+			findOutGaugeScr.InitFindOutGaugeScript (this);
+		}
 	}
 
 	//this function will return IState
@@ -178,7 +185,7 @@ public class EnemyScript : MonoBehaviour {
 					Vector2.left,rayLen,browseMask);
 			}
 
-			if (browseHits [i].collider != null) {
+			if (browseHits [i].collider != null && TimeLayer.EqualTimeLayer(gameObject,browseHits[i].collider.gameObject)) {
 				BrowseInfo bInfo = new BrowseInfo ();
 				bInfo.InitBrowseInfo (browseHits[i].collider.gameObject,browseHits [i].distance, browseHits [i].normal, browseHits[i].point,browseHits [i].transform.tag, browseHits [i].transform.gameObject.layer);
 				return bInfo;

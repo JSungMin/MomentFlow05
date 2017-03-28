@@ -15,11 +15,14 @@ public class AlertState : IState {
 		var colliders = Physics2D.OverlapCircleAll (enemyObj.transform.position, alertRadius, 1 << LayerMask.NameToLayer ("Enemy"));
 		for(int i =0;i<colliders.Length;i++){
 			var col = colliders [i];
-			var hit = Physics2D.Raycast (enemyObj.transform.position + Vector3.up*0.35f, (col.transform.position - enemyObj.transform.position).normalized,Vector2.Distance(col.transform.position, enemyObj.transform.position),1<<LayerMask.NameToLayer("Collision"));
+			if(TimeLayer.EqualTimeLayer(col.gameObject,enemyObj)){
+				Debug.Log ("Alert Ready");
+				var hit = Physics2D.Raycast (enemyObj.transform.position + Vector3.up*0.35f, (col.transform.position - enemyObj.transform.position).normalized,Vector2.Distance(col.transform.position, enemyObj.transform.position),1<<LayerMask.NameToLayer("Collision"));
 
-			if (hit.collider == null) {
-				col.GetComponent<EnemyScript> ().GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo (enemyScript.GetSpecifiedState<SuspiciousState> (State.Suspicious).targetPos, col.GetComponent<EnemyScript> ().moveSpeed * 0.5f);
-				col.GetComponent<EnemyScript> ().SetState (State.Suspicious);
+				if (hit.collider == null) {
+					col.GetComponent<EnemyScript> ().GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo (enemyScript.GetSpecifiedState<SuspiciousState> (State.Suspicious).targetPos, col.GetComponent<EnemyScript> ().moveSpeed * 0.5f);
+					col.GetComponent<EnemyScript> ().SetState (State.Suspicious);
+				}
 			} 
 		}
 	}
