@@ -14,7 +14,7 @@ public class AnimationBase : MonoBehaviour {
 
 	public SkeletonAnimation skel;
 
-	protected string cur_animation;
+	protected string[] cur_animation;
 
 	protected enum Direction{
 		Left,
@@ -26,13 +26,13 @@ public class AnimationBase : MonoBehaviour {
 
 	public void setAnimation(int index, string name, bool loop, float time)
 	{
-		if(cur_animation == name)
+		if(cur_animation[index] == name)
 		{
 			return;
 		}else
 		{
 			skel.state.SetAnimation(index, name, loop).TimeScale = time;
-			cur_animation = name;
+			cur_animation[index] = name;
 		}
 	}
 
@@ -50,5 +50,6 @@ public class AnimationBase : MonoBehaviour {
 
 	void Awake(){
 		skel = GetComponentInChildren<SkeletonAnimation> ();
+		cur_animation = new string[2];
 	}
 }

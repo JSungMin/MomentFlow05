@@ -29,7 +29,7 @@ public class PlayerAnim : AnimationBase {
 
 	// Update is called once per frame
 	void Update () {
-        if (cur_animation == "Walk")
+        if (cur_animation[1] == "Walk")
         {
             if (!audioSource.isPlaying)
                 audioSource.Play();

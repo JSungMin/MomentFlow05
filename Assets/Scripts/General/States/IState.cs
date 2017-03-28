@@ -28,17 +28,17 @@ public abstract class IState
     }
 
 	public void Idle(string animName){
-		enemyScript.anim.setAnimation (0, animName, true, 1);
+		enemyScript.anim.setAnimation (1, animName, true, 1);
 	}
 
 	public void Hold(string animName)
     {
-		enemyScript.anim.setAnimation (0, animName, true, 1);
+		enemyScript.anim.setAnimation (1, animName, true, 1);
     }
 
 	public void Walk(string animName,Transform t,Vector3 velocity)
     {
-		enemyScript.anim.setAnimation (0, animName, true, 1);
+		enemyScript.anim.setAnimation (1, animName, true, 1);
 		t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
 		t.Translate(velocity * Time.deltaTime);
     }

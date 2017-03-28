@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Spine;
+using Spine.Unity;
+using Spine.Unity.Modules;
+
 public class Enemy_Security : EnemyScript {
 	public float stateChange = 2;
 	private float stateChangeTimer = 0;
@@ -31,6 +35,16 @@ public class Enemy_Security : EnemyScript {
     // Update is called once per frame
     void Update()
     {
+		//이 부분 이후에 리펙토링 필요
+		if (TimeLayer.EqualTimeLayer (playerObject.gameObject, gameObject)) {
+			anim.setAnimation (0, "PresentColor", false, 1);
+			GetComponentInChildren<SkeletonGhost> ().ghostingEnabled = false;
+
+		} else {
+			anim.setAnimation (0, "PastColor", false, 1);
+			GetComponentInChildren<SkeletonGhost> ().ghostingEnabled = true;
+		}
+
 		if(hp<=0){
 			SetState (State.Stun);
 		}
@@ -75,9 +89,11 @@ public class Enemy_Security : EnemyScript {
 						SetState (State.Suspicious);
 						transitionDurationTimer = 0;
 						GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo (playerObject.transform.position, moveSpeed * 0.5f);
+						StopEmotion ();
 					} else {
+						PlayEmotion ("Question2");
 						transitionDurationTimer += Time.deltaTime;
-						anim.setAnimation (0, "Rifle_Suspicious_Idle", true, 1);
+						anim.setAnimation (1, "Rifle_Suspicious_Idle", true, 1);
 					}
 				} else {
 					SetState (State.Patrol);
@@ -98,16 +114,13 @@ public class Enemy_Security : EnemyScript {
 					InitToTransition ();
 				} else {
 					transitionDurationTimer += Time.deltaTime;
-					anim.setAnimation (0, charAnimName+"_Idle", true, 1);
+					anim.setAnimation (1, charAnimName+"_Idle", true, 1);
 				}
 				findOutGauge = 100;
 				return;
 			}
 			//When findOutGauge smaller then 100 then => Play Suspicious with playing OnStateStay
 			SetState (State.Suspicious);
-
-			//TODO : Make animation to 살금살금 걷기 but now 'Walk' <= Cleard
-			anim.setAnimation (0, charAnimName+"_Suspicious_Walk", true, 1);
 
 			//Detect Object and Player Browse() return is distance between player and this enemy
 			//if can't find player then return -1
@@ -124,10 +137,12 @@ public class Enemy_Security : EnemyScript {
 					if (transitionDurationTimer >= transitionDuration) {
 						SetState(State.Patrol);  //then isDetection in IState[3] will be true 
 						GetSpecifiedState<PatrolState>(State.Patrol).InitPatrolInfo (patrolDir, moveSpeed);
+						StopEmotion ();
 						InitToTransition ();
 					} else {
 						transitionDurationTimer += Time.deltaTime*0.25f;
-						anim.setAnimation (0, charAnimName+"_Idle", true, 1);
+						anim.setAnimation (1, charAnimName+"_Idle", true, 1);
+						PlayEmotion ("Confuse2");
 					}
 				}
 			}
@@ -157,7 +172,7 @@ public class Enemy_Security : EnemyScript {
 			} else {
 				detectionDurationTimer = 0;
 				transitionDurationTimer += Time.deltaTime;
-				anim.setAnimation (0, charAnimName+"_Attach", true, 0.5f);
+				anim.setAnimation (1, charAnimName+"_Attach", true, 0.5f);
 			}
 			break;
 		case State.Attack:
