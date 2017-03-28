@@ -5,7 +5,7 @@ using UnityEngine;
 public class DynamicBusLight : MonoBehaviour
 {
     private Vector3 dir;
-    private float speed = 5f;
+    private float speed = 5.0f;
     public bool isLeftOne;
     private const float maxTime = 16.0f;
     private float maxTimer = 0.0f;
@@ -21,9 +21,9 @@ public class DynamicBusLight : MonoBehaviour
     private void Awake()
     {
         float padding = isLeftOne? 0.5f : -0.5f;
-        transform.position = new Vector3(-8.5f + padding - speed * maxTime * 0.1f , 0.0f, -6.5f - speed * maxTime);
+        transform.position = new Vector3(-11.5f + padding + speed * maxTime * 0.1f , 0.0f, -6.5f - speed * maxTime);
         dir = Vector3.forward;
-        dir += Vector3.right * 0.1f;
+        dir += Vector3.left * 0.1f;
         dir = Vector3.Normalize(dir);
     }
 
@@ -32,7 +32,7 @@ public class DynamicBusLight : MonoBehaviour
         maxTimer += Time.deltaTime;
         transform.Translate(dir * Time.deltaTime * speed);
 
-        if(maxTimer >= maxTime*0.8f)
+        if (maxTimer >= maxTime * 0.75f)
         {
             tweenAlpha.PlayForward();
         }
