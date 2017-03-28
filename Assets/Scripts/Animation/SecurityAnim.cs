@@ -33,10 +33,10 @@ public class SecurityAnim : AnimationBase {
 				//setAnimation (0,esrc.charAnimName + "_Shoot", true, 1);
 				break;
 			case State.Escape:
-				setAnimation (0, "Escape", true, 1);
+				//setAnimation (0, "Escape", true, 1);
 				break;
-			case State.Sturn:
-				setAnimation (0, "Strun", true, 1);
+			case State.Stun:
+				//setAnimation (0, "Strun", true, 1);
 				break;
 			case State.Dead:
 				setAnimation (0, "Dead", true, 1);

@@ -34,12 +34,13 @@ public class ThrowableObjectScript : InteractInterface {
 		for(int i = 0;i<colliders.Length;i++){
 			var escr = colliders [i].GetComponent<EnemyScript> ();
 			RaycastHit2D hit = Physics2D.Raycast (transform.position, (escr.transform.position - transform.position).normalized, alertRadius,mask);
+			Debug.DrawLine (transform.position, transform.position + (escr.transform.position - transform.position).normalized * alertRadius,Color.red);
 			if(null!=escr){
-				if (null != hit.collider) {
+				if (hit.collider.gameObject.layer != LayerMask.NameToLayer("Collision")) {
 					if (!escr.GetSpecifiedState<DetectionState> (State.Detection).isDetection) {
 						escr.GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo (transform.position, escr.moveSpeed * 0.5f);
 						escr.SetState (State.Suspicious);
-						escr.transitionDurationTimer = 0;
+						escr.InitToTransition ();
 						Debug.Log (escr.name);
 					}
 				}
@@ -116,14 +117,12 @@ public class ThrowableObjectScript : InteractInterface {
 			}
 			Vector2 reflectVec = Vector2.zero;
 			if(hitsX[i].collider!=null){
-				//Debug.Log (Vector3.Magnitude(velocity));
-				if(Vector3.Magnitude(velocity)>=3.5f)
+				if(Vector3.Magnitude(velocity)>=2)
 					AlertToNearEnemy ();
 				velocity += Vector2.Reflect (xDir*Mathf.Abs(velocity.x), hitsX [i].normal);
 			}
 			if(hitsY[i].collider!=null){
-				//Debug.Log (Vector3.Magnitude(velocity));
-				if(Vector3.Magnitude(velocity)>=3.5f)
+				if(Vector3.Magnitude(velocity)>=2)
 					AlertToNearEnemy ();
 				velocity += Vector2.Reflect (yDir*Mathf.Abs(velocity.y), hitsY [i].normal);
 			}
@@ -139,6 +138,12 @@ public class ThrowableObjectScript : InteractInterface {
 	}
 
 	void Update(){
+		if(applyGravity){
+			velocity += Vector2.down * 9.8f * Time.deltaTime;
+		}
+		RayCastByVelocity ();
+		velocity.x = Mathf.Lerp (velocity.x, 0, Time.deltaTime * 3f);
+
 		if(isGrabbed){
 			if (Input.GetMouseButtonDown (0)) {
 				ThrowObject ();
@@ -146,10 +151,6 @@ public class ThrowableObjectScript : InteractInterface {
 		}
 
 		transform.Translate (velocity * Time.deltaTime);
-		if(applyGravity){
-			velocity += Vector2.down * 9.8f * Time.deltaTime;
-		}
-		RayCastByVelocity ();
-		velocity.x = Mathf.Lerp (velocity.x, 0, Time.deltaTime * 3f);
+
 	}
 }

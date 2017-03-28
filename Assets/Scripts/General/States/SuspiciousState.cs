@@ -20,7 +20,11 @@ public class SuspiciousState : IState {
 	}
 
 	public bool CheckArrive(){
-		if (Vector3.Distance (enemyObj.transform.position, targetPos)>=0.3f) {
+		var ePos = enemyObj.transform.position;
+		var tPos = targetPos;
+		ePos.y = 0;
+		tPos.y = 0;
+		if (Vector3.Distance (ePos, tPos)>=0.3f) {
 			CalculateDirection ();
 			return false;
 		}
@@ -35,7 +39,10 @@ public class SuspiciousState : IState {
 
 	public override void OnStateStay(){
 		if(!CheckArrive()){
-			Walk (enemyScript.charAnimName + "_Suspicious_Walk",enemyObj.transform, dir * speed*0.5f);
+			var bInfo = enemyScript.Browse (speed*0.5f);
+			if (bInfo.layer != LayerMask.NameToLayer ("Collision")) {
+				Walk (enemyScript.charAnimName + "_Suspicious_Walk",enemyObj.transform, dir * speed*0.5f);
+			}
 			enemyScript.AimToObject (targetPos);
 		}
 	}

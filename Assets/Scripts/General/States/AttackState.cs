@@ -32,13 +32,15 @@ public class AttackState : IState {
 
 	public override void OnStateStay(){
 		if (!enemyScript.isAttack) {
+			var bInfo = enemyScript.Browse (enemyScript.moveSpeed * 1.2f);
 			if (enemyScript.attackRange <= Vector2.Distance (enemyScript.playerObject.transform.position, enemyObj.transform.position)) {
-				Walk ("Rifle_Run", enemyObj.transform, (enemyScript.playerObject.transform.position - enemyObj.transform.position).normalized * enemyScript.moveSpeed * 1.2f);
+				if (bInfo.layer != LayerMask.NameToLayer ("Collision")) {
+					Walk (enemyScript.charAnimName+"_Run", enemyObj.transform, (enemyScript.playerObject.transform.position - enemyObj.transform.position).normalized * enemyScript.moveSpeed * 1.2f);
+				}
 			} else {
 				if (fireDelayTimer >= fireDelay) {
 					if (attackType == EnemyAttackType.Gun) {
 						enemyScript.fireBullets = enemyScript.FireBullets (fireNum);
-						Debug.Log (Vector2.Distance (enemyScript.playerObject.transform.position, enemyObj.transform.position));
 						enemyScript.anim.setAnimation (0, enemyScript.charAnimName + "_Shoot", true, 1);
 						enemyScript.StartCoroutine (enemyScript.fireBullets);
 						fireDelayTimer = 0;

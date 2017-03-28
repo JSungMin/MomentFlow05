@@ -11,14 +11,18 @@ public class EnemyScript : MonoBehaviour {
 	public Player playerObject { protected set; get; }
 
 	public State enemyState;
-    public IState[] istate;
+	//유지될 상태
+	public State defaultState;
+
+	public IState[] istate;
 
 	public AnimationBase anim;
 	public string charAnimName;
 	public GameObject aim_bone;
 	public GameObject bullet;
 
-	public bool canAlert;
+	public float maxHp;
+	public float hp;
 
 	public Vector3 patrolDir;
 	public float moveSpeed;
@@ -26,13 +30,20 @@ public class EnemyScript : MonoBehaviour {
     public float holdDuration;
 	public float walkDuration;
 
+	public float patrolDuration;
+	protected float patrolDurationTimer = 0;
+
 	public float detectionDuration;
-	public float detectionDurationTimer = 0;
+	protected float detectionDurationTimer = 0;
 
 	public bool isAttack = false;
 	public float attackRange;
 	public float attackDelay;
 	public Vector3 velocity;
+
+	public bool canAlert;
+	public bool canEscape;
+	public float escapeHP;
 
 	public float findOutSight = 1;
 	public float findOutGauge = 0;
@@ -41,7 +52,7 @@ public class EnemyScript : MonoBehaviour {
 	public LayerMask browseMask;
 
 	public float transitionDuration;
-	public float transitionDurationTimer = 0;
+	protected float transitionDurationTimer = 0;
 
 	protected void InitEnemy(){
 		playerObject = GameObject.FindObjectOfType<Player> ();
@@ -51,11 +62,13 @@ public class EnemyScript : MonoBehaviour {
 		minY = GetComponent<Collider2D> ().bounds.min.y;
 		colXLen = GetComponent<Collider2D> ().bounds.size.x;
 		colYLen = GetComponent<Collider2D> ().bounds.size.y;
+
+		InitToTransition ();
+		GetSpecifiedState<PatrolState>(State.Patrol).InitPatrolInfo (patrolDir, moveSpeed);
 	}
 
 	public void Awake(){
 		Debug.Log ("In Parent");
-		InitEnemy ();
 	}
 
 	//this function will return IState
@@ -76,6 +89,29 @@ public class EnemyScript : MonoBehaviour {
 	float minX,minY;
 	float colXLen;
 	float colYLen;
+
+	public void InitToTransition(){
+		transitionDurationTimer = 0;
+	}
+
+	public void SetDefaultState(){
+		switch(defaultState){
+		case State.Idle:
+			SetState (State.Idle);
+			break;
+		case State.Sit:
+			SetState (State.Sit);
+			break;
+		case State.Patrol:
+			//GetSpecifiedState<PatrolState> (State.Patrol).InitPatrolInfo(patrolDir,moveSpeed);
+			SetState (State.Patrol);
+			break;
+		case State.Suspicious:
+			GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo(playerObject.transform.position,moveSpeed*0.5f);
+			SetState (State.Suspicious);
+			break;
+		}
+	}
 
 	public void AimToObject(Vector3 targetPos){
 		if(aim_bone!=null){
@@ -152,6 +188,7 @@ public class EnemyScript : MonoBehaviour {
 		}
 		return new BrowseInfo();
 	}
+
 	public IEnumerator fireBullets;
 	public void Fire(){
 		var newBullet = MonoBehaviour.Instantiate (bullet, aim_bone.transform.position, Quaternion.identity) as GameObject;
@@ -168,5 +205,12 @@ public class EnemyScript : MonoBehaviour {
 			yield return new WaitForSeconds (0.25f);
 		}
 		isAttack = false;
+	}
+
+	public bool CheckEscapeConditioin(){
+		if(canEscape&&hp<=escapeHP){
+			return true;
+		}
+		return false;
 	}
 }

@@ -15,9 +15,12 @@ public class PatrolState : IState
 	public void InitPatrolInfo(Vector3 d, float s){
 		dir = d;
 		speed = s;
+
+		OnStateEnter ();
 	}
 
     public override void OnStateEnter(){
+		Debug.Log ("Enter");
 		holdDuration = enemyObj.GetComponent<EnemyScript> ().holdDuration;
 		walkDuration = enemyObj.GetComponent<EnemyScript> ().walkDuration;
 		enemyScript.AimToForward ();
