@@ -11,10 +11,13 @@ public class InteractInterface : MonoBehaviour {
 	protected InteractWithObject interact;
 	protected StopInteractWithObject stopInteract;
 
-	public void Interact(){
-		interact();
-	}
-	public void StopInteract(){
-		stopInteract ();
-	}
+    public void Interact()
+    {
+        interact();
+    }
+
+    public void StopInteract()
+    {
+        stopInteract();
+    }
 }

@@ -12,7 +12,7 @@ public class DynamicBackground : MonoBehaviour
     private void Awake()
     {
         leftestPosX = -21.0f;
-        moveSpeed = 1.0f;
+        moveSpeed = 2.2f;
         isMove = false;
         StartCoroutine(MoveStartDelay());
     }
@@ -22,8 +22,8 @@ public class DynamicBackground : MonoBehaviour
         if (isMove)
         {
             transform.Translate(Vector3.left * Time.deltaTime * moveSpeed);
-            if (transform.position.x < leftestPosX)
-                transform.position = new Vector3(rightestPosX, transform.position.y, transform.position.z);
+            //if (transform.position.x < leftestPosX)
+            //    transform.position = new Vector3(rightestPosX, transform.position.y, transform.position.z);
         }
     }
 
