@@ -38,7 +38,7 @@ public class ThrowableObjectScript : InteractInterface {
 			Debug.DrawLine (transform.position, transform.position + (escr.transform.position - transform.position).normalized * alertRadius,Color.red);
 			if(null!=escr){
 				if(TimeLayer.EqualTimeLayer(escr.gameObject,gameObject)){
-					if (hit.collider.gameObject.layer != LayerMask.NameToLayer ("Collision")) {
+					if (null != hit.collider&& hit.collider.gameObject.layer != LayerMask.NameToLayer ("Collision")) {
 						if (!escr.GetSpecifiedState<DetectionState> (State.Detection).isDetection) {
 							escr.GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo (transform.position, escr.moveSpeed * 0.5f);
 							escr.SetState (State.Suspicious);

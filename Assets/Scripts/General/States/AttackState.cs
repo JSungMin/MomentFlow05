@@ -41,14 +41,14 @@ public class AttackState : IState {
 				if (fireDelayTimer >= fireDelay) {
 					if (attackType == EnemyAttackType.Gun) {
 						enemyScript.fireBullets = enemyScript.FireBullets (fireNum);
-						enemyScript.anim.setAnimation (0, enemyScript.charAnimName + "_Shoot", true, 1);
+						enemyScript.anim.setAnimation (1, enemyScript.charAnimName + "_Shoot", true, 1);
 						enemyScript.StartCoroutine (enemyScript.fireBullets);
 						fireDelayTimer = 0;
 					} else {
 					}
 				} else {
 					fireDelayTimer += Time.deltaTime;
-					enemyScript.anim.setAnimation (0, enemyScript.charAnimName + "_Idle", true, 1);
+					enemyScript.anim.setAnimation (1, enemyScript.charAnimName + "_Idle", true, 1);
 				}
 			}
 		}

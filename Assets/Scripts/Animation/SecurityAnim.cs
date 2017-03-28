@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SecurityAnim : AnimationBase {
 	EnemyScript esrc;
-
+	public MeshRenderer meshRender;
 	// Use this for initialization
 	void Start () {
 		esrc = GetComponent<EnemyScript> ();
@@ -39,10 +39,10 @@ public class SecurityAnim : AnimationBase {
 				//setAnimation (0, "Strun", true, 1);
 				break;
 			case State.Dead:
-				setAnimation (0, "Dead", true, 1);
+				setAnimation (1, "Dead", true, 1);
 				break;
 			case State.Sit:
-				setAnimation (0, "Sit", false, 1);
+				setAnimation (1, "Sit", false, 1);
 				break;
 			}
 		}

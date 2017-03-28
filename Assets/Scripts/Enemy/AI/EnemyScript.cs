@@ -21,6 +21,8 @@ public class EnemyScript : MonoBehaviour {
 	public GameObject aim_bone;
 	public GameObject bullet;
 
+	public GameObject emotionBox;
+
 	public FindOutGaugeScript findOutGaugeScr;
 
 	public float maxHp;
@@ -117,6 +119,20 @@ public class EnemyScript : MonoBehaviour {
 			GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo(playerObject.transform.position,moveSpeed*0.5f);
 			SetState (State.Suspicious);
 			break;
+		}
+	}
+
+	public void PlayEmotion(string animName){
+		if(!emotionBox.activeSelf){
+			emotionBox.SetActive (true);
+			emotionBox.GetComponentInChildren<AnimationBase> ().setAnimation (0, animName, false, 1);
+		}
+	}
+
+	public void StopEmotion(){
+		if(emotionBox.activeSelf){
+			//emotionBox.GetComponentInChildren<AnimationBase> ().setAnimation (0, "None", false, 1);
+			emotionBox.SetActive (false);
 		}
 	}
 
