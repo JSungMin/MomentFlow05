@@ -20,7 +20,6 @@ public class PatrolState : IState
 	}
 
     public override void OnStateEnter(){
-		Debug.Log ("Enter");
 		holdDuration = enemyObj.GetComponent<EnemyScript> ().holdDuration;
 		walkDuration = enemyObj.GetComponent<EnemyScript> ().walkDuration;
 		enemyScript.AimToForward ();

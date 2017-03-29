@@ -50,18 +50,26 @@ public class Enemy_Security : EnemyScript {
 		}
 		//Detection 이후 일정 시간이 지나면 isDetection = false And Patrol 상태로 만든다.
 		if (GetSpecifiedState<DetectionState> (State.Detection).isDetection) {
-			if (isFindPlayer.layer != LayerMask.NameToLayer ("Player")) {
-				detectionDurationTimer += Time.deltaTime;
-				transform.localScale = new Vector3 (Mathf.Sign ((playerObject.transform.position.x - transform.position.x)) * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-				if(detectionDurationTimer >= detectionDuration){
-					if(isAttack){
-						GetSpecifiedState<AttackState> (State.Attack).OnStateExit ();
+				if (isFindPlayer.layer != LayerMask.NameToLayer ("Player")) {
+					detectionDurationTimer += Time.deltaTime;
+					transform.localScale = new Vector3 (Mathf.Sign ((playerObject.transform.position.x - transform.position.x)) * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+					if(detectionDurationTimer >= detectionDuration){
+						if(isAttack){
+							GetSpecifiedState<AttackState> (State.Attack).OnStateExit ();
+						}
+						GetSpecifiedState<DetectionState> (State.Detection).isDetection = false;
+						GetSpecifiedState<PatrolState> (State.Patrol).InitPatrolInfo (patrolDir, moveSpeed);
+						SetState (State.Patrol);
+						detectionDurationTimer = 0;
 					}
-					GetSpecifiedState<DetectionState> (State.Detection).isDetection = false;
-					GetSpecifiedState<PatrolState> (State.Patrol).InitPatrolInfo (patrolDir, moveSpeed);
-					SetState (State.Patrol);
-					detectionDurationTimer = 0;
 				}
+		}
+
+		if(enemyState == State.Attack){
+			if (!TimeLayer.EqualTimeLayer (playerObject.gameObject, gameObject)) {
+				GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo (playerObject.transform.position, moveSpeed * 0.5f);
+				SetState (State.Suspicious);
+				findOutGauge = 99;
 			}
 		}
 
@@ -83,6 +91,10 @@ public class Enemy_Security : EnemyScript {
 			SetState(State.Idle);       
         	break;
 		case State.Patrol:
+			if(!TimeLayer.EqualTimeLayer(playerObject.gameObject,gameObject)){
+				findOutGauge = Mathf.Lerp (findOutGauge, 0, Time.deltaTime * findOutGaugeIncrement * 0.1f);
+			}
+
 			if (isFindPlayer.hittedObj != null) {
 				if (isFindPlayer.layer == LayerMask.NameToLayer ("Player")) {
 					if (transitionDurationTimer >= transitionDuration) {
@@ -93,6 +105,7 @@ public class Enemy_Security : EnemyScript {
 					} else {
 						PlayEmotion ("Question2");
 						transitionDurationTimer += Time.deltaTime;
+						findOutGauge = Mathf.Lerp (findOutGauge, 50, Time.deltaTime * findOutGaugeIncrement * 0.1f);
 						anim.setAnimation (1, "Rifle_Suspicious_Idle", true, 1);
 					}
 				} else {
@@ -128,12 +141,11 @@ public class Enemy_Security : EnemyScript {
 
 			//if find out player then play below statement
 			if(isFindPlayer.layer == LayerMask.NameToLayer("Player")){
-				findOutGauge += (findOutGaugeIncrement / isFindPlayer.distance) * Time.deltaTime*4;
+				findOutGauge = Mathf.Lerp(findOutGauge,110, Time.deltaTime*2);
 				GetSpecifiedState<SuspiciousState>(State.Suspicious).InitSuspiciousInfo (playerObject.transform.position, moveSpeed);
 			} 
 			else {
 				if(GetSpecifiedState<SuspiciousState>(State.Suspicious).CheckArrive()){
-					Debug.Log ("Can't Find Player");
 					if (transitionDurationTimer >= transitionDuration) {
 						SetState(State.Patrol);  //then isDetection in IState[3] will be true 
 						GetSpecifiedState<PatrolState>(State.Patrol).InitPatrolInfo (patrolDir, moveSpeed);

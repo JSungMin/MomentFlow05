@@ -33,7 +33,6 @@ public class SuspiciousState : IState {
 
 	public override void OnStateEnter(){
 		CalculateDirection ();
-		enemyScript.findOutGauge = 50;
 		enemyObj.transform.localScale = new Vector3 (Mathf.Sign (dir.x) * Mathf.Abs(enemyObj.transform.localScale.x), enemyObj.transform.localScale.y,enemyObj.transform.localScale.z);
 	}
 
