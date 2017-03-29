@@ -55,34 +55,35 @@ public class Controller2D : MonoBehaviour {
 			Debug.DrawRay(rayOrigin, Vector2.right * directionX * rayLength,Color.red);
 
 			if (hit) {
+			//	if(TimeLayer.EqualTimeLayer(hit.collider.gameObject,gameObject)){
+					float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
 
-				float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
-
-				if (i == 0 && slopeAngle <= maxClimbAngle) {
-					if (collisions.descendingSlope) {
-						collisions.descendingSlope = false;
-						velocity = collisions.velocityOld;
-					}
-					float distanceToSlopeStart = 0;
-					if (slopeAngle != collisions.slopeAngleOld) {
-						distanceToSlopeStart = hit.distance-skinWidth;
-						velocity.x -= distanceToSlopeStart * directionX;
-					}
-					ClimbSlope(ref velocity, slopeAngle);
-					velocity.x += distanceToSlopeStart * directionX;
-				}
-
-				if (!collisions.climbingSlope || slopeAngle > maxClimbAngle) {
-					velocity.x = (hit.distance - skinWidth) * directionX;
-					rayLength = hit.distance;
-
-					if (collisions.climbingSlope) {
-						velocity.y = Mathf.Tan(collisions.slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(velocity.x);
+					if (i == 0 && slopeAngle <= maxClimbAngle) {
+						if (collisions.descendingSlope) {
+							collisions.descendingSlope = false;
+							velocity = collisions.velocityOld;
+						}
+						float distanceToSlopeStart = 0;
+						if (slopeAngle != collisions.slopeAngleOld) {
+							distanceToSlopeStart = hit.distance-skinWidth;
+							velocity.x -= distanceToSlopeStart * directionX;
+						}
+						ClimbSlope(ref velocity, slopeAngle);
+						velocity.x += distanceToSlopeStart * directionX;
 					}
 
-					collisions.left = directionX == -1;
-					collisions.right = directionX == 1;
-				}
+					if (!collisions.climbingSlope || slopeAngle > maxClimbAngle) {
+						velocity.x = (hit.distance - skinWidth) * directionX;
+						rayLength = hit.distance;
+
+						if (collisions.climbingSlope) {
+							velocity.y = Mathf.Tan(collisions.slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(velocity.x);
+						}
+
+						collisions.left = directionX == -1;
+						collisions.right = directionX == 1;
+					}
+				//}
 			}
 		}
 	}
@@ -99,6 +100,7 @@ public class Controller2D : MonoBehaviour {
 			Debug.DrawRay(rayOrigin, Vector2.up * directionY * rayLength,Color.red);
 
 			if (hit) {
+				//if (TimeLayer.EqualTimeLayer (hit.collider.gameObject, gameObject)) {
 					velocity.y = (hit.distance - skinWidth) * directionY;
 					rayLength = hit.distance;
 
@@ -108,6 +110,7 @@ public class Controller2D : MonoBehaviour {
 
 					collisions.below = directionY == -1;
 					collisions.above = directionY == 1;
+				//}
 			}
 		}
 
@@ -118,11 +121,13 @@ public class Controller2D : MonoBehaviour {
 			RaycastHit2D hit = Physics2D.Raycast(rayOrigin,Vector2.right * directionX,rayLength,collisionMask);
 
 			if (hit) {
-				float slopeAngle = Vector2.Angle(hit.normal,Vector2.up);
-				if (slopeAngle != collisions.slopeAngle) {
-					velocity.x = (hit.distance - skinWidth) * directionX;
-					collisions.slopeAngle = slopeAngle;
-				}
+				//if (TimeLayer.EqualTimeLayer (hit.collider.gameObject, gameObject)) {
+					float slopeAngle = Vector2.Angle(hit.normal,Vector2.up);
+					if (slopeAngle != collisions.slopeAngle) {
+						velocity.x = (hit.distance - skinWidth) * directionX;
+						collisions.slopeAngle = slopeAngle;
+					}
+				//}
 			}
 		}
 	}

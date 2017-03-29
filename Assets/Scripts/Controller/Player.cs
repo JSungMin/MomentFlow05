@@ -72,6 +72,7 @@ public class Player : MyObject
 	}
 
 	void ProcessTimeSwitching(){
+
 		if(Input.GetKeyDown(KeyCode.Tab)){
 			int toLayer = 0;
 			if (TimeLayer.GetTimeLayer (gameObject) == 0) {
@@ -86,6 +87,7 @@ public class Player : MyObject
 				equipItems [i].layerNum = toLayer;
 			}	
 		}
+		Camera.main.GetComponent<GrayScaleEffect> ().intensity = Mathf.Lerp (Camera.main.GetComponent<GrayScaleEffect> ().intensity, 1 - GetComponent<TimeLayer>().layerNum, Time.deltaTime*2);
 	}
 
 	// Use this for initialization
