@@ -65,9 +65,6 @@ namespace UnityStandardAssets.ImageEffects
                 case AAMode.FXAA1PresetB:
                     returnValue = materialFXAAPreset3;
                     break;
-                case AAMode.NFAA:
-                    returnValue = nfaa;
-                    break;
                 case AAMode.SSAA:
                     returnValue = ssaa;
                     break;
@@ -91,7 +88,7 @@ namespace UnityStandardAssets.ImageEffects
             materialFXAAPreset3 = CreateMaterial(shaderFXAAPreset3, materialFXAAPreset3);
             materialFXAAII = CreateMaterial(shaderFXAAII, materialFXAAII);
             materialFXAAIII = CreateMaterial(shaderFXAAIII, materialFXAAIII);
-            nfaa = CreateMaterial(nfaaShader, nfaa);
+           // nfaa = CreateMaterial(nfaaShader, nfaa);
             ssaa = CreateMaterial(ssaaShader, ssaa);
             dlaa = CreateMaterial(dlaaShader, dlaa);
 
@@ -154,18 +151,6 @@ namespace UnityStandardAssets.ImageEffects
                 Graphics.Blit(source, interim, dlaa, 0);
                 Graphics.Blit(interim, destination, dlaa, dlaaSharp ? 2 : 1);
                 RenderTexture.ReleaseTemporary(interim);
-            }
-            else if (mode == AAMode.NFAA && nfaa != null)
-            {
-                // ----------------------------------------------------------------
-                // nfaa antialiasing
-
-                source.anisoLevel = 0;
-
-                nfaa.SetFloat("_OffsetScale", offsetScale);
-                nfaa.SetFloat("_BlurRadius", blurRadius);
-
-                Graphics.Blit(source, destination, nfaa, showGeneratedNormals ? 1 : 0);
             }
             else
             {
