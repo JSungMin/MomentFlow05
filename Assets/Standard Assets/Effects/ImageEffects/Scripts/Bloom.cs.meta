@@ -1,5 +1,7 @@
 fileFormatVersion: 2
 guid: 7fceaeb339b971b429c4cc600acabd13
+timeCreated: 1436896033
+licenseType: Store
 MonoImporter:
   serializedVersion: 2
   defaultReferences:
@@ -11,7 +13,9 @@ MonoImporter:
       type: 3}
   - brightPassFilterShader: {fileID: 4800000, guid: 0aeaa4cb29f5d4e9c8455f04c8575c8c,
       type: 3}
+  - lensTexture: {fileID: 2800000, guid: d54cbd7e25a45f14cb388ecbbdc52029, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
   assetBundleName: 
+  assetBundleVariant: 

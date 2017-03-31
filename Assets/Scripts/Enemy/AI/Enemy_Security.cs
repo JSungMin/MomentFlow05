@@ -141,7 +141,7 @@ public class Enemy_Security : EnemyScript {
 
 			//if find out player then play below statement
 			if(isFindPlayer.layer == LayerMask.NameToLayer("Player")){
-				findOutGauge = Mathf.Lerp(findOutGauge,110, Time.deltaTime*2);
+				findOutGauge = Mathf.Lerp(findOutGauge,110, Time.deltaTime*3/(isFindPlayer.distance));
 				GetSpecifiedState<SuspiciousState>(State.Suspicious).InitSuspiciousInfo (playerObject.transform.position, moveSpeed);
 			} 
 			else {
