@@ -53,7 +53,7 @@ namespace Spine.Unity.Modules {
 
 			gameObject.SetActive(true);
 			meshRenderer.sharedMaterials = materials;
-			meshRenderer.sortingLayerID = sortingLayerID;
+			//meshRenderer.sortingLayerID = sortingLayerID;
 			meshRenderer.sortingOrder = sortingOrder;
 			meshFilter.sharedMesh = Instantiate(mesh);
 			colors = meshFilter.sharedMesh.colors32;
