@@ -9,11 +9,14 @@ public class ObjectTimeSwitching : MonoBehaviour {
     private Player player;
     private SpriteRenderer sp;
 
+    private BoxCollider2D bc;
+
     public IEnumerator appearObject;
     public IEnumerator disappearObject;
 
     public IEnumerator DisappearObject()
     {
+        bc.enabled = false;
         Color tmpAlpha = sp.color;
         var tmpColor = Color.gray;
         tmpColor.a = 0.3f;
@@ -30,6 +33,7 @@ public class ObjectTimeSwitching : MonoBehaviour {
     }
     public IEnumerator AppearObject()
     {
+        bc.enabled = true;
         Color tmpAlpha = sp.color;
         var tmpColor = Color.white;
         tmpColor.a = 1;
@@ -45,8 +49,13 @@ public class ObjectTimeSwitching : MonoBehaviour {
         sp.color = tmpAlpha;
     }
 
-	// Use this for initialization
-	void Start () {
+    private void Awake()
+    {
+        bc = GetComponent<BoxCollider2D>();
+    }
+
+    // Use this for initialization
+    void Start () {
         if (timeLayer == null)
         {
             timeLayer = GetComponent<TimeLayer>();

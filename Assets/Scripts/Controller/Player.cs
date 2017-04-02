@@ -11,7 +11,7 @@ public class Player : MyObject
 
 	private Controller2D controller;
 
-	public float jumpHeight = 10;
+	public float jumpHeight = 0.1f;
 	public float timeToJumpApex = .4f;
 	private float accelerationTimeAirborne = .2f;
 	private float accelerationTimeGrounded = .1f;
@@ -28,7 +28,8 @@ public class Player : MyObject
 	public bool isJump;
 
 	public AnimationState animationState;
-
+    // 플레이어 크기와 비슷한 충돌체
+    public BoxCollider2D playerBC;
 
 	bool isAir = false;
 
@@ -73,6 +74,8 @@ public class Player : MyObject
 
 	void ProcessTimeSwitching(){
 
+        // 다른 레이어의 통과 불가능한 지형들과 플레이어가 충돌한다면
+        // 타임 스위칭을 할 수 없다
 		if(Input.GetKeyDown(KeyCode.Tab)){
 			int toLayer = 0;
 			if (TimeLayer.GetTimeLayer (gameObject) == 0) {
@@ -90,25 +93,43 @@ public class Player : MyObject
 		Camera.main.GetComponent<GrayScaleEffect> ().intensity = Mathf.Lerp (Camera.main.GetComponent<GrayScaleEffect> ().intensity, 1 - GetComponent<TimeLayer>().layerNum, Time.deltaTime*2);
 	}
 
-	// Use this for initialization
+    // isGrabing이 true라면 플레이어의 위치를 벽 코너에 고정한다
+    private bool isGrabing;
+    // 벽의 모서리를 잡는 함수
+    void ProcessGrabCorner()
+    {
+        if(Input.GetKey(KeyCode.R))
+        {
+            // if 벽 모서리와 닿아 있다면 isGrabing = true
+        }
+        else
+        {
+            isGrabing = false;
+        }
+    }
+    
 	void Start () {
 		animator = GetComponent<Animator> ();
 		controller = GetComponent<Controller2D> ();
 		gravity = -9.8f;
 		//gravity = -(2*jumpHeight) / Mathf.Pow (timeToJumpApex, 2);
 		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
-	}
-
-	// Update is called once per frame
+    }
+    
 	void Update () {
 		if (hp <= 0) {
 			Destroyed ();
 		}
-		ProcessTimeSwitching ();
-		ProcessGround ();
-		ProcessMove ();
 
-		controller.Move ( velocity * Time.deltaTime);
+		ProcessTimeSwitching();
+		ProcessGround();
+		ProcessMove();
+        ProcessJump();
+        ProcessGrabCorner();
+
+        controller.Move ( velocity * Time.deltaTime);
 		velocity.x = 0;
 	}
+
+    
 }
