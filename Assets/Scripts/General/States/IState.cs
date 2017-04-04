@@ -27,24 +27,34 @@ public abstract class IState
 		}
     }
 
-	public void Idle(string animName){
-		enemyScript.anim.setAnimation (1, animName, true, 1);
+	public void Idle(){
+		enemyScript.anim.Idle (enemyScript.charAnimName);
 	}
 
-	public void Hold(string animName)
+	public void Hold()
     {
-		enemyScript.anim.setAnimation (1, animName, true, 1);
+		enemyScript.anim.Idle (enemyScript.charAnimName);
     }
 
-	public void Walk(string animName,Transform t,Vector3 velocity)
+	public void Walk(Transform t,Vector3 velocity)
     {
-		enemyScript.anim.setAnimation (1, animName, true, 1);
+		enemyScript.anim.Walk (enemyScript.charAnimName);
 		t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
 		t.Translate(velocity * Time.deltaTime);
     }
-	public void Run(string animName, Transform t,Vector3 velocity){
-
+	public void SuspiciousWalk(Transform t,Vector3 velocity)
+	{
+		enemyScript.anim.SuspiciousWalk(enemyScript.charAnimName);
+		t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
+		t.Translate(velocity * Time.deltaTime);
 	}
+	public void Run(Transform t,Vector3 velocity)
+	{
+		enemyScript.anim.Run(enemyScript.charAnimName);
+		t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
+		t.Translate(velocity * Time.deltaTime);
+	}
+
 	public void LookAround(){
 
 	}

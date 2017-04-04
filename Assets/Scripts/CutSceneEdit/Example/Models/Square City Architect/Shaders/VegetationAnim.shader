@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 // Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
@@ -172,7 +174,7 @@ Shader "Town Center/Vegetation"
 				OUT.viewDir = normalize(OUT.posWorld - _WorldSpaceCameraPos);
 
 				IN.vertex = mul(unity_WorldToObject, float4 (IN.vertex.xyz, 1))* 1.0;
-				OUT.pos = mul(UNITY_MATRIX_MVP, IN.vertex);
+				OUT.pos = UnityObjectToClipPos(IN.vertex);
 
 				OUT.uvs = IN.texCoord0;
 

@@ -48,6 +48,38 @@ public class AnimationBase : MonoBehaviour {
 		}
 	}
 
+	public void PastColor(){
+		setAnimation (0, "PastColor", false, 1);
+	}
+
+	public void PresentColor(){
+		setAnimation (0, "PresentColor", false, 1);
+	}
+
+	public void Idle(string charAnimName){
+		setAnimation (1, charAnimName+"_Idle", true, 1);
+	}
+
+	public void Walk(string charAnimName){
+		setAnimation (1, charAnimName + "_Walk", true, 1);
+	}
+
+	public void SuspiciousWalk(string charAnimName){
+		setAnimation (1, charAnimName+"_Suspicious_Walk", true, 1);
+	}
+
+	public void Run(string charAnimName){
+		setAnimation (1, charAnimName + "_Run", true, 1);
+	}
+
+	public void Shoot(string charAnimName){
+		setAnimation (1,charAnimName +"_Shoot",true,1);
+	}
+
+	public void Stun(){
+
+	}
+
 	void Awake(){
 		skel = GetComponentInChildren<SkeletonAnimation> ();
 		cur_animation = new string[2];
