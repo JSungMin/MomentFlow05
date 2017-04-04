@@ -54,7 +54,7 @@ public class Controller2D : MonoBehaviour {
 
 			Debug.DrawRay(rayOrigin, Vector2.right * directionX * rayLength,Color.red);
 
-			if (hit) {
+			if (hit.collider != null) {
 				float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
 				if (i == 0 && slopeAngle <= maxClimbAngle) {
 					if(TimeLayer.EqualTimeLayer(gameObject,hit.collider.gameObject)){
@@ -102,7 +102,7 @@ public class Controller2D : MonoBehaviour {
 
 			Debug.DrawRay(rayOrigin, Vector2.up * directionY * rayLength,Color.red);
 
-			if (hit) {
+			if (hit.collider != null) {
 				if (TimeLayer.EqualTimeLayer (hit.collider.gameObject, gameObject)) {
 					velocity.y = (hit.distance - skinWidth) * directionY;
 				} else {
