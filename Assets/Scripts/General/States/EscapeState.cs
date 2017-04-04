@@ -17,14 +17,14 @@ public class EscapeState : IState {
 			d.y = 0;
 			d.x = Mathf.Sign (d.x);
 			if (bInfo.layer != LayerMask.NameToLayer ("Collision")) {
-				Walk (enemyScript.charAnimName + "_Run", enemyObj.transform, d*enemyScript.moveSpeed * 1.2f);
+				Run (enemyObj.transform, d*enemyScript.moveSpeed * 1.2f);
 			}
 		} else {
 			var d = enemyObj.transform.localScale;
 			d.y = 0;
 			d.z = 0;
 			if (bInfo.layer != LayerMask.NameToLayer ("Collision")) {
-				Walk (enemyScript.charAnimName + "_Run", enemyObj.transform, d * enemyScript.moveSpeed * 1.2f);
+				Run (enemyObj.transform, d * enemyScript.moveSpeed * 1.2f);
 			}
 		}
 	}

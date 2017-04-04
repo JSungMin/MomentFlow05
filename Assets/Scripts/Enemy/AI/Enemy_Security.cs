@@ -37,11 +37,11 @@ public class Enemy_Security : EnemyScript {
     {
 		//이 부분 이후에 리펙토링 필요
 		if (TimeLayer.EqualTimeLayer (playerObject.gameObject, gameObject)) {
-			anim.setAnimation (0, "PresentColor", false, 1);
+			((SecurityAnim)anim).PresentColor ();
 			GetComponentInChildren<SkeletonGhost> ().ghostingEnabled = false;
 
 		} else {
-			anim.setAnimation (0, "PastColor", false, 1);
+			((SecurityAnim)anim).PastColor ();
 			GetComponentInChildren<SkeletonGhost> ().ghostingEnabled = true;
 		}
 
@@ -106,7 +106,7 @@ public class Enemy_Security : EnemyScript {
 						PlayEmotion ("Question2");
 						transitionDurationTimer += Time.deltaTime;
 						findOutGauge = Mathf.Lerp (findOutGauge, 50, Time.deltaTime * findOutGaugeIncrement * 0.1f);
-						anim.setAnimation (1, "Rifle_Suspicious_Idle", true, 1);
+						anim.SuspiciousWalk(charAnimName);
 					}
 				} else {
 					SetState (State.Patrol);
@@ -127,7 +127,7 @@ public class Enemy_Security : EnemyScript {
 					InitToTransition ();
 				} else {
 					transitionDurationTimer += Time.deltaTime;
-					anim.setAnimation (1, charAnimName+"_Idle", true, 1);
+					anim.Idle (charAnimName);
 				}
 				findOutGauge = 100;
 				return;
@@ -153,7 +153,7 @@ public class Enemy_Security : EnemyScript {
 						InitToTransition ();
 					} else {
 						transitionDurationTimer += Time.deltaTime*0.25f;
-						anim.setAnimation (1, charAnimName+"_Idle", true, 1);
+						anim.Idle (charAnimName);
 						PlayEmotion ("Confuse2");
 					}
 				}
@@ -184,7 +184,7 @@ public class Enemy_Security : EnemyScript {
 			} else {
 				detectionDurationTimer = 0;
 				transitionDurationTimer += Time.deltaTime;
-				anim.setAnimation (1, charAnimName+"_Attach", true, 0.5f);
+				anim.Idle (charAnimName);
 			}
 			break;
 		case State.Attack:

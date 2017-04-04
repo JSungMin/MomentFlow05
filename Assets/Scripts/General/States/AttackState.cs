@@ -35,20 +35,20 @@ public class AttackState : IState {
 			var bInfo = enemyScript.Browse (enemyScript.moveSpeed * 1.2f);
 			if (enemyScript.attackRange <= Vector2.Distance (enemyScript.playerObject.transform.position, enemyObj.transform.position)) {
 				if (bInfo.layer != LayerMask.NameToLayer ("Collision")) {
-					Walk (enemyScript.charAnimName+"_Run", enemyObj.transform, (enemyScript.playerObject.transform.position - enemyObj.transform.position).normalized * enemyScript.moveSpeed * 1.2f);
+					Run (enemyObj.transform, (enemyScript.playerObject.transform.position - enemyObj.transform.position).normalized * enemyScript.moveSpeed * 1.2f);
 				}
 			} else {
 				if (fireDelayTimer >= fireDelay) {
 					if (attackType == EnemyAttackType.Gun) {
 						enemyScript.fireBullets = enemyScript.FireBullets (fireNum);
-						enemyScript.anim.setAnimation (1, enemyScript.charAnimName + "_Shoot", true, 1);
+						enemyScript.anim.Shoot (enemyScript.charAnimName);
 						enemyScript.StartCoroutine (enemyScript.fireBullets);
 						fireDelayTimer = 0;
 					} else {
 					}
 				} else {
 					fireDelayTimer += Time.deltaTime;
-					enemyScript.anim.setAnimation (1, enemyScript.charAnimName + "_Idle", true, 1);
+					enemyScript.anim.Idle(enemyScript.charAnimName);
 				}
 			}
 		}

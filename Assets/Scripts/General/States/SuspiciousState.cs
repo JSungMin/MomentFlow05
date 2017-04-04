@@ -40,9 +40,9 @@ public class SuspiciousState : IState {
 		if(!CheckArrive()){
 			var bInfo = enemyScript.Browse (speed*0.5f);
 			if (bInfo.layer != LayerMask.NameToLayer ("Collision")) {
-				Walk (enemyScript.charAnimName + "_Suspicious_Walk", enemyObj.transform, dir * speed * 0.5f);
+				SuspiciousWalk (enemyObj.transform, dir * speed * 0.5f);
 			} else {
-				Hold (enemyScript.charAnimName + "_Idle");
+				Hold ();
 			}
 			enemyScript.AimToObject (targetPos);
 		}

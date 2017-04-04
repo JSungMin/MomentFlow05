@@ -9,7 +9,7 @@ public class DetectionState : IState {
 
 	public override void OnStateEnter(){
 		isDetection = true;
-		Hold (enemyScript.charAnimName + "_Idle");
+		Hold ();
 	}
 
 	public override void OnStateStay(){

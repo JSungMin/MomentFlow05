@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 // Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
@@ -130,7 +132,7 @@ Shader "Town Center/BuildingsVertexCFlag" {
 			float windTime = _Time.y * float2(_WindEdgeFlutterFreqScale,1);
 			float4 mdlPos = AnimateVertex2(v.vertex,v.normal,windParams,wind,windTime);
 
-            o.pos = mul(UNITY_MATRIX_MVP, mdlPos);
+            o.pos = UnityObjectToClipPos(mdlPos);
             TRANSFER_VERTEX_TO_FRAGMENT(o)
 
             return o;
@@ -234,7 +236,7 @@ Shader "Town Center/BuildingsVertexCFlag" {
             float4 node_6128 = _Time + _TimeEditor;
             v.vertex.xyz += float3(node_6128.g,node_6128.g,node_6128.g);
             o.posWorld = mul(unity_ObjectToWorld, v.vertex);
-            o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+            o.pos = UnityObjectToClipPos(v.vertex);
             TRANSFER_SHADOW_CASTER(o)
             return o;
         }

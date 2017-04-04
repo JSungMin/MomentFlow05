@@ -55,10 +55,9 @@ public class Controller2D : MonoBehaviour {
 			Debug.DrawRay(rayOrigin, Vector2.right * directionX * rayLength,Color.red);
 
 			if (hit) {
-			//	if(TimeLayer.EqualTimeLayer(hit.collider.gameObject,gameObject)){
-					float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
-
-					if (i == 0 && slopeAngle <= maxClimbAngle) {
+				float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
+				if (i == 0 && slopeAngle <= maxClimbAngle) {
+					if(TimeLayer.EqualTimeLayer(gameObject,hit.collider.gameObject)){
 						if (collisions.descendingSlope) {
 							collisions.descendingSlope = false;
 							velocity = collisions.velocityOld;
@@ -69,10 +68,13 @@ public class Controller2D : MonoBehaviour {
 							velocity.x -= distanceToSlopeStart * directionX;
 						}
 						ClimbSlope(ref velocity, slopeAngle);
+
 						velocity.x += distanceToSlopeStart * directionX;
 					}
+				}
 
-					if (!collisions.climbingSlope || slopeAngle > maxClimbAngle) {
+				if (!collisions.climbingSlope || slopeAngle > maxClimbAngle) {
+					if(TimeLayer.EqualTimeLayer(gameObject,hit.collider.gameObject)){
 						velocity.x = (hit.distance - skinWidth) * directionX;
 						rayLength = hit.distance;
 
@@ -83,7 +85,8 @@ public class Controller2D : MonoBehaviour {
 						collisions.left = directionX == -1;
 						collisions.right = directionX == 1;
 					}
-				//}
+
+				}
 			}
 		}
 	}
@@ -100,8 +103,11 @@ public class Controller2D : MonoBehaviour {
 			Debug.DrawRay(rayOrigin, Vector2.up * directionY * rayLength,Color.red);
 
 			if (hit) {
-				//if (TimeLayer.EqualTimeLayer (hit.collider.gameObject, gameObject)) {
+				if (TimeLayer.EqualTimeLayer (hit.collider.gameObject, gameObject)) {
 					velocity.y = (hit.distance - skinWidth) * directionY;
+				} else {
+					velocity.y = 0;
+				}
 					rayLength = hit.distance;
 
 					if (collisions.climbingSlope) {
@@ -110,7 +116,6 @@ public class Controller2D : MonoBehaviour {
 
 					collisions.below = directionY == -1;
 					collisions.above = directionY == 1;
-				//}
 			}
 		}
 
@@ -121,18 +126,19 @@ public class Controller2D : MonoBehaviour {
 			RaycastHit2D hit = Physics2D.Raycast(rayOrigin,Vector2.right * directionX,rayLength,collisionMask);
 
 			if (hit) {
-				//if (TimeLayer.EqualTimeLayer (hit.collider.gameObject, gameObject)) {
+				if (TimeLayer.EqualTimeLayer (hit.collider.gameObject, gameObject)) {
 					float slopeAngle = Vector2.Angle(hit.normal,Vector2.up);
 					if (slopeAngle != collisions.slopeAngle) {
 						velocity.x = (hit.distance - skinWidth) * directionX;
 						collisions.slopeAngle = slopeAngle;
 					}
-				//}
+				}
 			}
 		}
 	}
 
 	void ClimbSlope(ref Vector3 velocity, float slopeAngle) {
+		Debug.Log ("In ClimbSlope");
 		float moveDistance = Mathf.Abs (velocity.x);
 		float climbVelocityY = Mathf.Sin (slopeAngle * Mathf.Deg2Rad) * moveDistance;
 
@@ -155,14 +161,16 @@ public class Controller2D : MonoBehaviour {
 			if (slopeAngle != 0 && slopeAngle <= maxDescendAngle) {
 				if (Mathf.Sign(hit.normal.x) == directionX) {
 					if (hit.distance - skinWidth <= Mathf.Tan(slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(velocity.x)) {
-						float moveDistance = Mathf.Abs(velocity.x);
-						float descendVelocityY = Mathf.Sin (slopeAngle * Mathf.Deg2Rad) * moveDistance;
-						velocity.x = Mathf.Cos (slopeAngle * Mathf.Deg2Rad) * moveDistance * Mathf.Sign (velocity.x);
-						velocity.y -= descendVelocityY;
+						if(TimeLayer.EqualTimeLayer(gameObject,hit.collider.gameObject)){
+							float moveDistance = Mathf.Abs(velocity.x);
+							float descendVelocityY = Mathf.Sin (slopeAngle * Mathf.Deg2Rad) * moveDistance;
+							velocity.x = Mathf.Cos (slopeAngle * Mathf.Deg2Rad) * moveDistance * Mathf.Sign (velocity.x);
+							velocity.y -= descendVelocityY;
 
-						collisions.slopeAngle = slopeAngle;
-						collisions.descendingSlope = true;
-						collisions.below = true;
+							collisions.slopeAngle = slopeAngle;
+							collisions.descendingSlope = true;
+							collisions.below = true;
+						}
 					}
 				}
 			}
