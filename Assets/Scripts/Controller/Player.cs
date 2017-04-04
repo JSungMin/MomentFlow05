@@ -52,21 +52,21 @@ public class Player : MyObject
 	void ProcessMove(){
 		input = new Vector2 (Input.GetAxis ("Horizontal"), Input.GetAxis ("Vertical"));
 
-		timer = input.x == 0 ? 0 : timer + Time.deltaTime;
+		timer = input.x == 0 ? 0 : timer + Time.fixedDeltaTime;
 		if (input.x != 0) {
 			state = State.Walk;
 		} else {
 			state = State.Idle;
 		}
 		velocity.x += input.x*moveSpeed*moveStep.Evaluate(timer);
-		velocity.y += gravity * Time.deltaTime;
+		velocity.y += gravity * Time.fixedDeltaTime;
 	}
 
 	float jumpSaveDelay=0;
 	void ProcessJump(){
 		if(Input.GetKeyDown(KeyCode.Space)){
-			if (!isJump) {
-				velocity.y += jumpHeight;
+			if (!isJump && velocity.y>= gravity * Time.fixedDeltaTime*7.0f) {
+				velocity.y = jumpHeight;
 				isJump = true;
 			}
 		}
@@ -112,11 +112,10 @@ public class Player : MyObject
 		animator = GetComponent<Animator> ();
 		controller = GetComponent<Controller2D> ();
 		gravity = -9.8f;
-		//gravity = -(2*jumpHeight) / Mathf.Pow (timeToJumpApex, 2);
 		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
     }
     
-	void Update () {
+	void FixedUpdate () {
 		if (hp <= 0) {
 			Destroyed ();
 		}
@@ -127,7 +126,7 @@ public class Player : MyObject
         ProcessJump();
         ProcessGrabCorner();
 
-        controller.Move ( velocity * Time.deltaTime);
+        controller.Move ( velocity * Time.fixedDeltaTime);
 		velocity.x = 0;
 	}
 
