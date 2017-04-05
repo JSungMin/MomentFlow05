@@ -67,10 +67,10 @@ public class Player : MyObject
 	void ProcessMove(){
 		input = new Vector2 (Input.GetAxis ("Horizontal"), Input.GetAxis ("Vertical"));
 
-		timer = input.x == 0 ? 0 : timer + Time.fixedDeltaTime;
+		timer = input.x == 0 ? 0 : timer + Time.deltaTime;
 
 		velocity.x += input.x*moveSpeed*moveStep.Evaluate(timer);
-		velocity.y += gravity * Time.fixedDeltaTime;
+		velocity.y += gravity * Time.deltaTime;
 
 		if (input.x != 0) {
 			state = State.Walk;
@@ -83,7 +83,7 @@ public class Player : MyObject
 	float jumpSaveDelay=0;
 	void ProcessJump(){
 		if(Input.GetKeyDown(KeyCode.Space)){
-			if (!isJump && velocity.y>= gravity * Time.fixedDeltaTime*7.0f) {
+			if (!isJump && velocity.y>= gravity * Time.deltaTime*7.0f) {
 				velocity.y = jumpHeight;
 				isJump = true;
 			}
@@ -251,19 +251,16 @@ public class Player : MyObject
 			Destroyed ();
 		}
 
-		ProcessTimeSwitching();
-	}
-	void FixedUpdate () {
-		ProcessGround();
-		ProcessMove();
+        ProcessGround();
+        ProcessMove();
         ProcessJump();
-		ProcessGrabCorner();
-		ProcessRolling ();
-		if(!isGrabing){
-			controller.Move ( velocity * Time.fixedDeltaTime);
-			velocity.x = 0;
-		}
-	}
-
-    
+        ProcessGrabCorner();
+        ProcessRolling();
+        ProcessTimeSwitching();
+        if (!isGrabing)
+        {
+            controller.Move(velocity * Time.deltaTime);
+            velocity.x = 0;
+        }
+    }
 }
