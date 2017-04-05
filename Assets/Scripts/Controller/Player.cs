@@ -251,7 +251,6 @@ public class Player : MyObject
 		if (hp <= 0) {
 			Destroyed ();
 		}
-		
 		ProcessGround();
 		ProcessMove();
         ProcessJump();
