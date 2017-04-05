@@ -9,6 +9,7 @@ using Spine;
 public class EnemyScript : MonoBehaviour {
 
 	public Player playerObject { protected set; get; }
+	public TimeLayer pTimeLayer{ protected set; get;}
 
 	public State enemyState;
 	//유지될 상태
@@ -192,24 +193,56 @@ public class EnemyScript : MonoBehaviour {
 		for(int i =0;i<browseDensity;i++){
 			if (transform.localScale.x > 0) {
 				browseHits [i] = Physics2D.Raycast (
-					new Vector2 (maxX, minY + colYLen * (i / (browseDensity - 1))),
+					new Vector2 (maxX, maxY - colYLen * (i / (browseDensity - 1))),
 					Vector2.right,rayLen,browseMask);
 			}
 			else{
 				browseHits [i] = Physics2D.Raycast (
-					new Vector2 (minX, minY + colYLen * (i / (browseDensity - 1))),
+					new Vector2 (minX, maxY - colYLen * (i / (browseDensity - 1))),
 					Vector2.left,rayLen,browseMask);
 			}
 
-			if (browseHits [i].collider != null && TimeLayer.EqualTimeLayer(gameObject,browseHits[i].collider.gameObject)) {
-				BrowseInfo bInfo = new BrowseInfo ();
-				bInfo.InitBrowseInfo (browseHits[i].collider.gameObject,browseHits [i].distance, browseHits [i].normal, browseHits[i].point,browseHits [i].transform.tag, browseHits [i].transform.gameObject.layer);
-				return bInfo;
-			} else {
-				return new BrowseInfo();
+			if (browseHits [i].collider != null) {
+				if(TimeLayer.EqualTimeLayer(pTimeLayer,browseHits[i].transform.GetComponentInParent<TimeLayer>())){
+					BrowseInfo bInfo = new BrowseInfo ();
+					bInfo.InitBrowseInfo (browseHits[i].collider.gameObject,browseHits [i].distance, browseHits [i].normal, browseHits[i].point,browseHits [i].transform.tag, browseHits [i].transform.gameObject.layer);
+					return bInfo;
+				}
 			}
 		}
 		return new BrowseInfo();
+	}
+
+	protected void VerticalCollisions(ref Vector3 v){
+
+		RaycastHit2D[][] browseHits = new RaycastHit2D[browseDensity][];
+
+		maxX = GetComponent<Collider2D> ().bounds.max.x;
+		maxY = GetComponent<Collider2D> ().bounds.max.y;
+		minX = GetComponent<Collider2D> ().bounds.min.x;
+		minY = GetComponent<Collider2D> ().bounds.min.y;
+
+		for(int i =0;i<browseDensity;i++){
+			if (v.y > 0) {
+				browseHits [i] = Physics2D.RaycastAll (
+					new Vector2 (minX + colXLen * (i / (browseDensity - 1)), maxY),
+					Vector2.up, v.y * Time.deltaTime, browseMask);
+			} else {
+				browseHits [i] = Physics2D.RaycastAll (
+					new Vector2 (minX + colXLen * (i / (browseDensity - 1)), minY),
+					Vector2.down, v.y * Time.deltaTime, browseMask);
+			}
+
+			for(int j = 0;j<browseHits[i].Length;j++){
+				if(browseHits[i][j].collider != null){
+					if(browseHits[i][j].transform.gameObject.layer == LayerMask.NameToLayer("Collision")){
+						if(TimeLayer.EqualTimeLayer(pTimeLayer,browseHits[i][j].transform.GetComponentInParent<TimeLayer>())){
+							v.y = 0;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public IEnumerator fireBullets;

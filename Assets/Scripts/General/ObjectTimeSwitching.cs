@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ObjectTimeSwitching : MonoBehaviour {
 
-    public TimeLayer timeLayer;
+	private TimeLayer timeLayer;
 
     private Player player;
     private SpriteRenderer sp;
@@ -58,7 +58,7 @@ public class ObjectTimeSwitching : MonoBehaviour {
     void Start () {
         if (timeLayer == null)
         {
-            timeLayer = GetComponent<TimeLayer>();
+			timeLayer = transform.GetComponentInParent<TimeLayer>();
         }
         sp = GetComponent<SpriteRenderer>();
         player = GameObject.FindObjectOfType<Player>();
@@ -68,7 +68,7 @@ public class ObjectTimeSwitching : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (TimeLayer.EqualTimeLayer(player.transform.gameObject,gameObject))
+		if (TimeLayer.EqualTimeLayer(player.ParentTimeLayer.gameObject,timeLayer.gameObject))
         {
             StopCoroutine(disappearObject);
             appearObject = AppearObject();

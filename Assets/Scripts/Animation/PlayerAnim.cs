@@ -26,6 +26,18 @@ public class PlayerAnim : AnimationBase {
 	public void SetWalk(){
 		setAnimation (0, "Run", true, 1);
     }
+	//TODO: Run -> GrabCorner
+	public void SetGrabCorner(){
+		setAnimation (0, "Run", true ,1);
+	}
+	//TODO: Run -> Climb
+	public void SetClimb(){
+		setAnimation (0, "Run", true, 1);
+	}
+	//TODO: Run -> Rolling
+	public void SetRolling(){
+		setAnimation (0, "Run", true, 1);
+	}
 
 	// Update is called once per frame
 	void Update () {
@@ -54,12 +66,31 @@ public class PlayerAnim : AnimationBase {
 				//setAnimation (0, characterName [characterIndex] + "_" + dir.ToString (), true, 1);
 			}
 
-			if (player.state == MyObject.State.Walk) {
+			switch(player.state){
+			case MyObject.State.Walk:
 				setAnimation (0, "Run", true, 1);
-			} else if(player.state == MyObject.State.Sit){
-				setAnimation (0, "Sit", true, 1);
-			}else if(player.state == MyObject.State.Idle){
+				break;
+			case MyObject.State.Idle:
 				setAnimation (0, "Idle", true, 1);
+				break;
+			case MyObject.State.Sit:
+				setAnimation (0, "Sit", true, 1);
+				break;
+			case MyObject.State.Jump:
+				
+				break;
+			case MyObject.State.Fall:
+
+				break;
+			case MyObject.State.GrabCorner:
+				SetGrabCorner ();
+				break;
+			case MyObject.State.ClimbCorner:
+				SetClimb ();
+				break;
+			case MyObject.State.Rolling:
+				SetRolling ();
+				break;
 			}
 		}
 	}

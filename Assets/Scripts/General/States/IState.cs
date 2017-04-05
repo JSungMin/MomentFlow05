@@ -15,8 +15,8 @@ public abstract class IState
 	public IState(){ }
 
 
-	public IState(GameObject obj)
-    {
+	public IState(GameObject obj) 
+	{
         enemyObj = obj;
 		enemyScript = enemyObj.GetComponent<EnemyScript> ();
 		if(enemyScript == null){
@@ -27,32 +27,43 @@ public abstract class IState
 		}
     }
 
-	public void Idle(){
+	public void Idle() 
+	{
 		enemyScript.anim.Idle (enemyScript.charAnimName);
+		enemyScript.velocity.x = 0;
 	}
 
 	public void Hold()
     {
 		enemyScript.anim.Idle (enemyScript.charAnimName);
+		enemyScript.velocity.x = 0;
     }
 
 	public void Walk(Transform t,Vector3 velocity)
     {
+		enemyScript.velocity.x = velocity.x;
+
 		enemyScript.anim.Walk (enemyScript.charAnimName);
+
 		t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
-		t.Translate(velocity * Time.deltaTime);
+	
     }
 	public void SuspiciousWalk(Transform t,Vector3 velocity)
 	{
+		enemyScript.velocity.x = velocity.x;
+
 		enemyScript.anim.SuspiciousWalk(enemyScript.charAnimName);
 		t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
-		t.Translate(velocity * Time.deltaTime);
+
 	}
 	public void Run(Transform t,Vector3 velocity)
 	{
+		enemyScript.velocity.x = velocity.x;
+
 		enemyScript.anim.Run(enemyScript.charAnimName);
+
 		t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
-		t.Translate(velocity * Time.deltaTime);
+	
 	}
 
 	public void LookAround(){

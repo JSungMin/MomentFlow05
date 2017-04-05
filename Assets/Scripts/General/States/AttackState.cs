@@ -17,7 +17,7 @@ public class AttackState : IState {
 
 	public AttackState (GameObject obj) : base (obj){}
 
-	public void InitAttackInfo(EnemyAttackType type, GameObject bulletPref, int fireN){
+	public void InitAttackInfo(EnemyAttackType type, GameObject bulletPref, int fireN) {
 		attackType = type;
 		bullet = bulletPref;
 		fireDelay = enemyScript.attackDelay;
@@ -31,6 +31,7 @@ public class AttackState : IState {
 	}
 
 	public override void OnStateStay(){
+		enemyScript.AimToObject (enemyScript.playerObject.transform.position);
 		if (!enemyScript.isAttack) {
 			var bInfo = enemyScript.Browse (enemyScript.moveSpeed * 1.2f);
 			if (enemyScript.attackRange <= Vector2.Distance (enemyScript.playerObject.transform.position, enemyObj.transform.position)) {
@@ -38,6 +39,7 @@ public class AttackState : IState {
 					Run (enemyObj.transform, (enemyScript.playerObject.transform.position - enemyObj.transform.position).normalized * enemyScript.moveSpeed * 1.2f);
 				}
 			} else {
+				Idle();
 				if (fireDelayTimer >= fireDelay) {
 					if (attackType == EnemyAttackType.Gun) {
 						enemyScript.fireBullets = enemyScript.FireBullets (fireNum);
@@ -48,7 +50,6 @@ public class AttackState : IState {
 					}
 				} else {
 					fireDelayTimer += Time.deltaTime;
-					enemyScript.anim.Idle(enemyScript.charAnimName);
 				}
 			}
 		}

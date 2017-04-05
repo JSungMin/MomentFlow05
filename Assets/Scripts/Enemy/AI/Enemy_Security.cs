@@ -15,6 +15,10 @@ public class Enemy_Security : EnemyScript {
 		base.Awake ();
 		Debug.Log ("In Child");
 
+		pTimeLayer = transform.GetComponentInParent<TimeLayer> ();
+
+		Debug.Log ("Enemy Name : " + gameObject.name + "  Layer : " + pTimeLayer.transform.name);
+
 		anim = GetComponent<AnimationBase> ();
         // TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // 부모, 자식의 생성자 호출에 대해서 더 공부해야할것
@@ -35,8 +39,8 @@ public class Enemy_Security : EnemyScript {
     // Update is called once per frame
     void Update()
     {
-		//이 부분 이후에 리펙토링 필요
-		if (TimeLayer.EqualTimeLayer (playerObject.gameObject, gameObject)) {
+		//이 부분 이후에 리펙토링 필요 => Clear
+		if (TimeLayer.EqualTimeLayer (playerObject.ParentTimeLayer, pTimeLayer)) {
 			((SecurityAnim)anim).PresentColor ();
 			GetComponentInChildren<SkeletonGhost> ().ghostingEnabled = false;
 
@@ -66,7 +70,7 @@ public class Enemy_Security : EnemyScript {
 		}
 
 		if(enemyState == State.Attack){
-			if (!TimeLayer.EqualTimeLayer (playerObject.gameObject, gameObject)) {
+			if (!TimeLayer.EqualTimeLayer (playerObject.ParentTimeLayer.gameObject, pTimeLayer.gameObject)) {
 				GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo (playerObject.transform.position, moveSpeed * 0.5f);
 				SetState (State.Suspicious);
 				findOutGauge = 99;
@@ -85,18 +89,17 @@ public class Enemy_Security : EnemyScript {
 
         switch (enemyState)
         {
-           case State.Idle:
-                    // 함수 내부에서 형변환을 해주어서 조금 더 깔끔하게 짜기 위해 함수를 구현함
-                    // 단 성능이 더 중요하다면 함수를 호출하는 overload를 줄이기 위해 함수를 사용하지 않아도 됨
+        case State.Idle:
 			SetState(State.Idle);       
         	break;
 		case State.Patrol:
-			if(!TimeLayer.EqualTimeLayer(playerObject.gameObject,gameObject)){
-				findOutGauge = Mathf.Lerp (findOutGauge, 0, Time.deltaTime * findOutGaugeIncrement * 0.1f);
+			if(!TimeLayer.EqualTimeLayer(playerObject.ParentTimeLayer.gameObject, pTimeLayer.gameObject)){
+				findOutGauge = Mathf.Lerp (findOutGauge, 0, Time.deltaTime * findOutGaugeIncrement);
 			}
 
 			if (isFindPlayer.hittedObj != null) {
-				if (isFindPlayer.layer == LayerMask.NameToLayer ("Player")) {
+				if (isFindPlayer.layer == LayerMask.NameToLayer ("Player") && 
+					isFindPlayer.hittedObj.GetComponent<Player>().state != MyObject.State.Rolling) {
 					if (transitionDurationTimer >= transitionDuration) {
 						SetState (State.Suspicious);
 						transitionDurationTimer = 0;
@@ -111,7 +114,7 @@ public class Enemy_Security : EnemyScript {
 				} else {
 					SetState (State.Patrol);
 					isFindPlayer = Browse (findOutSight);
-					findOutGauge = Mathf.Lerp (findOutGauge, 0, Time.deltaTime * findOutGaugeIncrement * 0.1f);
+					findOutGauge = Mathf.Lerp (findOutGauge, 0, Time.deltaTime * findOutGaugeIncrement);
 				}
 			} else {
 				isFindPlayer = Browse (findOutSight);
@@ -140,16 +143,17 @@ public class Enemy_Security : EnemyScript {
 			isFindPlayer = Browse (1);
 
 			//if find out player then play below statement
-			if(isFindPlayer.layer == LayerMask.NameToLayer("Player")){
+			if(isFindPlayer.layer == LayerMask.NameToLayer("Player") && 
+				isFindPlayer.hittedObj.GetComponent<Player>().state != MyObject.State.Rolling){
 				findOutGauge = Mathf.Lerp(findOutGauge,110, findOutGaugeIncrement*Time.deltaTime*3/(isFindPlayer.distance));
 				GetSpecifiedState<SuspiciousState>(State.Suspicious).InitSuspiciousInfo (playerObject.transform.position, moveSpeed);
 			} 
 			else {
 				if(GetSpecifiedState<SuspiciousState>(State.Suspicious).CheckArrive()){
 					if (transitionDurationTimer >= transitionDuration) {
+						StopEmotion ();
 						SetState(State.Patrol);  //then isDetection in IState[3] will be true 
 						GetSpecifiedState<PatrolState>(State.Patrol).InitPatrolInfo (patrolDir, moveSpeed);
-						StopEmotion ();
 						InitToTransition ();
 					} else {
 						transitionDurationTimer += Time.deltaTime*0.25f;
@@ -204,5 +208,13 @@ public class Enemy_Security : EnemyScript {
 
 			break;
         }
+			
+	
     }
+	void FixedUpdate(){
+		//velocity.y -= 9.8f * Time.fixedDeltaTime;
+		//VerticalCollisions (ref velocity);
+
+		transform.Translate (velocity * Time.fixedDeltaTime);
+	}
 }

@@ -15,7 +15,7 @@ public class AlertState : IState {
 		var colliders = Physics2D.OverlapCircleAll (enemyObj.transform.position, alertRadius, 1 << LayerMask.NameToLayer ("Enemy"));
 		for(int i =0;i<colliders.Length;i++){
 			var col = colliders [i];
-			if(TimeLayer.EqualTimeLayer(col.gameObject,enemyObj)){
+			if(TimeLayer.EqualTimeLayer(col.transform.GetComponentInParent<TimeLayer>(),enemyScript.pTimeLayer)){
 				Debug.Log ("Alert Ready");
 				var hit = Physics2D.Raycast (enemyObj.transform.position + Vector3.up*0.35f, (col.transform.position - enemyObj.transform.position).normalized,Vector2.Distance(col.transform.position, enemyObj.transform.position),1<<LayerMask.NameToLayer("Collision"));
 

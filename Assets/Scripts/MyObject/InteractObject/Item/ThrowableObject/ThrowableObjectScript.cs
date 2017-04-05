@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ThrowableObjectScript : InteractInterface {
+	public TimeLayer pTimeLayer{ protected set; get;}
 	private Transform initRootTrans;
 	private Transform playerHands;
 
@@ -37,7 +38,7 @@ public class ThrowableObjectScript : InteractInterface {
 			RaycastHit2D hit = Physics2D.Raycast (transform.position, (escr.transform.position - transform.position).normalized, alertRadius,mask);
 			Debug.DrawLine (transform.position, transform.position + (escr.transform.position - transform.position).normalized * alertRadius,Color.red);
 			if(null!=escr){
-				if(TimeLayer.EqualTimeLayer(escr.gameObject,gameObject)){
+				if(TimeLayer.EqualTimeLayer(escr.pTimeLayer,pTimeLayer)){
 					if (null != hit.collider&& hit.collider.gameObject.layer != LayerMask.NameToLayer ("Collision")) {
 						if (!escr.GetSpecifiedState<DetectionState> (State.Detection).isDetection) {
 							escr.GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo (transform.position, escr.moveSpeed * 0.5f);
@@ -85,7 +86,7 @@ public class ThrowableObjectScript : InteractInterface {
 		List<Collider2D> colList = new List<Collider2D> ();
 
 		for(int i = 0;i<cols.Length;i++){
-			if(TimeLayer.EqualTimeLayer(cols[i].gameObject,gameObject)){
+			if(TimeLayer.EqualTimeLayer(cols[i].transform.GetComponentInParent<TimeLayer>(),pTimeLayer)){
 				colList.Add (cols [i]);
 			}
 		}
@@ -190,6 +191,7 @@ public class ThrowableObjectScript : InteractInterface {
 
 	// Use this for initialization
 	void Start () {
+		pTimeLayer = transform.GetComponentInParent<TimeLayer> ();
 		initRootTrans = transform.parent;
 		playerHands = GameObject.FindObjectOfType<Player> ().transform.GetChild (1);
 		interact += GrabObject;
