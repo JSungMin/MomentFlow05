@@ -67,10 +67,10 @@ public class Player : MyObject
 	void ProcessMove(){
 		input = new Vector2 (Input.GetAxis ("Horizontal"), Input.GetAxis ("Vertical"));
 
-		timer = input.x == 0 ? 0 : timer + Time.fixedDeltaTime;
+		timer = input.x == 0 ? 0 : timer + Time.deltaTime;
 
 		velocity.x += input.x*moveSpeed*moveStep.Evaluate(timer);
-		velocity.y += gravity * Time.fixedDeltaTime;
+		velocity.y += gravity * Time.deltaTime;
 
 		if (input.x != 0) {
 			state = State.Walk;
@@ -82,8 +82,8 @@ public class Player : MyObject
 
 	float jumpSaveDelay=0;
 	void ProcessJump(){
-		if(Input.GetKeyDown(KeyCode.Space)){
-			if (!isJump && velocity.y>= gravity * Time.fixedDeltaTime*7.0f) {
+		if(Input.GetKey(KeyCode.Space)){
+			if (!isJump && velocity.y>= gravity * Time.deltaTime*7.0f) {
 				velocity.y = jumpHeight;
 				isJump = true;
 			}
@@ -176,7 +176,7 @@ public class Player : MyObject
 			for (int i = 0; i < cols.Length; i++) {
 				var c = cols [i];
 				if (c.gameObject.layer == LayerMask.NameToLayer ("Collision") && 
-					c.CompareTag("GrabableObject")&&
+					c.CompareTag("GrabableObject")||c.CompareTag("Ground")&&
 					TimeLayer.EqualTimeLayer (pTimeLayer, c.transform.GetComponentInParent<TimeLayer> ())) {
 				bool isFoward = (Mathf.Sign ((c.transform.position - transform.position).x) == Mathf.Sign (transform.localScale.x)) ? true : false;
 					if (isFoward) {
@@ -246,24 +246,21 @@ public class Player : MyObject
 		gravity = -9.8f;
 		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
     }
-	void Update(){
+
+	void Update () {
 		if (hp <= 0) {
 			Destroyed ();
 		}
-
-		ProcessTimeSwitching();
-	}
-	void FixedUpdate () {
+		
 		ProcessGround();
 		ProcessMove();
         ProcessJump();
 		ProcessGrabCorner();
 		ProcessRolling ();
+		ProcessTimeSwitching();
 		if(!isGrabing){
-			controller.Move ( velocity * Time.fixedDeltaTime);
+			controller.Move ( velocity * Time.deltaTime);
 			velocity.x = 0;
 		}
 	}
-
-    
 }

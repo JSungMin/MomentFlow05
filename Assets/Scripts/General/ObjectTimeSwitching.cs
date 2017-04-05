@@ -11,6 +11,8 @@ public class ObjectTimeSwitching : MonoBehaviour {
 
     private BoxCollider2D bc;
 
+	public float disappearAlpah = 0.3f;
+
     public IEnumerator appearObject;
     public IEnumerator disappearObject;
 
@@ -18,15 +20,15 @@ public class ObjectTimeSwitching : MonoBehaviour {
     {
         Color tmpAlpha = sp.color;
         var tmpColor = Color.gray;
-        tmpColor.a = 0.3f;
-        while (tmpAlpha.a >= 0.3f)
+		tmpColor.a = disappearAlpah;
+		while (tmpAlpha.a >= disappearAlpah)
         {
             tmpAlpha.a -= Time.deltaTime;
             tmpAlpha = Color.Lerp(tmpAlpha, tmpColor, Time.deltaTime);
             sp.color = tmpAlpha; 
             yield return new WaitForEndOfFrame();
         }
-        tmpAlpha.a = Mathf.Max(0.3f, tmpAlpha.a);
+		tmpAlpha.a = Mathf.Max(disappearAlpah, tmpAlpha.a);
         tmpAlpha = tmpColor;
         sp.color = tmpAlpha;
     }
