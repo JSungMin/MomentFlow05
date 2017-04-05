@@ -75,9 +75,7 @@ public class Player : MyObject
 		if (input.x != 0) {
 			state = State.Walk;
 		} else {
-			//if(velocity.x==0){
-				state = State.Idle;
-			//}
+			state = State.Idle;
 		}
 
 	}
@@ -93,19 +91,34 @@ public class Player : MyObject
 	}
 
 	void ProcessTimeSwitching(){
-
         // 다른 레이어의 통과 불가능한 지형들과 플레이어가 충돌한다면
         // 타임 스위칭을 할 수 없다
 		if(Input.GetKeyDown(KeyCode.Tab)){
+			var bc = GetComponent<BoxCollider2D> ();
+			var colPos = transform.position + new Vector3(bc.offset.x,bc.offset.y,0);
+			var cols = Physics2D.OverlapBoxAll (colPos, new Vector2 (bc.size.x, bc.size.y), 0,1<<LayerMask.NameToLayer("Collision"));
+
+			bool canSwitching = true;
+
 			int toLayer = 0;
 			if (pTimeLayer.layerNum == 0) {
 				toLayer = 1;
-			} else {
-				toLayer = 0;
 			}
-			TimeLayerManager.GetInstance.MoveObjectToLayer (gameObject, toLayer);
-			pTimeLayer = transform.GetComponentInParent<TimeLayer> ();
-			controller.pTimeLayer = pTimeLayer;
+
+			for(int i = 0;i<cols.Length;i++){
+				var c = cols [i];
+				Debug.Log ("Name : " + c.gameObject.name + " toLayer : " + toLayer + " hit : " + c.GetComponentInParent<TimeLayer>().layerNum);
+				if(c.GetComponentInParent<TimeLayer>().layerNum == toLayer){
+					Debug.Log ("Overlap");
+					canSwitching = false;
+				}
+			}
+
+			if (canSwitching) {
+				TimeLayerManager.GetInstance.MoveObjectToLayer (gameObject, toLayer);
+				pTimeLayer = transform.GetComponentInParent<TimeLayer> ();
+				controller.pTimeLayer = pTimeLayer;
+			}
 		}
 		Camera.main.GetComponent<GrayScaleEffect> ().intensity = Mathf.Lerp (Camera.main.GetComponent<GrayScaleEffect> ().intensity, 1 - pTimeLayer.layerNum, Time.deltaTime*2);
 	}
@@ -217,7 +230,7 @@ public class Player : MyObject
 
 	void ProcessRolling(){
 		if (Input.GetKey (KeyCode.LeftShift) && 
-			!isRolling &&
+			!isRolling && !isAir &&
 			rollingCollDurationTimer >= rollingCoolDuration) {
 
 			isRolling = true;

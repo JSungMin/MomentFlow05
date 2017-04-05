@@ -16,7 +16,6 @@ public class ObjectTimeSwitching : MonoBehaviour {
 
     public IEnumerator DisappearObject()
     {
-        bc.enabled = false;
         Color tmpAlpha = sp.color;
         var tmpColor = Color.gray;
         tmpColor.a = 0.3f;
@@ -33,7 +32,6 @@ public class ObjectTimeSwitching : MonoBehaviour {
     }
     public IEnumerator AppearObject()
     {
-        bc.enabled = true;
         Color tmpAlpha = sp.color;
         var tmpColor = Color.white;
         tmpColor.a = 1;
