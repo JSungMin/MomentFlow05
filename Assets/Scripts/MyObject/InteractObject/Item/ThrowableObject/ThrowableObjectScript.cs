@@ -44,7 +44,7 @@ public class ThrowableObjectScript : InteractInterface {
 							escr.GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo (transform.position, escr.moveSpeed * 0.5f);
 							escr.SetState (State.Suspicious);
 							escr.InitToTransition ();
-							Debug.Log (escr.name);
+							Debug.Log (escr.name + " alerted");
 						}
 					}
 				}
