@@ -60,7 +60,7 @@ public class Controller2D : MonoBehaviour {
 				float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
 				if (i == 0 && slopeAngle <= maxClimbAngle) {
 					if(TimeLayer.EqualTimeLayer(pTimeLayer,hit.collider.transform.GetComponentInParent<TimeLayer>())||
-						hit.collider.CompareTag("Ground")){
+						hit.collider.CompareTag("Ground")||hit.collider.CompareTag("GrabableGround")){
 						if (collisions.descendingSlope) {
 							collisions.descendingSlope = false;
 							velocity = collisions.velocityOld;
@@ -78,7 +78,7 @@ public class Controller2D : MonoBehaviour {
 
 				if (!collisions.climbingSlope || slopeAngle > maxClimbAngle) {
 					if(TimeLayer.EqualTimeLayer(pTimeLayer,hit.collider.transform.GetComponentInParent<TimeLayer>())||
-						hit.collider.CompareTag("Ground")){
+						hit.collider.CompareTag("Ground")||hit.collider.CompareTag("GrabableGround")){
 						velocity.x = (hit.distance - skinWidth) * directionX;
 						rayLength = hit.distance;
 
@@ -99,24 +99,27 @@ public class Controller2D : MonoBehaviour {
 		float directionY = Mathf.Sign (velocity.y);
 		float rayLength = Mathf.Abs (velocity.y) + skinWidth;
 
+		RaycastHit2D[][] browseHits = new RaycastHit2D[verticalRayCount][];
+
 		for (int i = 0; i < verticalRayCount; i ++) {
 			Vector2 rayOrigin = (directionY == -1)?raycastOrigins.bottomLeft:raycastOrigins.topLeft;
 			rayOrigin += Vector2.right * (verticalRaySpacing * i + velocity.x);
-			RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, collisionMask);
+			browseHits[i] = Physics2D.RaycastAll(rayOrigin, Vector2.up * directionY, rayLength, collisionMask);
 
 			Debug.DrawRay(rayOrigin, Vector2.up * directionY * rayLength,Color.red);
+			for(int j = 0;j < browseHits[i].Length;j++){
+				if (browseHits[i][j].collider != null) {
+					if (TimeLayer.EqualTimeLayer (browseHits[i][j].collider.GetComponentInParent<TimeLayer>(), pTimeLayer)||
+						browseHits[i][j].collider.CompareTag("Ground")||browseHits[i][j].collider.CompareTag("GrabableGround")) {
+						velocity.y = (browseHits[i][j].distance - skinWidth) * directionY;
+						rayLength = browseHits[i][j].distance;
 
-			if (hit.collider != null) {
-				if (TimeLayer.EqualTimeLayer (hit.collider.GetComponentInParent<TimeLayer>(), pTimeLayer)||
-					hit.collider.CompareTag("Ground")) {
-					velocity.y = (hit.distance - skinWidth) * directionY;
-					rayLength = hit.distance;
-
-					if (collisions.climbingSlope) {
-						velocity.x = velocity.y / Mathf.Tan (collisions.slopeAngle * Mathf.Deg2Rad) * Mathf.Sign (velocity.x);
+						if (collisions.climbingSlope) {
+							velocity.x = velocity.y / Mathf.Tan (collisions.slopeAngle * Mathf.Deg2Rad) * Mathf.Sign (velocity.x);
+						}
+						collisions.below = directionY == -1;
+						collisions.above = directionY == 1;
 					}
-					collisions.below = directionY == -1;
-					collisions.above = directionY == 1;
 				}
 			}
 		}

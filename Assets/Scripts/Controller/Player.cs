@@ -172,13 +172,13 @@ public class Player : MyObject
 		// if 벽 모서리와 닿아 있다면 isGrabing = true
 		if (isAir && !isClimb) {
 			Vector2 pos = new Vector2 (transform.position.x, transform.position.y);
-			var cols = Physics2D.OverlapBoxAll (pos, new Vector2 (0.2f, 0.36f), 0);
+			var cols = Physics2D.OverlapBoxAll (pos, new Vector2 (0.20f, 0.35f), 0);
 			for (int i = 0; i < cols.Length; i++) {
 				var c = cols [i];
 				if (c.gameObject.layer == LayerMask.NameToLayer ("Collision") && 
-					c.CompareTag("GrabableObject")||c.CompareTag("Ground")&&
-					TimeLayer.EqualTimeLayer (pTimeLayer, c.transform.GetComponentInParent<TimeLayer> ())) {
-				bool isFoward = (Mathf.Sign ((c.transform.position - transform.position).x) == Mathf.Sign (transform.localScale.x)) ? true : false;
+					(c.CompareTag("GrabableObject") && TimeLayer.EqualTimeLayer (pTimeLayer, c.transform.GetComponentInParent<TimeLayer> ()))||
+					(c.CompareTag("GrabableGround"))) {
+					bool isFoward = (Mathf.Sign ((c.transform.position - transform.position).x) == Mathf.Sign (transform.localScale.x)) ? true : false;
 					if (isFoward) {
 						if (GetComponent<BoxCollider2D> ().bounds.min.y < c.bounds.max.y) {
 							if (GetComponent<BoxCollider2D> ().bounds.max.y >= c.bounds.max.y - 0.1f) {
