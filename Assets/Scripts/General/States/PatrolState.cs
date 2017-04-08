@@ -38,7 +38,7 @@ public class PatrolState : IState
 		} else {
 			walkDurationTimer += Time.deltaTime;
 	
-			var bInfo = enemyScript.Browse (speed*Time.deltaTime);
+			var bInfo = enemyScript.FindNearestCollisionInBrowseInfos (speed*Time.deltaTime);
 			if (bInfo.layer!=LayerMask.NameToLayer("Collision")) {
 				Walk (enemyObj.transform, dir * speed);
 			} else {

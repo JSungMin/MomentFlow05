@@ -35,7 +35,7 @@ public class Enemy_Security : EnemyScript {
 
 		InitEnemy ();
 	}
-	BrowseInfo isFindPlayer;
+	bool isFindPlayer;
     // Update is called once per frame
     void Update()
     {
@@ -54,7 +54,7 @@ public class Enemy_Security : EnemyScript {
 		}
 		//Detection 이후 일정 시간이 지나면 isDetection = false And Patrol 상태로 만든다.
 		if (GetSpecifiedState<DetectionState> (State.Detection).isDetection) {
-				if (isFindPlayer.layer != LayerMask.NameToLayer ("Player")) {
+				if (isFindPlayer) {
 					detectionDurationTimer += Time.deltaTime;
 					transform.localScale = new Vector3 (Mathf.Sign ((playerObject.transform.position.x - transform.position.x)) * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
 					if(detectionDurationTimer >= detectionDuration){
@@ -97,9 +97,8 @@ public class Enemy_Security : EnemyScript {
 				findOutGauge = Mathf.Lerp (findOutGauge, 0, Time.deltaTime * findOutGaugeIncrement);
 			}
 
-			if (isFindPlayer.hittedObj != null) {
-				if (isFindPlayer.layer == LayerMask.NameToLayer ("Player") && 
-					isFindPlayer.hittedObj.GetComponent<Player>().state != MyObject.State.Rolling) {
+			if (isFindPlayer) {
+				if (playerObject.GetComponent<Player>().state != MyObject.State.Rolling) {
 					if (transitionDurationTimer >= transitionDuration) {
 						SetState (State.Suspicious);
 						transitionDurationTimer = 0;
@@ -113,11 +112,11 @@ public class Enemy_Security : EnemyScript {
 					}
 				} else {
 					SetState (State.Patrol);
-					isFindPlayer = Browse (findOutSight);
+					isFindPlayer = IsFindPlayer (findOutSight);
 					findOutGauge = Mathf.Lerp (findOutGauge, 0, Time.deltaTime * findOutGaugeIncrement);
 				}
 			} else {
-				isFindPlayer = Browse (findOutSight);
+				isFindPlayer = IsFindPlayer (findOutSight);
 				SetState (State.Patrol);
 			}
 			patrolDurationTimer += Time.deltaTime;
@@ -140,12 +139,12 @@ public class Enemy_Security : EnemyScript {
 
 			//Detect Object and Player Browse() return is distance between player and this enemy
 			//if can't find player then return -1
-			isFindPlayer = Browse (1);
+			isFindPlayer = IsFindPlayer (1);
 
 			//if find out player then play below statement
-			if(isFindPlayer.layer == LayerMask.NameToLayer("Player") && 
-				isFindPlayer.hittedObj.GetComponent<Player>().state != MyObject.State.Rolling){
-				findOutGauge = Mathf.Lerp(findOutGauge,110, findOutGaugeIncrement*Time.deltaTime*3/(isFindPlayer.distance));
+			if(isFindPlayer && 
+				playerObject.GetComponent<Player>().state != MyObject.State.Rolling){
+				findOutGauge = Mathf.Lerp(findOutGauge,110, findOutGaugeIncrement*Time.deltaTime*3/(FindPlayerInBrowseInfos(1).distance));
 				GetSpecifiedState<SuspiciousState>(State.Suspicious).InitSuspiciousInfo (playerObject.transform.position, moveSpeed);
 			} 
 			else {
@@ -192,7 +191,7 @@ public class Enemy_Security : EnemyScript {
 			}
 			break;
 		case State.Attack:
-			isFindPlayer = Browse (findOutSight);
+			isFindPlayer = IsFindPlayer (findOutSight);
 			SetState (State.Attack);
 			break;
 		case State.Escape:

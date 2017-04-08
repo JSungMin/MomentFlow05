@@ -33,7 +33,7 @@ public class AttackState : IState {
 	public override void OnStateStay(){
 		enemyScript.AimToObject (enemyScript.playerObject.transform.position);
 		if (!enemyScript.isAttack) {
-			var bInfo = enemyScript.Browse (enemyScript.moveSpeed * 1.2f);
+			var bInfo = enemyScript.FindNearestCollisionInBrowseInfos (enemyScript.moveSpeed * 1.2f);
 			if (enemyScript.attackRange <= Vector2.Distance (enemyScript.playerObject.transform.position, enemyObj.transform.position)) {
 				if (bInfo.layer != LayerMask.NameToLayer ("Collision")) {
 					Run (enemyObj.transform, (enemyScript.playerObject.transform.position - enemyObj.transform.position).normalized * enemyScript.moveSpeed * 1.2f);

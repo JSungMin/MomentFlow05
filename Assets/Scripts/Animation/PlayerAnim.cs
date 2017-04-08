@@ -9,8 +9,6 @@ public class PlayerAnim : AnimationBase {
 
 	bool isAttack;
 	bool isDamaged;
-
-	public bool isSit;
 		
 	// Use this for initialization
 	void Start () {
@@ -19,23 +17,33 @@ public class PlayerAnim : AnimationBase {
     }
 
 	public void SetSit(){
-		setAnimation (0, "Sit", false, 1);
-		isSit = true;
+		setAnimation (0, "Sit", true, 1);
+	}
+
+	public void SetHide(){
+		setAnimation (0, "Hide", true, 1);
+	}
+
+	public void SetSitWalk(){
+		setAnimation (0, "Run", true, 1);
+		//TODO : setAnimation (0, "Sit_Walk",true,1);
 	}
 
 	public void SetWalk(){
-		setAnimation (0, "Run", true, 1);
+		if (player.isSit) {
+			SetSitWalk ();
+		} else {
+			setAnimation (0, "Run", true, 1);
+		}
     }
+
 	//TODO: Run -> GrabCorner
 	public void SetGrabCorner(){
 		setAnimation (0, "Run", true ,1);
 	}
+
 	//TODO: Run -> Climb
 	public void SetClimb(){
-		setAnimation (0, "Run", true, 1);
-	}
-	//TODO: Run -> Rolling
-	public void SetRolling(){
 		setAnimation (0, "Run", true, 1);
 	}
 
@@ -87,9 +95,6 @@ public class PlayerAnim : AnimationBase {
 				break;
 			case MyObject.State.ClimbCorner:
 				SetClimb ();
-				break;
-			case MyObject.State.Rolling:
-				SetRolling ();
 				break;
 			}
 		}

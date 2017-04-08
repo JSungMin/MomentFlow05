@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -183,34 +184,87 @@ public class EnemyScript : MonoBehaviour {
 		}
 	}
 
-	//만약 플레이어를 탐지시 return true else then return false
-	public BrowseInfo Browse(float rayLen){
-		RaycastHit2D[] browseHits = new RaycastHit2D[browseDensity];
+	public BrowseInfo FindPlayerInBrowseInfos(float rayLen){
+		var infos = Browse (rayLen);
+		for(int i = 0; i < infos.Length;i++){
+			if(infos[i].layer == LayerMask.NameToLayer("Player")){
+				return infos [i];
+			}
+		}
+		return new BrowseInfo();
+	}
+
+	public BrowseInfo[] FindCollisionsInBrowseInfos(float rayLen){
+		var infos = Browse (rayLen);
+		List<BrowseInfo> collisions = new List<BrowseInfo> ();
+		for(int i = 0; i< infos.Length;i++){
+			if(infos[i].layer == LayerMask.NameToLayer("Collision")){
+				collisions.Add(infos [i]);
+			}
+		}
+		return collisions.ToArray();
+	}
+
+	//infos에 가까운 것 부터 담기는지 확인 필요
+	public BrowseInfo FindNearestCollisionInBrowseInfos(float rayLen){
+		var infos = Browse (rayLen);
+		for(int i = 0; i< infos.Length;i++){
+			if(infos[i].layer == LayerMask.NameToLayer("Collision")){
+				return infos [i];
+			}
+		}
+		return new BrowseInfo ();
+	}
+		
+	public bool IsFindPlayer(float rayLen){
+		Browse (rayLen);
+		for(int i = 0;i < browseDensity;i++){
+			for(int j = 0;j < gBrowseHits[i].Length;j++){
+				if(TimeLayer.EqualTimeLayer(pTimeLayer,gBrowseHits[i][j].collider.GetComponentInParent<TimeLayer>())){
+					if (gBrowseHits [i] [j].collider.gameObject.layer == LayerMask.NameToLayer ("Collision")) {
+						break;
+					} else if(gBrowseHits [i] [j].collider.gameObject.layer == LayerMask.NameToLayer ("Player")){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	RaycastHit2D[][] gBrowseHits;
+	//만약 탐지 가능한 객체(EqualTimeLayer == true)가 있으면 !null 요소가 만약 객체가 없으면 null
+	public BrowseInfo[] Browse(float rayLen){
+		gBrowseHits = new RaycastHit2D[browseDensity][];
+		BrowseInfo[] bInfos = new BrowseInfo[0];
+
 		maxX = GetComponent<Collider2D> ().bounds.max.x;
 		maxY = GetComponent<Collider2D> ().bounds.max.y;
 		minX = GetComponent<Collider2D> ().bounds.min.x;
 		minY = GetComponent<Collider2D> ().bounds.min.y;
 		for(int i =0;i<browseDensity;i++){
 			if (transform.localScale.x > 0) {
-				browseHits [i] = Physics2D.Raycast (
+				gBrowseHits [i] = Physics2D.RaycastAll (
 					new Vector2 (maxX, maxY - colYLen * (i / (browseDensity - 1))),
 					Vector2.right,rayLen,browseMask);
 			}
 			else{
-				browseHits [i] = Physics2D.Raycast (
+				gBrowseHits [i] = Physics2D.RaycastAll (
 					new Vector2 (minX, maxY - colYLen * (i / (browseDensity - 1))),
 					Vector2.left,rayLen,browseMask);
 			}
 
-			if (browseHits [i].collider != null) {
-				if(TimeLayer.EqualTimeLayer(pTimeLayer,browseHits[i].transform.GetComponentInParent<TimeLayer>())){
-					BrowseInfo bInfo = new BrowseInfo ();
-					bInfo.InitBrowseInfo (browseHits[i].collider.gameObject,browseHits [i].distance, browseHits [i].normal, browseHits[i].point,browseHits [i].transform.tag, browseHits [i].transform.gameObject.layer);
-					return bInfo;
+			bInfos = new BrowseInfo[gBrowseHits [i].Length];
+
+			for(int j = 0; j <gBrowseHits[i].Length; j++){
+				if (gBrowseHits [i][j].collider != null) {
+					if(TimeLayer.EqualTimeLayer(pTimeLayer,gBrowseHits[i][j].transform.GetComponentInParent<TimeLayer>())){
+						bInfos[j].InitBrowseInfo (gBrowseHits[i][j].collider.gameObject,gBrowseHits [i][j].distance, gBrowseHits [i][j].normal, gBrowseHits[i][j].point,gBrowseHits [i][j].transform.tag, gBrowseHits [i][j].transform.gameObject.layer);
+					}
 				}
 			}
 		}
-		return new BrowseInfo();
+		return bInfos;
 	}
 
 	protected void VerticalCollisions(ref Vector3 v){

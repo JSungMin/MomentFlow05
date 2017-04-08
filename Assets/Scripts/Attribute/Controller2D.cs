@@ -184,6 +184,7 @@ public class Controller2D : MonoBehaviour {
 	}
 
 	void UpdateRaycastOrigins() {
+		CalculateRaySpacing ();
 		Bounds bounds = collider.bounds;
 		bounds.Expand (skinWidth * -2);
 
@@ -194,6 +195,7 @@ public class Controller2D : MonoBehaviour {
 	}
 
 	void CalculateRaySpacing() {
+		collider = GetComponent<BoxCollider2D> ();
 		Bounds bounds = collider.bounds;
 		bounds.Expand (skinWidth * -2);
 

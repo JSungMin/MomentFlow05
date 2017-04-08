@@ -16,8 +16,8 @@ public class MyObject : MonoBehaviour {
 
 	public enum State{
 		Idle,
-		Sit,
 		Walk,
+		Sit,
 		Run,
 		Attack,
 		Damaged,

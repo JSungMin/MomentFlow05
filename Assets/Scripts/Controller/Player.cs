@@ -24,6 +24,14 @@ public class Player : MyObject
 
 	private Controller2D controller;
 
+	private BoxCollider2D pBoxCollider;
+
+	private Vector2 INIT_COLLIDER_OFFSET;
+	private Vector2 SIT_COLLIDER_OFFSET;
+	private Vector2 INIT_COLLIDER_SIZE = new Vector2(0.2f, 0.36f);
+	private Vector2 SIT_COLLIDER_SIZE = new Vector2 (0.2f,0.2f);
+
+
 	public float jumpHeight = 0.1f;
 	public float timeToJumpApex = .4f;
 	private float accelerationTimeAirborne = .2f;
@@ -39,14 +47,12 @@ public class Player : MyObject
 	private float gravity;
 
 	public bool isJump;
+	bool isAir = false;
 
 	private const float MAX_GRAB_HEIGHT_RATIO = 1.5f;
 
 	public AnimationState animationState;
-    // 플레이어 크기와 비슷한 충돌체
-    public BoxCollider2D playerBC;
 
-	bool isAir = false;
 
 	public void ProcessGround(){
 		if (controller.collisions.above || controller.collisions.below) {
@@ -75,7 +81,10 @@ public class Player : MyObject
 		if (input.x != 0) {
 			state = State.Walk;
 		} else {
-			state = State.Idle;
+			if (isSit)
+				state = State.Sit;
+			else
+				state = State.Idle;
 		}
 
 	}
@@ -201,48 +210,36 @@ public class Player : MyObject
 		}
 		ClimbCorner ();
     }
+		
+	public bool isSit = false;
 
-	public float rollingDuration = 0.25f;
-	float rollingDurationTimer = 0;
-
-	public float rollingCoolDuration = 1;
-	float rollingCollDurationTimer = 0;
-
-	public float rollingSpeed = 2;
-
-	//if isRolling is true then enemy's findOutGauge can't be increased
-	bool isRolling = false;
-
-	void Rolling(){
-		if (isRolling) {
-			if (rollingDurationTimer <= rollingDuration) {
-				rollingDurationTimer += Time.deltaTime;
-				velocity.x = rollingSpeed * Mathf.Sign(transform.localScale.x);
-				state = State.Rolling;
-			} else {
-				isRolling = false;
-				rollingDurationTimer = 0;
-			}
+	void Sit(){
+		if (isSit) {
+			pBoxCollider.offset = SIT_COLLIDER_OFFSET;
+			pBoxCollider.size = SIT_COLLIDER_SIZE;
 		} else {
-			rollingCollDurationTimer += Time.deltaTime;
+			pBoxCollider.offset = INIT_COLLIDER_OFFSET;
+			pBoxCollider.size = INIT_COLLIDER_SIZE;
 		}
-	}
-
-	void ProcessRolling(){
-		if (Input.GetKey (KeyCode.LeftShift) && 
-			!isRolling && !isAir &&
-			rollingCollDurationTimer >= rollingCoolDuration) {
-
-			isRolling = true;
-			rollingCollDurationTimer = 0;
-		}
-		Rolling ();
 	}
     
+	void ProcessSit(){
+		if (Input.GetKey (KeyCode.S) && !isAir) {
+			isSit = true;
+		} 
+		else {
+			isSit = false;
+		}
+		Sit ();
+	}
+
 	void Start () {
 		pTimeLayer = transform.GetComponentInParent<TimeLayer> ();
 		animator = GetComponent<Animator> ();
 		controller = GetComponent<Controller2D> ();
+		pBoxCollider = GetComponent<BoxCollider2D> ();
+		INIT_COLLIDER_OFFSET = pBoxCollider.offset;
+		SIT_COLLIDER_OFFSET = INIT_COLLIDER_OFFSET - Vector2.up*0.08f;
 		gravity = -9.8f;
 		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
     }
@@ -255,7 +252,7 @@ public class Player : MyObject
 		ProcessMove();
         ProcessJump();
 		ProcessGrabCorner();
-		ProcessRolling ();
+		ProcessSit ();
 		ProcessTimeSwitching();
 		if(!isGrabing){
 			controller.Move ( velocity * Time.deltaTime);

@@ -10,7 +10,7 @@ public class EscapeState : IState {
 	}
 
 	public override void OnStateStay(){
-		var bInfo = enemyScript.Browse (enemyScript.findOutSight);
+		var bInfo = enemyScript.FindPlayerInBrowseInfos (enemyScript.findOutSight);
 		if (bInfo.layer == LayerMask.NameToLayer ("Player")) {
 			var ePos = new Vector2 (enemyObj.transform.position.x, enemyObj.transform.position.y);
 			var d = (bInfo.point - ePos).normalized;

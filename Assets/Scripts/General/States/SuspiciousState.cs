@@ -38,7 +38,7 @@ public class SuspiciousState : IState {
 
 	public override void OnStateStay(){
 		if(!CheckArrive()){
-			var bInfo = enemyScript.Browse (speed*0.5f);
+			var bInfo = enemyScript.FindNearestCollisionInBrowseInfos (speed*0.5f);
 			if (bInfo.layer != LayerMask.NameToLayer ("Collision")) {
 				SuspiciousWalk (enemyObj.transform, dir * speed * 0.5f);
 			} else {
