@@ -105,7 +105,7 @@ public class Player : MyObject
 		if(Input.GetKeyDown(KeyCode.Tab)){
 			var bc = GetComponent<BoxCollider2D> ();
 			var colPos = transform.position + new Vector3(bc.offset.x,bc.offset.y,0);
-			var cols = Physics2D.OverlapBoxAll (colPos, new Vector2 (bc.size.x, bc.size.y), 0,1<<LayerMask.NameToLayer("Collision"));
+			var cols = Physics2D.OverlapBoxAll (colPos, new Vector2 (bc.size.x*0.8f, bc.size.y*0.8f), 0,1<<LayerMask.NameToLayer("Collision"));
 
 			bool canSwitching = true;
 
