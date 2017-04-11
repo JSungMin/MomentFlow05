@@ -25,7 +25,9 @@ public class EnemyScript : MonoBehaviour {
 
 	public GameObject emotionBox;
 
-	public FindOutGaugeScript findOutGaugeScr;
+	public Transform findOutGaugePool;
+	public GameObject findOutGaugePref;
+	private FindOutGaugeScript findOutGaugeScr;
 
 	public float maxHp;
 	public float hp;
@@ -76,10 +78,13 @@ public class EnemyScript : MonoBehaviour {
 	public void Awake(){
 		Debug.Log ("In Parent");
 		if (findOutGaugeScr == null) {
-			Debug.LogError ("There is No FindOutGagueScirpt for this Enemy : " + gameObject.name);
-		} else {
-			findOutGaugeScr.InitFindOutGaugeScript (this);
+			GameObject newGauge = Instantiate (findOutGaugePref, Vector3.zero,Quaternion.identity);
+			newGauge.transform.parent = findOutGaugePool;
+			newGauge.transform.localPosition = new Vector3 (0,0,-10000);
+			newGauge.transform.localScale = Vector3.one;
+			findOutGaugeScr = newGauge.GetComponent<FindOutGaugeScript> ();
 		}
+		findOutGaugeScr.InitFindOutGaugeScript (this);
 	}
 
 	//this function will return IState

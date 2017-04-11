@@ -107,6 +107,7 @@ public class ThrowableObjectScript : InteractInterface {
 			}
 		}
 		findOutIndex = colList.IndexOf(colList[index]);
+		Debug.Log (colList.Count + "Count");
 		return colList [index];
 	}
 
