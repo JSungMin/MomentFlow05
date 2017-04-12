@@ -302,7 +302,6 @@ public class EnemyScript : MonoBehaviour {
 					if(TimeLayer.EqualTimeLayer(pTimeLayer,browseHits[i][j].transform.GetComponentInParent<TimeLayer>())||
 						browseHits[i][j].transform.CompareTag("Ground")||
 						browseHits[i][j].transform.CompareTag("GrabableGround")){
-						Debug.Log ("Yes");
 						velocity.y = 0;
 					}
 					//}

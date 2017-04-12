@@ -20,6 +20,8 @@ public class ThrowableObjectScript : InteractInterface {
 
 	public float alertRadius;
 
+    public float threshold;
+
 	public void CalculateThrowVelocity(){
 		Vector3 mp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		Vector3 dir = (mp - transform.position).normalized;
@@ -178,14 +180,14 @@ public class ThrowableObjectScript : InteractInterface {
 
 			var nearestX = FindOutNearestCollider (tmpColsX);
 			if (nearestX != null) {
-				if(Vector3.Magnitude(velocity)>=2)
+				if(Vector3.Magnitude(velocity)>= threshold)
 					AlertToNearEnemy ();
 				velocity += Vector2.Reflect (xDir*Mathf.Abs(velocity.x)*1.2f, hitsX [i][findOutIndex].normal);
 			}
 
 			var nearestY = FindOutNearestCollider (tmpColsY);
 			if(nearestY != null){
-				if(Vector3.Magnitude(velocity)>=2)
+				if(Vector3.Magnitude(velocity)>= threshold)
 					AlertToNearEnemy ();
 				velocity += Vector2.Reflect (yDir*Mathf.Abs(velocity.y), hitsY [i][findOutIndex].normal);
 			}
