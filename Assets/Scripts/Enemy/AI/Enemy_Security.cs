@@ -208,12 +208,11 @@ public class Enemy_Security : EnemyScript {
 			break;
         }
 			
-	
+		velocity.y -= 2.8f * Time.deltaTime;
+		VerticalCollisions ();
+		transform.Translate (velocity * Time.deltaTime);
     }
 	void FixedUpdate(){
-		//velocity.y -= 9.8f * Time.fixedDeltaTime;
-		//VerticalCollisions (ref velocity);
-
-		transform.Translate (velocity * Time.fixedDeltaTime);
+		
 	}
 }

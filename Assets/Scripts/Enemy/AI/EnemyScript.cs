@@ -272,7 +272,7 @@ public class EnemyScript : MonoBehaviour {
 		return bInfos;
 	}
 
-	protected void VerticalCollisions(ref Vector3 v){
+	protected void VerticalCollisions(){
 
 		RaycastHit2D[][] browseHits = new RaycastHit2D[browseDensity][];
 
@@ -282,23 +282,30 @@ public class EnemyScript : MonoBehaviour {
 		minY = GetComponent<Collider2D> ().bounds.min.y;
 
 		for(int i =0;i<browseDensity;i++){
-			if (v.y > 0) {
+			if (velocity.y > 0) {
+				Debug.DrawLine (new Vector2 (minX + colXLen * (i / (browseDensity - 1)), maxY),
+					new Vector2 (minX + colXLen * (i / (browseDensity - 1)), maxY) + Vector2.up*velocity.y * Time.deltaTime);
 				browseHits [i] = Physics2D.RaycastAll (
 					new Vector2 (minX + colXLen * (i / (browseDensity - 1)), maxY),
-					Vector2.up, v.y * Time.deltaTime, browseMask);
+					Vector2.up, velocity.y * Time.deltaTime, browseMask);
 			} else {
+				Debug.DrawLine (new Vector2 (minX + colXLen * (i / (browseDensity - 1)), minY),
+					new Vector2 (minX + colXLen * (i / (browseDensity - 1)), minY) + Vector2.up*velocity.y * Time.deltaTime);
 				browseHits [i] = Physics2D.RaycastAll (
 					new Vector2 (minX + colXLen * (i / (browseDensity - 1)), minY),
-					Vector2.down, v.y * Time.deltaTime, browseMask);
+					Vector2.up, velocity.y * Time.deltaTime, browseMask);
 			}
 
 			for(int j = 0;j<browseHits[i].Length;j++){
 				if(browseHits[i][j].collider != null){
-					if(browseHits[i][j].transform.gameObject.layer == LayerMask.NameToLayer("Collision")){
-						if(TimeLayer.EqualTimeLayer(pTimeLayer,browseHits[i][j].transform.GetComponentInParent<TimeLayer>())){
-							v.y = 0;
-						}
+					//if(browseHits[i][j].transform.gameObject.layer == LayerMask.NameToLayer("Collision")){
+					if(TimeLayer.EqualTimeLayer(pTimeLayer,browseHits[i][j].transform.GetComponentInParent<TimeLayer>())||
+						browseHits[i][j].transform.CompareTag("Ground")||
+						browseHits[i][j].transform.CompareTag("GrabableGround")){
+						Debug.Log ("Yes");
+						velocity.y = 0;
 					}
+					//}
 				}
 			}
 		}
