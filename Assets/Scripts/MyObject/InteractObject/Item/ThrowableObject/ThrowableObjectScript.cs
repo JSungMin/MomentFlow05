@@ -86,7 +86,9 @@ public class ThrowableObjectScript : InteractInterface {
 		List<Collider2D> colList = new List<Collider2D> ();
 
 		for(int i = 0;i<cols.Length;i++){
-			if(TimeLayer.EqualTimeLayer(cols[i].transform.GetComponentInParent<TimeLayer>(),pTimeLayer)){
+			if(TimeLayer.EqualTimeLayer(cols[i].transform.GetComponentInParent<TimeLayer>(),pTimeLayer)||
+				cols[i].transform.CompareTag("Ground")||
+				cols[i].transform.CompareTag("GrabableGround")){
 				colList.Add (cols [i]);
 			}
 		}
@@ -107,6 +109,7 @@ public class ThrowableObjectScript : InteractInterface {
 			}
 		}
 		findOutIndex = colList.IndexOf(colList[index]);
+		Debug.Log (colList.Count + "Count");
 		return colList [index];
 	}
 

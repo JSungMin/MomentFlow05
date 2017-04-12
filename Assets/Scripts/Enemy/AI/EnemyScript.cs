@@ -25,7 +25,9 @@ public class EnemyScript : MonoBehaviour {
 
 	public GameObject emotionBox;
 
-	public FindOutGaugeScript findOutGaugeScr;
+	public Transform findOutGaugePool;
+	public GameObject findOutGaugePref;
+	private FindOutGaugeScript findOutGaugeScr;
 
 	public float maxHp;
 	public float hp;
@@ -76,10 +78,13 @@ public class EnemyScript : MonoBehaviour {
 	public void Awake(){
 		Debug.Log ("In Parent");
 		if (findOutGaugeScr == null) {
-			Debug.LogError ("There is No FindOutGagueScirpt for this Enemy : " + gameObject.name);
-		} else {
-			findOutGaugeScr.InitFindOutGaugeScript (this);
+			GameObject newGauge = Instantiate (findOutGaugePref, Vector3.zero,Quaternion.identity);
+			newGauge.transform.parent = findOutGaugePool;
+			newGauge.transform.localPosition = new Vector3 (0,0,-10000);
+			newGauge.transform.localScale = Vector3.one;
+			findOutGaugeScr = newGauge.GetComponent<FindOutGaugeScript> ();
 		}
+		findOutGaugeScr.InitFindOutGaugeScript (this);
 	}
 
 	//this function will return IState
@@ -267,7 +272,7 @@ public class EnemyScript : MonoBehaviour {
 		return bInfos;
 	}
 
-	protected void VerticalCollisions(ref Vector3 v){
+	protected void VerticalCollisions(){
 
 		RaycastHit2D[][] browseHits = new RaycastHit2D[browseDensity][];
 
@@ -277,23 +282,30 @@ public class EnemyScript : MonoBehaviour {
 		minY = GetComponent<Collider2D> ().bounds.min.y;
 
 		for(int i =0;i<browseDensity;i++){
-			if (v.y > 0) {
+			if (velocity.y > 0) {
+				Debug.DrawLine (new Vector2 (minX + colXLen * (i / (browseDensity - 1)), maxY),
+					new Vector2 (minX + colXLen * (i / (browseDensity - 1)), maxY) + Vector2.up*velocity.y * Time.deltaTime);
 				browseHits [i] = Physics2D.RaycastAll (
 					new Vector2 (minX + colXLen * (i / (browseDensity - 1)), maxY),
-					Vector2.up, v.y * Time.deltaTime, browseMask);
+					Vector2.up, velocity.y * Time.deltaTime, browseMask);
 			} else {
+				Debug.DrawLine (new Vector2 (minX + colXLen * (i / (browseDensity - 1)), minY),
+					new Vector2 (minX + colXLen * (i / (browseDensity - 1)), minY) + Vector2.up*velocity.y * Time.deltaTime);
 				browseHits [i] = Physics2D.RaycastAll (
 					new Vector2 (minX + colXLen * (i / (browseDensity - 1)), minY),
-					Vector2.down, v.y * Time.deltaTime, browseMask);
+					Vector2.up, velocity.y * Time.deltaTime, browseMask);
 			}
 
 			for(int j = 0;j<browseHits[i].Length;j++){
 				if(browseHits[i][j].collider != null){
-					if(browseHits[i][j].transform.gameObject.layer == LayerMask.NameToLayer("Collision")){
-						if(TimeLayer.EqualTimeLayer(pTimeLayer,browseHits[i][j].transform.GetComponentInParent<TimeLayer>())){
-							v.y = 0;
-						}
+					//if(browseHits[i][j].transform.gameObject.layer == LayerMask.NameToLayer("Collision")){
+					if(TimeLayer.EqualTimeLayer(pTimeLayer,browseHits[i][j].transform.GetComponentInParent<TimeLayer>())||
+						browseHits[i][j].transform.CompareTag("Ground")||
+						browseHits[i][j].transform.CompareTag("GrabableGround")){
+						Debug.Log ("Yes");
+						velocity.y = 0;
 					}
+					//}
 				}
 			}
 		}
