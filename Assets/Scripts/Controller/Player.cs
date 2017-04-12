@@ -31,6 +31,7 @@ public class Player : MyObject
 	private Vector2 INIT_COLLIDER_SIZE = new Vector2(0.2f, 0.36f);
 	private Vector2 SIT_COLLIDER_SIZE = new Vector2 (0.2f,0.2f);
 
+	private const float MAX_GRAB_HEIGHT_RATIO = 1.5f;
 
 	public float jumpHeight = 0.1f;
 	public float timeToJumpApex = .4f;
@@ -49,7 +50,6 @@ public class Player : MyObject
 	public bool isJump;
 	bool isAir = false;
 
-	private const float MAX_GRAB_HEIGHT_RATIO = 1.5f;
 
 	public AnimationState animationState;
 
@@ -91,7 +91,7 @@ public class Player : MyObject
 
 	float jumpSaveDelay=0;
 	void ProcessJump(){
-		if(Input.GetKey(KeyCode.Space)){
+		if(Input.GetKeyDown(KeyCode.Space)){
 			if (!isJump && velocity.y>= gravity * Time.deltaTime*7.0f) {
 				velocity.y = jumpHeight;
 				isJump = true;
@@ -134,12 +134,17 @@ public class Player : MyObject
 		
 	Collider2D grappingObj;
 
+	private bool isClimb = false;
+	//만족 스러운 Duration 찾은 후 private나 const로 지정
 	public float climbDuration;
-	float climbDurationTimer = 0;
-	bool isClimb = false;
+	private float climbDurationTimer = 0;
 
-	float tClimbHeight = 0;
-	float tClimbSpeed = 0;
+	//t는 tmp의 약자로 함수 실행마다 재정의됨
+	private float tClimbHeight = 0;
+	private float tClimbSpeed = 0;
+
+	//만족 스러운 Duration 찾은 후 private나 const로 지정
+	public float climbDelayDuration;
 
 	void ClimbCorner(){
 		if(isGrabing && Input.GetKeyDown(KeyCode.Space) && !isClimb){
@@ -150,8 +155,8 @@ public class Player : MyObject
 		if(isClimb){
 			if (climbDurationTimer <= climbDuration) {
 				climbDurationTimer += Time.deltaTime;
+
 				transform.position += Vector3.up * tClimbSpeed * Time.deltaTime;
-				anim.SetClimb ();
 				state = State.ClimbCorner;
 			} else {
 				isClimb = false;
