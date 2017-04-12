@@ -312,9 +312,10 @@ public class EnemyScript : MonoBehaviour {
 
 	public IEnumerator fireBullets;
 	public void Fire(){
-		var newBullet = MonoBehaviour.Instantiate (bullet, aim_bone.transform.position, Quaternion.identity) as GameObject;
-		newBullet.GetComponent<NormalBullet> ().dir = (playerObject.transform.position - transform.position).normalized;
-		//newBullet.transform.parent = enemyBulletPool;
+		var newBullet = Instantiate (bullet, Vector3.zero, Quaternion.identity) as GameObject;
+		newBullet.transform.position = aim_bone.transform.position;
+		newBullet.GetComponent<Bullet>().pTimeLayer = pTimeLayer;
+		newBullet.GetComponent<Bullet> ().dir = (playerObject.GetComponent<Collider2D>().bounds.center - GetComponent<Collider2D>().bounds.center).normalized;
 	}
 
 	public IEnumerator FireBullets(int num){

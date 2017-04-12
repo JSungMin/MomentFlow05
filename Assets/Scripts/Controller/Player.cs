@@ -53,6 +53,17 @@ public class Player : MyObject
 
 	public AnimationState animationState;
 
+	public void Damaged(float dAmount){
+		if (hp - dAmount <= 0){
+			Dead ();
+			return;
+		}
+		hp -= dAmount;
+	}
+
+	public void Dead(){
+		Debug.Log ("Player Dead");
+	}
 
 	public void ProcessGround(){
 		if (controller.collisions.above || controller.collisions.below) {
