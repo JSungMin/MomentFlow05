@@ -13,19 +13,20 @@ public class BusStop : InteractInterface {
 		if (!isInteract) {
 			fadeOutCam.PlayForward ();
 			busController.state = BusController.BusState.Move;
+            bus.StartAction();
 			isInteract = true;
 		}
 	}
+
 	public void DropBus(){
-		isInteract = false;
-		GameObject.FindObjectOfType<InteractiveManager> ().nowInteract = false;
+		//isInteract = false;
+		//GameObject.FindObjectOfType<InteractiveManager> ().nowInteract = false;
 	}
 
 	public void NextScene(){
 		SceneManager.LoadScene (1);	
 	}
-
-	// Use this for initialization
+    
 	void Start () {
 		interact += CallBus;
 		stopInteract += DropBus;

@@ -6,30 +6,45 @@ public class BubbleDialogue : MonoBehaviour
 {
     public GameObject followObject;
 
-	public TweenAlpha alpha;
-	public TweenPosition position;
+	private TweenAlpha tweenAlpha;
+    private TweenPosition tweenPosition;
 
-	public void StartBubble(){
-		alpha.PlayForward ();
-		position.PlayForward ();
+    private Paging paging;
 
-		GetComponent<Paging> ().NextPage ();
+    private void Awake()
+    {
+        tweenAlpha = GetComponentInChildren<TweenAlpha>();
+        tweenPosition = GetComponentInChildren<TweenPosition>();
+
+        tweenAlpha.enabled = false;
+        tweenPosition.enabled = false;
+
+        paging = GetComponent<Paging>();
+        tweenAlpha.GetComponent<UI2DSprite>().alpha = 0;
+    }
+
+    // bubble을 켜고 dialogue를 시작한다
+    public void StartBubble(){
+        tweenAlpha.PlayForward();
+        tweenPosition.PlayForward();
+        paging.NextPage();
 	}
 
     public void NextPage()
     {
-        GetComponent<Paging>().NextPage();
+        paging.NextPage();
     }
 
-	public void EndBubble(){
-		alpha.PlayReverse ();
-		position.PlayForward ();
-		GetComponent<Paging> ().StopShowContent ();
+    // dialogue를 끝내고 bubble을 끈다
+    public void EndBubble(){
+        tweenAlpha.PlayReverse ();
+        tweenPosition.PlayForward ();
+        paging.StopShowContent ();
 	}
 
     public int GetContentCount()
     {
-        return GetComponent<Paging>().GetContentCount();
+        return paging.GetContentCount();
     }
 
     private void Update()
@@ -37,7 +52,5 @@ public class BubbleDialogue : MonoBehaviour
 		var followPos = followObject.transform.position + Vector3.up * 0.5f;
 		followPos.z = transform.position.z;
 		transform.position = followPos;
-        //transform.localScale = Vector3.one;
-        //transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, 0.0f);
     }
 }

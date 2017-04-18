@@ -10,7 +10,7 @@ public class Enemy_Security : EnemyScript {
 	public float stateChange = 2;
 	private float stateChangeTimer = 0;
 
-	void Awake()
+	private new void Awake()
     {
 		base.Awake ();
 		Debug.Log ("In Child");
@@ -108,7 +108,7 @@ public class Enemy_Security : EnemyScript {
 						PlayEmotion ("Question2");
 						transitionDurationTimer += Time.deltaTime;
 						findOutGauge = Mathf.Lerp (findOutGauge, 50, Time.deltaTime * findOutGaugeIncrement * 0.1f);
-						anim.SuspiciousWalk(charAnimName);
+						anim.SuspiciousWalk();
 					}
 				} else {
 					SetState (State.Patrol);
@@ -129,7 +129,7 @@ public class Enemy_Security : EnemyScript {
 					InitToTransition ();
 				} else {
 					transitionDurationTimer += Time.deltaTime;
-					anim.Idle (charAnimName);
+					anim.Idle ();
 				}
 				findOutGauge = 100;
 				return;
@@ -156,7 +156,7 @@ public class Enemy_Security : EnemyScript {
 						InitToTransition ();
 					} else {
 						transitionDurationTimer += Time.deltaTime*0.25f;
-						anim.Idle (charAnimName);
+						anim.Idle ();
 						PlayEmotion ("Confuse2");
 					}
 				}
@@ -187,7 +187,7 @@ public class Enemy_Security : EnemyScript {
 			} else {
 				detectionDurationTimer = 0;
 				transitionDurationTimer += Time.deltaTime;
-				anim.Idle (charAnimName);
+				anim.Idle ();
 			}
 			break;
 		case State.Attack:

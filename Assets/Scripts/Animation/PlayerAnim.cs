@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// play 할 수 있는 모든 케릭터들의 애니메이션을 컨트롤하는 클래스 (알릭, 셀마, 에일린)
 public class PlayerAnim : AnimationBase {
 	Player player;
 
@@ -9,10 +10,11 @@ public class PlayerAnim : AnimationBase {
 
 	bool isAttack;
 	bool isDamaged;
-		
-	// Use this for initialization
-	void Start () {
-		player = GetComponent<Player> ();		
+
+    private new void Awake()
+    {
+        base.Awake();
+        player = GetComponent<Player>();
         audioSource = GetComponent<AudioSource>();
     }
 
@@ -26,7 +28,6 @@ public class PlayerAnim : AnimationBase {
 
 	public void SetSitWalk(){
 		setAnimation (0, "Run", true, 1);
-		//TODO : setAnimation (0, "Sit_Walk",true,1);
 	}
 
 	public void SetWalk(){
@@ -46,10 +47,9 @@ public class PlayerAnim : AnimationBase {
 	public void SetClimb(){
 		setAnimation (0, "Run", true, 1);
 	}
-
-	// Update is called once per frame
+    
 	void Update () {
-        if (cur_animation[1] == "Walk")
+        if (curAnimation[1] == "Walk")
         {
             if (!audioSource.isPlaying)
                 audioSource.Play();
@@ -67,13 +67,8 @@ public class PlayerAnim : AnimationBase {
 			} else if (inputX < 0) {
 				dir = Direction.Left;
 				transform.localScale = new Vector3 (-1, transform.localScale.y, transform.localScale.z);
-			} 
-
-			if (pastDir != dir) {
-				//skel.state.ClearTracks ();
-				//setAnimation (0, characterName [characterIndex] + "_" + dir.ToString (), true, 1);
 			}
-
+        
 			switch(player.state){
 			case MyObject.State.Walk:
 				setAnimation (0, "Run", true, 1);
@@ -85,10 +80,8 @@ public class PlayerAnim : AnimationBase {
 				setAnimation (0, "Sit", true, 1);
 				break;
 			case MyObject.State.Jump:
-				
 				break;
 			case MyObject.State.Fall:
-
 				break;
 			case MyObject.State.GrabCorner:
 				SetGrabCorner ();

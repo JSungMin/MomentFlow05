@@ -22,14 +22,11 @@ public class BusController : MonoBehaviour {
 	public void SetBusState(string s){
 		if (s == "Move") {
 			state = BusState.Move;
-			Debug.Log ("MOve");
 		} else if (s == "Stop") {
-			Debug.Log ("Stop");
 			state = BusState.Stop;
 		}
 	}
 	
-	// Update is called once per frame
 	void Update () {
 		if(state == BusState.Move){
 			if (speed <= maxSpeed) {
@@ -42,7 +39,7 @@ public class BusController : MonoBehaviour {
 				speed = 0;
 			}
 		}
-		tire01.transform.Rotate (-Vector3.forward * speed * Time.deltaTime);
-		tire02.transform.Rotate (-Vector3.forward * speed * Time.deltaTime);
+		tire01.transform.Rotate (Vector3.forward * speed * Time.deltaTime);
+		tire02.transform.Rotate (Vector3.forward * speed * Time.deltaTime);
 	}
 }

@@ -3,25 +3,36 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
+// 각각의 대화 컨텐츠들을 글자 하나씩 보여주고, 페이지를 넘기는 역할을 한다
 public class Paging : MonoBehaviour {
 
 	public List<string> contents;
-	public int offset = 0;
+	public int offset { private set; get; }
 
-	public int contentOffset = 0;
+	private int contentOffset = 0;
 	public float typingSpeed = 0.05f;
 
-	public UILabel label;
+	private UILabel label;
 
-	public IEnumerator showContent;
+	private IEnumerator showContent;
 
-	public void EraseContent(){
+    private void Awake()
+    {
+        offset = -1;
+        label = GetComponentInChildren<UILabel>();
+    }
+
+    void Start()
+    {
+        showContent = ShowContent();
+    }
+
+    public void EraseContent(){
         label.text = "";
 		contentOffset = 0;
 	}
 
-	public IEnumerator ShowContent(){
-		Debug.Log ("Yes");
+	private IEnumerator ShowContent(){
 		while (contentOffset < contents [offset].Length) {
 			yield return new WaitForSeconds (typingSpeed);
 			label.text += contents [offset].ToCharArray () [contentOffset];
@@ -44,9 +55,9 @@ public class Paging : MonoBehaviour {
 			offset+=1;
             if (offset < contents.Count)
                 StartCoroutine(ShowContent());
-			//StartCoroutine (showContent);
 		}
 	}
+
 	public void PreviousPage(){
 		if (offset - 1 >= -1) {
 			EraseContent ();
@@ -55,11 +66,6 @@ public class Paging : MonoBehaviour {
 			StartCoroutine (showContent);
 		}
 	}
-		
-	void Start(){
-        showContent = ShowContent();
-        //StartCoroutine(showContent);
-    }
 
     public int GetContentCount()
     {
