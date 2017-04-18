@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class Equiptment : MonoBehaviour {
 
-	public EquipType type;
+	//public EquipType type;
 	public int id;
 }
