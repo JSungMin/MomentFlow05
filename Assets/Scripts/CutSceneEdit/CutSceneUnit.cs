@@ -467,6 +467,7 @@ public class CutSceneUnit : MonoBehaviour {
 			Debug.LogError ("Index : " + index + "  Object haven't Curve Component");
 	}
 
+    // isAction을 true로 만들어서 정의된 행동을 실행하도록 한다
 	public void StartAction(){
 		isAction = true;
 	}

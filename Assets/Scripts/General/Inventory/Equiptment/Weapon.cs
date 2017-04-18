@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Weapon : Equiptment {
-	public EquipWeapon weaponType;
 
 	public float damage;
 	public float attackSpeed;

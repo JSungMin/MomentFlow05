@@ -29,13 +29,13 @@ public abstract class IState
 
 	public void Idle() 
 	{
-		enemyScript.anim.Idle (enemyScript.charAnimName);
+        enemyScript.anim.Idle();
 		enemyScript.velocity.x = 0;
 	}
 
 	public void Hold()
     {
-		enemyScript.anim.Idle (enemyScript.charAnimName);
+        enemyScript.anim.Idle();
 		enemyScript.velocity.x = 0;
     }
 
@@ -43,7 +43,7 @@ public abstract class IState
     {
 		enemyScript.velocity.x = velocity.x;
 
-		enemyScript.anim.Walk (enemyScript.charAnimName);
+        enemyScript.anim.Walk();
 
 		t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
 	
@@ -52,17 +52,17 @@ public abstract class IState
 	{
 		enemyScript.velocity.x = velocity.x;
 
-		enemyScript.anim.SuspiciousWalk(enemyScript.charAnimName);
-		t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
+		enemyScript.anim.SuspiciousWalk();
+        t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
 
 	}
 	public void Run(Transform t,Vector3 velocity)
 	{
 		enemyScript.velocity.x = velocity.x;
 
-		enemyScript.anim.Run(enemyScript.charAnimName);
+		enemyScript.anim.Run();
 
-		t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
+        t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
 	
 	}
 

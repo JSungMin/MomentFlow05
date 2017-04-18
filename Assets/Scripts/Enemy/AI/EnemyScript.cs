@@ -19,7 +19,6 @@ public class EnemyScript : MonoBehaviour {
 	public IState[] istate;
 
 	public AnimationBase anim;
-	public string charAnimName;
 	public GameObject aim_bone;
 	public GameObject bullet;
 
