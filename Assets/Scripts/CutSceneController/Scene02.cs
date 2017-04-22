@@ -13,13 +13,14 @@ public class Scene02 : MonoBehaviour
     public BubbleDialogue stopBusDialogue;
     
 	public CutSceneUnit busUnit;
-
 	public CutSceneUnit[] watcherAgentUnits;
 	public CutSceneUnit roboUnit;
 
 	public GameObject[] passengers;
 	private CutSceneUnit[] passengersCutSceneUnit;
     private AnimationBase[] passengersAnim;
+
+	public ChatDialogue chatDialogue;
 
     private void Awake()
     {
@@ -65,6 +66,10 @@ public class Scene02 : MonoBehaviour
 		yield return StartCoroutine (MakeHansClosePaper());
 
 		yield return StartCoroutine (PickUpAgentsAndRobo());
+
+		yield return StartCoroutine (AllCutUnitActionPause());
+
+		yield return StartCoroutine (ProcessChatDialog ());
     }
 
     private IEnumerator MakeHansReadPaper()
@@ -119,18 +124,95 @@ public class Scene02 : MonoBehaviour
 	}
 
 	private IEnumerator PickUpAgentsAndRobo(){
-		roboUnit.gameObject.SetActive (true);
-		roboUnit.StartAction ();
 		for(int i = 0; i < watcherAgentUnits.Length;i++){
-			yield return new WaitForSeconds (0.5f);
 			watcherAgentUnits [i].gameObject.SetActive (true);
 			watcherAgentUnits [i].StartAction ();
+			yield return new WaitForSeconds (0.5f);
 		}
-		yield return new WaitForSeconds (2);
+
+		roboUnit.gameObject.SetActive (true);
+		roboUnit.StartAction ();
+
+		yield return new WaitForSeconds (4f);
+	}
+
+	private IEnumerator StartChatDialogue(){
+		chatDialogue.StartChat ();
+		yield return StartCoroutine (WaitForClick ());
+	}
+
+	private IEnumerator ContinueChatDialogue(){
+		yield return StartCoroutine (WaitForClick ());
+		chatDialogue.NextPage ();
+		yield return StartCoroutine (WaitForClick ());
 	}
 
     private IEnumerator PickUpLobo()
     {
         yield return new WaitForSeconds(1.0f);
     }
+
+	private IEnumerator AllCutUnitActionPause(){
+		foreach (var unit in watcherAgentUnits) {
+			unit.PasueAction ();
+		}
+		foreach (var unit in passengersCutSceneUnit) {
+			unit.PasueAction ();
+		}
+		roboUnit.PasueAction ();
+		yield return null;
+	}
+
+	private IEnumerator ProcessChatDialog(){
+		yield return StartCoroutine (StartChatDialogue());
+		for(int i = 1; i < chatDialogue.GetContentCount(); i++){
+			yield return StartCoroutine (ContinueChatDialogue ());
+			switch(i){
+			case 10:
+				//Angry Lobo
+				yield return StartCoroutine(LoboAttackHans());
+				break;
+			case 13:
+				yield return StartCoroutine (LoboStapToEntrance ());
+				break;
+			}
+		}
+	}
+
+	private IEnumerator LoboAttackHans(){
+		yield return StartCoroutine (AngryFaceLobo ());
+
+	}
+
+	private IEnumerator AngryFaceLobo(){
+		roboUnit.GetComponent<LoboAnim> ().AngryFace ();
+		yield return StartCoroutine (LoboStapToHansAndAttack ());
+	}
+
+	private IEnumerator LoboStapToHansAndAttack(){
+		roboUnit.GetComponent<LoboAnim> ().Run ();
+		while(true){
+			roboUnit.transform.position = Vector3.MoveTowards (roboUnit.transform.position, hansAnim.transform.position, Time.deltaTime*0.5f);	
+			if(roboUnit.transform.position.x <= hansAnim.transform.position.x +0.15f){
+				break;
+			}
+			yield return null;
+		}
+		roboUnit.GetComponent<LoboAnim> ().Attack ();
+		yield return new WaitForSeconds (2.5f);
+	}
+
+	private IEnumerator LoboStapToEntrance(){
+		roboUnit.GetComponent<LoboAnim> ().SetDir (false);
+		while (true) {
+			roboUnit.GetComponent<LoboAnim> ().Walk ();
+			roboUnit.transform.localPosition = Vector3.MoveTowards (roboUnit.transform.localPosition, new Vector3(0,roboUnit.transform.localPosition.y), Time.deltaTime*0.4f);
+			if(roboUnit.transform.localPosition.x>=0){
+				break;
+			}
+			yield return null;
+		}
+		roboUnit.GetComponent<LoboAnim> ().LoboIdle ();
+		yield return new WaitForSeconds (2f);
+	}
 }

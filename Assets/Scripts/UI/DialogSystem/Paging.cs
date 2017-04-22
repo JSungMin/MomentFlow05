@@ -7,7 +7,7 @@ using UnityEngine;
 public class Paging : MonoBehaviour {
 
 	public List<string> contents;
-	public int offset { private set; get; }
+	public int offset;
 
 	private int contentOffset = 0;
 	public float typingSpeed = 0.05f;

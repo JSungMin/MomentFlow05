@@ -1,166 +1,180 @@
 
 skeleton.png
-size: 2048,128
+size: 1024,256
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
 Detective/Bottom
-  rotate: false
-  xy: 2, 7
+  rotate: true
+  xy: 368, 82
   size: 80, 20
   orig: 80, 20
   offset: 0, 0
   index: -1
 Detective/Coat
-  rotate: true
-  xy: 229, 14
+  rotate: false
+  xy: 2, 2
   size: 110, 150
   orig: 110, 150
   offset: 0, 0
   index: -1
 Detective/Gun
   rotate: false
-  xy: 909, 49
+  xy: 757, 174
   size: 60, 75
   orig: 60, 75
   offset: 0, 0
   index: -1
 Detective/Head
   rotate: false
-  xy: 670, 4
+  xy: 518, 129
   size: 120, 120
   orig: 120, 120
   offset: 0, 0
   index: -1
 Detective/Leg_Straight
   rotate: true
-  xy: 971, 79
+  xy: 819, 204
   size: 45, 90
   orig: 45, 90
   offset: 0, 0
   index: -1
 Detective/LowerArm_Left
   rotate: true
-  xy: 1627, 89
+  xy: 588, 92
   size: 35, 65
   orig: 35, 65
   offset: 0, 0
   index: -1
 Detective/LowerArm_Right
-  rotate: true
-  xy: 1155, 84
+  rotate: false
+  xy: 390, 92
   size: 40, 75
   orig: 40, 75
   offset: 0, 0
   index: -1
 Detective/LowerLeg
   rotate: true
-  xy: 909, 2
+  xy: 655, 82
   size: 45, 65
   orig: 45, 65
   offset: 0, 0
   index: -1
 Detective/Torso
   rotate: true
-  xy: 533, 44
+  xy: 381, 169
   size: 80, 135
   orig: 80, 135
   offset: 0, 0
   index: -1
 Detective/UpperArm_Left
-  rotate: true
-  xy: 1396, 89
+  rotate: false
+  xy: 474, 92
   size: 35, 75
   orig: 35, 75
   offset: 0, 0
   index: -1
 Detective/UpperArm_Right
   rotate: true
-  xy: 1232, 89
+  xy: 819, 167
   size: 35, 80
   orig: 35, 80
   offset: 0, 0
   index: -1
 Detective/UpperLeg
   rotate: false
-  xy: 1828, 79
+  xy: 722, 82
   size: 30, 45
   orig: 30, 45
   offset: 0, 0
   index: -1
 Security/Bottom
   rotate: false
-  xy: 381, 17
+  xy: 241, 5
   size: 80, 20
   orig: 80, 20
   offset: 0, 0
   index: -1
 Security/Head
   rotate: false
-  xy: 792, 4
+  xy: 640, 129
   size: 115, 120
   orig: 115, 120
   offset: 0, 0
   index: -1
 Security/Leg_Straight
   rotate: true
-  xy: 1063, 79
+  xy: 911, 204
   size: 45, 90
   orig: 45, 90
   offset: 0, 0
   index: -1
+Security/Lobo_Face_Angry
+  rotate: false
+  xy: 114, 17
+  size: 125, 135
+  orig: 125, 135
+  offset: 0, 0
+  index: -1
+Security/Lobo_Face_Idle
+  rotate: false
+  xy: 241, 27
+  size: 125, 135
+  orig: 125, 135
+  offset: 0, 0
+  index: -1
 Security/LowerArm_Left
   rotate: true
-  xy: 1694, 89
+  xy: 804, 130
   size: 35, 65
   orig: 35, 65
   offset: 0, 0
   index: -1
 Security/LowerArm_Right
-  rotate: true
-  xy: 1473, 84
+  rotate: false
+  xy: 432, 92
   size: 40, 75
   orig: 40, 75
   offset: 0, 0
   index: -1
 Security/LowerLeg
-  rotate: true
-  xy: 1761, 79
+  rotate: false
+  xy: 757, 107
   size: 45, 65
   orig: 45, 65
   offset: 0, 0
   index: -1
 Security/Rifle
   rotate: false
-  xy: 2, 29
+  xy: 2, 154
   size: 225, 95
   orig: 225, 95
   offset: 0, 0
   index: -1
 Security/Torso
   rotate: true
-  xy: 381, 39
+  xy: 229, 164
   size: 85, 150
   orig: 85, 150
   offset: 0, 0
   index: -1
 Security/UpperArm_Left
   rotate: true
-  xy: 1550, 89
+  xy: 511, 92
   size: 35, 75
   orig: 35, 75
   offset: 0, 0
   index: -1
 Security/UpperArm_Right
   rotate: true
-  xy: 1314, 89
+  xy: 901, 167
   size: 35, 80
   orig: 35, 80
   offset: 0, 0
   index: -1
 Security/UpperLeg
-  rotate: false
-  xy: 1860, 79
+  rotate: true
+  xy: 871, 135
   size: 30, 45
   orig: 30, 45
   offset: 0, 0

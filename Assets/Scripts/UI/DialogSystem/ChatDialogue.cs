@@ -19,18 +19,23 @@ public class ChatDialogue : MonoBehaviour
 	}
 
 	// Chat 켜고 dialogue를 시작한다
-	public void StartBubble(){
+	public void StartChat(){
 		tweenAlpha.PlayForward();
 		paging.NextPage();
 	}
 
 	public void NextPage()
 	{
+		Debug.Log ("Next");
 		paging.NextPage();
 	}
 
-	// dialogue를 끝내고 bubble을 끈다
-	public void EndBubble(){
+	public void HidePage(){
+		tweenAlpha.PlayReverse ();
+	}
+
+	// dialogue를 끝내고 Chat 끈다
+	public void EndChat(){
 		tweenAlpha.PlayReverse ();
 		paging.StopShowContent ();
 	}
