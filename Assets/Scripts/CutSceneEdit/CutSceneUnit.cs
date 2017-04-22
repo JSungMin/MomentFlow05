@@ -124,7 +124,7 @@ public class CutSceneUnit : MonoBehaviour {
 
 	void OnValidate(){
 		#if UNITY_EDITOR
-		for (int i = 0; i < curveItemList.Count; i++) {
+		/*for (int i = 0; i < curveItemList.Count; i++) {
 			var tmpLastIndex = curveItemList [i].curve.length - 1;
 			var tmpLastValue = curveItemList [i].curve.keys [tmpLastIndex].value;
 			var tmpLastTime = curveItemList [i].curve.keys [tmpLastIndex].time;
@@ -132,9 +132,10 @@ public class CutSceneUnit : MonoBehaviour {
 			for (int j = 1; j < curveItemList [i].curve.length; j++) {
 				var tmpValue = curveItemList [i].curve.keys [j].value;
 				var tmpTime = curveItemList [i].curve.keys [j].time;
+				curveItemList[i].curve.MoveKey(j,new Keyframe(
 				curveItemList [i].curve.MoveKey (j, new Keyframe (Mathf.Clamp (tmpTime + (durationItemList [i].duration - tmpLastTime), 0, durationItemList [i].duration), tmpValue));
 			}
-		}
+		}*/
 
 		//OccurEvent의 크기와 Event Item List의 크기를 같게 조정함
 		for (int i = 0; i < eventItemList.Count; i++) {				
@@ -467,7 +468,6 @@ public class CutSceneUnit : MonoBehaviour {
 			Debug.LogError ("Index : " + index + "  Object haven't Curve Component");
 	}
 
-    // isAction을 true로 만들어서 정의된 행동을 실행하도록 한다
 	public void StartAction(){
 		isAction = true;
 	}

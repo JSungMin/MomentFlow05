@@ -60,7 +60,9 @@ public class Controller2D : MonoBehaviour {
 				float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
 				if (i == 0 && slopeAngle <= maxClimbAngle) {
 					if(TimeLayer.EqualTimeLayer(pTimeLayer,hit.collider.transform.GetComponentInParent<TimeLayer>())||
-						hit.collider.CompareTag("Ground")||hit.collider.CompareTag("GrabableGround")){
+						hit.collider.CompareTag("Ground")||hit.collider.CompareTag("GrabableGround")||
+						hit.collider.CompareTag("Bound")
+					){
 						if (collisions.descendingSlope) {
 							collisions.descendingSlope = false;
 							velocity = collisions.velocityOld;
@@ -78,7 +80,8 @@ public class Controller2D : MonoBehaviour {
 
 				if (!collisions.climbingSlope || slopeAngle > maxClimbAngle) {
 					if(TimeLayer.EqualTimeLayer(pTimeLayer,hit.collider.transform.GetComponentInParent<TimeLayer>())||
-						hit.collider.CompareTag("Ground")||hit.collider.CompareTag("GrabableGround")){
+						hit.collider.CompareTag("Ground")||hit.collider.CompareTag("GrabableGround")||
+						hit.collider.CompareTag("Bound")){
 						velocity.x = (hit.distance - skinWidth) * directionX;
 						rayLength = hit.distance;
 
@@ -110,7 +113,9 @@ public class Controller2D : MonoBehaviour {
 			for(int j = 0;j < browseHits[i].Length;j++){
 				if (browseHits[i][j].collider != null) {
 					if (TimeLayer.EqualTimeLayer (browseHits[i][j].collider.GetComponentInParent<TimeLayer>(), pTimeLayer)||
-						browseHits[i][j].collider.CompareTag("Ground")||browseHits[i][j].collider.CompareTag("GrabableGround")) {
+						browseHits[i][j].collider.CompareTag("Ground")||browseHits[i][j].collider.CompareTag("GrabableGround")||
+						browseHits[i][j].collider.CompareTag("Bound")
+					) {
 						velocity.y = (browseHits[i][j].distance - skinWidth) * directionY;
 						rayLength = browseHits[i][j].distance;
 
@@ -132,7 +137,9 @@ public class Controller2D : MonoBehaviour {
 
 			if (hit) {
 				if (TimeLayer.EqualTimeLayer (hit.collider.transform.GetComponentInParent<TimeLayer>(), pTimeLayer)||
-					hit.collider.CompareTag("Ground")) {
+					hit.collider.CompareTag("Ground")||
+					hit.collider.CompareTag("Bound")
+				) {
 					float slopeAngle = Vector2.Angle(hit.normal,Vector2.up);
 					if (slopeAngle != collisions.slopeAngle) {
 						velocity.x = (hit.distance - skinWidth) * directionX;

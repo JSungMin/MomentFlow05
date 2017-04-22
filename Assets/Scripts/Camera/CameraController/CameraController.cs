@@ -12,11 +12,6 @@ public class CameraController : MonoBehaviour
 	public Vector3 offset;
     public List<GameObject> Player;
 
-    public float rectLeftx, rectLefty;
-    public float rectRightx, rectRighty;
-
-    public const float rectLimit = 3.0f;
-
 	public AnimationCurve zoomInCurve;
 
 	public float tape = 0;
@@ -26,9 +21,13 @@ public class CameraController : MonoBehaviour
 	public bool isZoomIn = false;
 	public bool isFixedZoomIn = false;
 	public bool isShake = false;
+	public bool isBlured = false;
+
 
 	public Vector3 shakeDirection;
 	public AnimationCurve shakeAmount;
+
+	public AnimationCurve blurCurve;
 
 	public Vector3 centerPosition;
 
@@ -192,6 +191,8 @@ public class CameraController : MonoBehaviour
 		InitCenterPosition ();
 	}
 
+	float blurTape = 0;
+
     void Update()
     {
 		//if ray's collision object has "Bound" Tag then return isLeft = true bla bla bla..
@@ -230,6 +231,15 @@ public class CameraController : MonoBehaviour
 				shakeTape = 0;
 				isShake = false;
 				shakeDirection = Vector3.zero;
+			}
+		}
+		if(isBlured){
+			if (blurTape <= 0.5f) {
+				GetComponent<UnityStandardAssets.ImageEffects.BlurOptimized> ().blurSize = blurCurve.Evaluate (blurTape / 0.5f);
+				blurTape += Time.deltaTime;
+			} else {
+				blurTape = 0;
+				isBlured = false;
 			}
 		}
     }

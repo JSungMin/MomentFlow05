@@ -50,17 +50,23 @@ public class AnimationBase : MonoBehaviour
     {
         if (dir != Direction.Left && isToLeft)
         {
-            skel.state.ClearTracks();
             dir = Direction.Left;
             transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         }
         else
         {
-            skel.state.ClearTracks();
             dir = Direction.Right;
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         }
     }
+
+	public void StopAnimation(){
+		SetAnimationTimeScale (0);
+	}
+
+	public void SetAnimationTimeScale(float value){
+		skel.AnimationState.TimeScale = value;
+	}
 
 	public void PastColor(){
 		setAnimation (0, "PastColor", false, 1);
@@ -72,7 +78,8 @@ public class AnimationBase : MonoBehaviour
 
     // idle 애니메이션을 실행시킨다
 	public void Idle(){
-        setAnimation(1, charAnimName + "_Idle", true, 1);
+        //setAnimation(1, charAnimName + "_Idle", true, 1);
+		setAnimation(1, "Idle", true, 1);
 	}
 
 	public void Walk(){
@@ -84,7 +91,8 @@ public class AnimationBase : MonoBehaviour
 	}
 
 	public void Run(){
-		setAnimation (1, charAnimName + "_Run", true, 1);
+		//setAnimation (1, charAnimName + "_Run", true, 1);
+		setAnimation (1, "Run", true, 1);
 	}
 
 	public void Shoot(){

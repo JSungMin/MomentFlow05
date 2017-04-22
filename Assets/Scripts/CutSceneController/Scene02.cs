@@ -8,11 +8,11 @@ public class Scene02 : MonoBehaviour
 
     private float paperReadDuration = 3.0f;
     private float dialogueShowDuration = 2.0f;
-    private float passengerPickUpDuration = 2.0f;
+    private float passengerPickUpDuration = 1.5f;
 
     public BubbleDialogue stopBusDialogue;
     public GameObject[] passengers;
-    private CutSceneUnit[] passengersCutSceneUnit;
+	private CutSceneUnit[] passengersCutSceneUnit;
     private AnimationBase[] passengersAnim;
 
     private int offset = 0;
@@ -78,6 +78,7 @@ public class Scene02 : MonoBehaviour
     {
         for (int i = 0; i < passengersCutSceneUnit.Length; i++)
         {
+			passengers [i].SetActive (true);
             passengersCutSceneUnit[i].StartAction();
             yield return new WaitForSeconds(passengerPickUpDuration);
         }
@@ -85,7 +86,12 @@ public class Scene02 : MonoBehaviour
 
     private IEnumerator StopTime()
     {
-        yield return new WaitForSeconds(1.0f);
+		Camera.main.GetComponent<CameraController> ().isBlured = true;
+		for(int i = 0; i < passengersCutSceneUnit.Length; i++){
+			passengersCutSceneUnit [i].PasueAction ();
+			passengersAnim [i].StopAnimation();
+		}
+		yield return new WaitForSeconds(1);
     }
 
     private IEnumerator PickUpLobo()
