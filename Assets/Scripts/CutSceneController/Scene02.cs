@@ -8,15 +8,18 @@ public class Scene02 : MonoBehaviour
 
     private float paperReadDuration = 3.0f;
     private float dialogueShowDuration = 2.0f;
-    private float passengerPickUpDuration = 1.5f;
+    private float passengerPickUpDuration = 3f;
 
     public BubbleDialogue stopBusDialogue;
-    public GameObject[] passengers;
+    
+	public CutSceneUnit busUnit;
+
+	public CutSceneUnit[] watcherAgentUnits;
+	public CutSceneUnit roboUnit;
+
+	public GameObject[] passengers;
 	private CutSceneUnit[] passengersCutSceneUnit;
     private AnimationBase[] passengersAnim;
-
-    private int offset = 0;
-    private bool isRoutineOver = false;
 
     private void Awake()
     {
@@ -34,8 +37,17 @@ public class Scene02 : MonoBehaviour
 
     private void Start()
     {
-        SendToProcessCoroutine(UntilLoboFirstDialogue());
+		StartCoroutine(UntilLoboFirstDialogue());
     }
+
+	private IEnumerator WaitForClick(){
+		while(true){
+			if(Input.GetMouseButtonDown(0)){
+				break;
+			}
+			yield return null;
+		}
+	}
 
     // 로보가 처음 대사를 하기 전까지의 일련의 행동들
     private IEnumerator UntilLoboFirstDialogue()
@@ -49,10 +61,16 @@ public class Scene02 : MonoBehaviour
         yield return StartCoroutine(PickUpPassengers());
 
         yield return StartCoroutine(StopTime());
+
+		yield return StartCoroutine (MakeHansClosePaper());
+
+		yield return StartCoroutine (PickUpAgentsAndRobo());
     }
 
     private IEnumerator MakeHansReadPaper()
     {
+		hansAnim.OpenPaper ();
+		yield return new WaitForSeconds (1);
         hansAnim.ReadPaper();
 
         yield return new WaitForSeconds(paperReadDuration);
@@ -91,44 +109,28 @@ public class Scene02 : MonoBehaviour
 			passengersCutSceneUnit [i].PasueAction ();
 			passengersAnim [i].StopAnimation();
 		}
+		busUnit.PasueAction ();
 		yield return new WaitForSeconds(1);
     }
+
+	private IEnumerator MakeHansClosePaper(){
+		hansAnim.ClosePaper ();
+		yield return new WaitForSeconds(4.5f);
+	}
+
+	private IEnumerator PickUpAgentsAndRobo(){
+		roboUnit.gameObject.SetActive (true);
+		roboUnit.StartAction ();
+		for(int i = 0; i < watcherAgentUnits.Length;i++){
+			yield return new WaitForSeconds (0.5f);
+			watcherAgentUnits [i].gameObject.SetActive (true);
+			watcherAgentUnits [i].StartAction ();
+		}
+		yield return new WaitForSeconds (2);
+	}
 
     private IEnumerator PickUpLobo()
     {
         yield return new WaitForSeconds(1.0f);
-    }
-    
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (isRoutineOver)
-            {
-                offset++;
-                isRoutineOver = false;
-            }
-            else
-            {
-                switch (offset)
-                {
-                    case 1:
-                        break;
-                    default:
-                        break;
-                }   
-            }
-        }
-    }
-    
-    private void SendToProcessCoroutine(IEnumerator ienum)
-    {
-        StartCoroutine(ProcessCoroutine(ienum));
-    }
-
-    private IEnumerator ProcessCoroutine(IEnumerator ienum)
-    {
-        yield return StartCoroutine(ienum);
-        isRoutineOver = true;
     }
 }

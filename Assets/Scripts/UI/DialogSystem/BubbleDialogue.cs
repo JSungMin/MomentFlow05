@@ -49,7 +49,7 @@ public class BubbleDialogue : MonoBehaviour
 
     private void Update()
     {
-		var followPos = followObject.transform.position + Vector3.up * 0.5f;
+		var followPos = followObject.transform.position;
 		followPos.z = transform.position.z;
 		transform.position = followPos;
     }

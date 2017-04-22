@@ -1,0 +1,9 @@
+__Page_Desc;;
+__Line_NpcName;_Eng;NPC Name
+;;
+__Page_Welcome;;
+__Line_NpcAnswer;_Eng;NPC Say
+__Line_Common;_Eng;Leave
+;;
+__Page_Leave;;
+__Line_Effect;_Exit;

@@ -20,21 +20,21 @@ Agent/Leg_Straight
   index: -1
 Agent/LowerArm_Left
   rotate: true
-  xy: 771, 132
+  xy: 1742, 75
   size: 35, 65
   orig: 35, 65
   offset: 0, 0
   index: -1
 Agent/LowerArm_Right
   rotate: false
-  xy: 1816, 179
+  xy: 1821, 102
   size: 40, 75
   orig: 40, 75
   offset: 0, 0
   index: -1
 Agent/LowerLeg
   rotate: true
-  xy: 1366, 132
+  xy: 926, 132
   size: 45, 65
   orig: 45, 65
   offset: 0, 0
@@ -48,14 +48,14 @@ Agent/Torso
   index: -1
 Agent/UpperArm_Left
   rotate: true
-  xy: 1940, 177
+  xy: 1863, 90
   size: 35, 75
   orig: 35, 75
   offset: 0, 0
   index: -1
 Agent/UpperArm_Right
   rotate: true
-  xy: 1858, 219
+  xy: 841, 137
   size: 35, 80
   orig: 35, 80
   offset: 0, 0
@@ -76,14 +76,14 @@ Bag
   index: -1
 Bottom
   rotate: true
-  xy: 2017, 174
+  xy: 1940, 87
   size: 80, 20
   orig: 80, 20
   offset: 0, 0
   index: -1
 Criminal/Bottom
   rotate: false
-  xy: 1130, 157
+  xy: 632, 135
   size: 80, 20
   orig: 80, 20
   offset: 0, 0
@@ -96,85 +96,85 @@ Criminal/Head
   offset: 0, 0
   index: -1
 Criminal/Leg_Straight
-  rotate: true
-  xy: 495, 127
+  rotate: false
+  xy: 1618, 112
   size: 45, 90
   orig: 45, 90
   offset: 0, 0
   index: -1
 Criminal/LowerArm_Left
-  rotate: true
-  xy: 838, 132
+  rotate: false
+  xy: 1481, 112
   size: 35, 65
   orig: 35, 65
   offset: 0, 0
   index: -1
 Criminal/LowerArm_Right
   rotate: true
-  xy: 1940, 214
+  xy: 1863, 127
   size: 40, 75
   orig: 40, 75
   offset: 0, 0
   index: -1
 Criminal/LowerLeg
   rotate: true
-  xy: 532, 3
+  xy: 993, 132
   size: 45, 65
   orig: 45, 65
   offset: 0, 0
   index: -1
 Criminal/Sit_LeftArm
   rotate: true
-  xy: 1344, 179
+  xy: 1770, 179
   size: 75, 95
   orig: 75, 95
   offset: 0, 0
   index: -1
 Criminal/Sit_Leg
   rotate: false
-  xy: 916, 169
+  xy: 1190, 169
   size: 105, 85
   orig: 105, 85
   offset: 0, 0
   index: -1
 Criminal/Sit_RightArm
   rotate: true
-  xy: 1538, 169
+  xy: 1867, 169
   size: 85, 95
   orig: 85, 95
   offset: 0, 0
   index: -1
 Criminal/Torso
   rotate: true
-  xy: 495, 174
+  xy: 632, 174
   size: 80, 145
   orig: 80, 145
   offset: 0, 0
   index: -1
 Criminal/UpperArm_Left
   rotate: true
-  xy: 1212, 142
+  xy: 1962, 80
   size: 35, 75
   orig: 35, 75
   offset: 0, 0
   index: -1
 Criminal/UpperArm_Right
   rotate: false
-  xy: 1779, 164
+  xy: 1712, 122
   size: 35, 90
   orig: 35, 90
   offset: 0, 0
   index: -1
 Criminal/UpperLeg
   rotate: true
-  xy: 1039, 137
+  xy: 1809, 70
   size: 30, 45
   orig: 30, 45
   offset: 0, 0
   index: -1
 Hat
   rotate: false
-  xy: 789, 169
+  xy: 1063, 169
   size: 125, 85
   orig: 125, 85
   offset: 0, 0
@@ -188,28 +188,28 @@ Head
   index: -1
 Leg_Straight
   rotate: false
-  xy: 1732, 164
+  xy: 1665, 122
   size: 45, 90
   orig: 45, 90
   offset: 0, 0
   index: -1
 LowerArm_Left
   rotate: true
-  xy: 905, 132
+  xy: 1060, 132
   size: 35, 65
   orig: 35, 65
   offset: 0, 0
   index: -1
 LowerArm_Right
-  rotate: false
-  xy: 532, 50
+  rotate: true
+  xy: 1962, 117
   size: 40, 75
   orig: 40, 75
   offset: 0, 0
   index: -1
 LowerLeg
-  rotate: false
-  xy: 1587, 102
+  rotate: true
+  xy: 1127, 122
   size: 45, 65
   orig: 45, 65
   offset: 0, 0
@@ -230,28 +230,28 @@ OverSeer/Head_noEye
   index: -1
 OverSeer/Leg_Straight
   rotate: true
-  xy: 587, 132
+  xy: 532, 5
   size: 40, 90
   orig: 40, 90
   offset: 0, 0
   index: -1
 OverSeer/LowerArm_Left
   rotate: true
-  xy: 972, 132
+  xy: 1261, 132
   size: 35, 65
   orig: 35, 65
   offset: 0, 0
   index: -1
 OverSeer/LowerArm_Right
-  rotate: true
-  xy: 1289, 137
+  rotate: false
+  xy: 629, 58
   size: 40, 75
   orig: 40, 75
   offset: 0, 0
   index: -1
 OverSeer/LowerLeg
   rotate: true
-  xy: 1634, 112
+  xy: 1194, 122
   size: 45, 65
   orig: 45, 65
   offset: 0, 0
@@ -265,84 +265,140 @@ OverSeer/Torso
   index: -1
 OverSeer/UpperArm_Left
   rotate: true
-  xy: 1433, 132
+  xy: 1404, 142
   size: 35, 75
   orig: 35, 75
   offset: 0, 0
   index: -1
 OverSeer/UpperArm_Right
   rotate: true
-  xy: 1858, 182
+  xy: 629, 21
   size: 35, 80
   orig: 35, 80
   offset: 0, 0
   index: -1
 OverSeer/UpperLeg
-  rotate: false
-  xy: 1701, 112
+  rotate: true
+  xy: 1856, 58
   size: 30, 45
   orig: 30, 45
   offset: 0, 0
   index: -1
-Sit_LeftArm
+Paper_LowerArm_Right1
   rotate: true
-  xy: 1247, 179
+  xy: 671, 58
+  size: 75, 40
+  orig: 75, 40
+  offset: 0, 0
+  index: -1
+Paper_LowerArm_Right2
+  rotate: true
+  xy: 1749, 112
+  size: 65, 70
+  orig: 65, 70
+  offset: 0, 0
+  index: -1
+Paper_NewPaper_fold1
+  rotate: false
+  xy: 1658, 214
+  size: 110, 40
+  orig: 110, 40
+  offset: 0, 0
+  index: -1
+Paper_NewPaper_fold2
+  rotate: true
+  xy: 926, 179
+  size: 75, 135
+  orig: 75, 135
+  offset: 0, 0
+  index: -1
+Paper_NewPaper_spread
+  rotate: true
+  xy: 495, 144
+  size: 110, 135
+  orig: 110, 135
+  offset: 0, 0
+  index: -1
+Paper_NewPaper_spreadup1
+  rotate: true
+  xy: 1521, 204
+  size: 50, 135
+  orig: 50, 135
+  offset: 0, 0
+  index: -1
+Paper_NewPaper_spreadup2
+  rotate: true
+  xy: 632, 157
+  size: 15, 115
+  orig: 15, 115
+  offset: 0, 0
+  index: -1
+Paper_UpperArm_Right
+  rotate: true
+  xy: 1328, 132
+  size: 35, 65
+  orig: 35, 65
+  offset: 0, 0
+  index: -1
+Sit_LeftArm
+  rotate: false
+  xy: 1964, 159
   size: 75, 95
   orig: 75, 95
   offset: 0, 0
   index: -1
 Sit_Leg
   rotate: false
-  xy: 1023, 169
+  xy: 1297, 169
   size: 105, 85
   orig: 105, 85
   offset: 0, 0
   index: -1
 Sit_RightArm
   rotate: true
-  xy: 1441, 169
+  xy: 1521, 117
   size: 85, 95
   orig: 85, 95
   offset: 0, 0
   index: -1
 String_Left
   rotate: false
-  xy: 1635, 159
+  xy: 532, 47
   size: 95, 95
   orig: 95, 95
   offset: 0, 0
   index: -1
 String_Right
   rotate: true
-  xy: 1130, 179
+  xy: 1404, 179
   size: 75, 115
   orig: 75, 115
   offset: 0, 0
   index: -1
 Torso
   rotate: true
-  xy: 642, 174
+  xy: 779, 174
   size: 80, 145
   orig: 80, 145
   offset: 0, 0
   index: -1
 UpperArm_Left
   rotate: true
-  xy: 1510, 132
+  xy: 1665, 85
   size: 35, 75
   orig: 35, 75
   offset: 0, 0
   index: -1
 UpperArm_Right
   rotate: true
-  xy: 679, 137
+  xy: 749, 137
   size: 35, 90
   orig: 35, 90
   offset: 0, 0
   index: -1
 UpperLeg
   rotate: false
-  xy: 1733, 117
+  xy: 1903, 43
   size: 30, 45
   orig: 30, 45
   offset: 0, 0
