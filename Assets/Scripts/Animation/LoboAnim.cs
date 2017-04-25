@@ -19,7 +19,7 @@ public class LoboAnim : AnimationBase {
 	}
 
 	public void Walk(){
-		setAnimation (1, charAnimName + "Walk", true, 1);
+		setAnimation (1, "Lobo_Walk", true, 1);
 	}
 
 	public void Run(){
