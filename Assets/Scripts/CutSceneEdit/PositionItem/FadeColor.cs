@@ -28,7 +28,7 @@ public class FadeColor : BaseUnit {
 		
 	void Update(){
 		#if UNITY_EDITOR
-		if ((isSprite || isUGUI||isNGUI)&&hi.unit.offset == hi.index&&EditorApplication.isPlaying) {
+		if ((isSprite || isUGUI||isNGUI)&&transform.GetComponentInParent<PositionPool>().offset == hi.index&&EditorApplication.isPlaying) {
 			if (hi.unit.timer >= startTime) {
 				if (isSprite) {
 					hi.unit.GetComponent<SpriteRenderer> ().color = color.Evaluate ((hi.unit.timer - startTime) / endTime);
@@ -42,7 +42,7 @@ public class FadeColor : BaseUnit {
 			Debug.LogWarning ("This component only work with Image or SpriteRenderer or UI2DSprite");
 		}
 		#endif
-		if ((isSprite || isUGUI||isNGUI)&&hi.unit.offset == hi.index) {
+		if ((isSprite || isUGUI||isNGUI)&&hi.unit.transform.GetComponentInParent<PositionPool>().offset == hi.index) {
 			if (hi.unit.timer >= startTime) {
 				if (isSprite) {
 					hi.unit.GetComponent<SpriteRenderer> ().color = color.Evaluate ((hi.unit.timer - startTime) / endTime);

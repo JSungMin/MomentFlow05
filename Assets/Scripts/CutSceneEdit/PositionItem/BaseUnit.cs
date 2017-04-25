@@ -16,9 +16,9 @@ public class BaseUnit : MonoBehaviour {
 	public void InitUnit(){
 		if (!isInit) {
 			hi = GetComponent<HierarchySystem> ();
-			if (hi.index >= hi.unit.durationItemList.Count)
+			if (hi.index >= transform.GetComponentInParent<PositionPool>().durationItemList.Count)
 				hi.unit.AddFlatPoint (hi.index + 1);
-			lineDuration = hi.unit.durationItemList [hi.index].duration;
+			lineDuration =transform.GetComponentInParent<PositionPool>().durationItemList [hi.index].duration;
 			isInit = true;
 		}
 	}

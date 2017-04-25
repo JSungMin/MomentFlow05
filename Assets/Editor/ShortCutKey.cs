@@ -15,6 +15,7 @@ public class ShortCutKey : Editor
 	bool isD = true;
 	bool isL = true;
 
+	private PositionPool posPool;
 
 	Mesh CreateMesh(float width, float height, float start){
 		Mesh m = new Mesh();
@@ -126,8 +127,8 @@ public class ShortCutKey : Editor
 		}
 	}
 	void ShowFadeColor(HierarchySystem hi){
-		var nowPos = hi.unit.positionItemList [hi.index].transform.position;
-		var nextPos = hi.unit.positionItemList [hi.index + 1].transform.position;
+		var nowPos = posPool.positionItemList [hi.index].transform.position;
+		var nextPos = posPool.positionItemList [hi.index + 1].transform.position;
 
 		float size = HandleUtility.GetHandleSize (hi.transform.position);
 
@@ -140,7 +141,7 @@ public class ShortCutKey : Editor
 				nowPos.y = nextPos.y;
 			}
 			Handles.DrawDottedLine (nowPos, nextPos, 5 / size);
-			int timeOffset = (int)(hi.unit.durationItemList [hi.index].duration / 0.1f) + 1;
+			int timeOffset = (int)(posPool.durationItemList [hi.index].duration / 0.1f) + 1;
 			float normalSize = (nextPos.x - nowPos.x) / timeOffset;
 
 			GUIStyle newStyle = new GUIStyle ();
@@ -164,7 +165,7 @@ public class ShortCutKey : Editor
 				nowPos.x = nextPos.x;
 			}
 			Handles.DrawDottedLine (nowPos, nextPos, 5 / size);
-			int timeOffset = (int)(hi.unit.durationItemList [hi.index].duration / 0.1f) + 1;
+			int timeOffset = (int)(posPool.durationItemList [hi.index].duration / 0.1f) + 1;
 			float normalSize = (nextPos.y- nowPos.y) / timeOffset;
 
 			GUIStyle newStyle = new GUIStyle ();
@@ -181,8 +182,8 @@ public class ShortCutKey : Editor
 		if (fc != null) {
 			hi.transform.position = Handles.DoPositionHandle (hi.transform.position, Quaternion.identity);
 
-			var pNowPos = (Mathf.Abs (nextPos.x - nowPos.x) >= Mathf.Abs (nextPos.y - nowPos.y)) ? HandleUtility.WorldToGUIPoint (nowPos + Vector3.right * ((nextPos - nowPos).magnitude) * ((fc.startTime) / (hi.unit.durationItemList [hi.index].duration))) : HandleUtility.WorldToGUIPoint (nowPos + Vector3.up * ((nextPos - nowPos).magnitude) * ((fc.startTime) / (hi.unit.durationItemList [hi.index].duration)));
-			var pNextPos = (Mathf.Abs (nextPos.x - nowPos.x) >= Mathf.Abs (nextPos.y - nowPos.y)) ? HandleUtility.WorldToGUIPoint (nowPos + Vector3.right * ((nextPos - nowPos).magnitude) * ((fc.endTime) / (hi.unit.durationItemList [hi.index].duration))) : HandleUtility.WorldToGUIPoint (nowPos + Vector3.up * ((nextPos - nowPos).magnitude) * ((fc.endTime) / (hi.unit.durationItemList [hi.index].duration)));
+			var pNowPos = (Mathf.Abs (nextPos.x - nowPos.x) >= Mathf.Abs (nextPos.y - nowPos.y)) ? HandleUtility.WorldToGUIPoint (nowPos + Vector3.right * ((nextPos - nowPos).magnitude) * ((fc.startTime) / (posPool.durationItemList [hi.index].duration))) : HandleUtility.WorldToGUIPoint (nowPos + Vector3.up * ((nextPos - nowPos).magnitude) * ((fc.startTime) / (posPool.durationItemList [hi.index].duration)));
+			var pNextPos = (Mathf.Abs (nextPos.x - nowPos.x) >= Mathf.Abs (nextPos.y - nowPos.y)) ? HandleUtility.WorldToGUIPoint (nowPos + Vector3.right * ((nextPos - nowPos).magnitude) * ((fc.endTime) / (posPool.durationItemList [hi.index].duration))) : HandleUtility.WorldToGUIPoint (nowPos + Vector3.up * ((nextPos - nowPos).magnitude) * ((fc.endTime) / (posPool.durationItemList [hi.index].duration)));
 
 			var dis = Vector3.Distance (pNowPos, pNextPos);
 			var dir = (nextPos - nowPos);
@@ -223,8 +224,8 @@ public class ShortCutKey : Editor
 				}
 				Handles.EndGUI ();
 			} else {
-				pNowPos = (Mathf.Abs (nextPos.x - nowPos.x) >= Mathf.Abs (nextPos.y - nowPos.y)) ? HandleUtility.WorldToGUIPoint (nowPos - Vector3.right * ((nextPos - nowPos).magnitude) * ((fc.startTime) / (hi.unit.durationItemList [hi.index].duration))) : HandleUtility.WorldToGUIPoint (nowPos - Vector3.up * ((nextPos - nowPos).magnitude) * ((fc.startTime) / (hi.unit.durationItemList [hi.index].duration)));
-				pNextPos = (Mathf.Abs (nextPos.x - nowPos.x) >= Mathf.Abs (nextPos.y - nowPos.y)) ? HandleUtility.WorldToGUIPoint (nowPos - Vector3.right * ((nextPos - nowPos).magnitude) * ((fc.endTime) / (hi.unit.durationItemList [hi.index].duration))) : HandleUtility.WorldToGUIPoint (nowPos - Vector3.up * ((nextPos - nowPos).magnitude) * ((fc.endTime) / (hi.unit.durationItemList [hi.index].duration)));
+				pNowPos = (Mathf.Abs (nextPos.x - nowPos.x) >= Mathf.Abs (nextPos.y - nowPos.y)) ? HandleUtility.WorldToGUIPoint (nowPos - Vector3.right * ((nextPos - nowPos).magnitude) * ((fc.startTime) / (posPool.durationItemList [hi.index].duration))) : HandleUtility.WorldToGUIPoint (nowPos - Vector3.up * ((nextPos - nowPos).magnitude) * ((fc.startTime) / (posPool.durationItemList [hi.index].duration)));
+				pNextPos = (Mathf.Abs (nextPos.x - nowPos.x) >= Mathf.Abs (nextPos.y - nowPos.y)) ? HandleUtility.WorldToGUIPoint (nowPos - Vector3.right * ((nextPos - nowPos).magnitude) * ((fc.endTime) / (posPool.durationItemList [hi.index].duration))) : HandleUtility.WorldToGUIPoint (nowPos - Vector3.up * ((nextPos - nowPos).magnitude) * ((fc.endTime) / (posPool.durationItemList [hi.index].duration)));
 
 
 				Handles.BeginGUI ();
@@ -269,9 +270,9 @@ public class ShortCutKey : Editor
 		}
 
 		var nowPos = hi.transform.position;
-		var nextPos = hi.unit.positionItemList [hi.index + 1].transform.position;
+		var nextPos = posPool.positionItemList [hi.index + 1].transform.position;
 		var dis = Vector3.Distance (nowPos,nextPos);
-		var pos = nowPos+(nextPos - nowPos).normalized * (dt.delayStartTime/hi.unit.durationItemList[hi.index].duration)*dis;
+		var pos = nowPos+(nextPos - nowPos).normalized * (dt.delayStartTime / posPool.durationItemList[hi.index].duration)*dis;
 
 		float size = HandleUtility.GetHandleSize (pos);
 
@@ -290,8 +291,8 @@ public class ShortCutKey : Editor
 	}
 
 	void ApplyVisualization(HierarchySystem hi){
-		if (hi.unit.Selected) {
-			if (hi.index < hi.unit.positionItemList.Count-1) {
+		if (posPool.selected) {
+			if (hi.index < posPool.positionItemList.Count-1) {
 				ShowFadeColor (hi);
 				ShowDelayTimer (hi);
 			}
@@ -302,6 +303,7 @@ public class ShortCutKey : Editor
 	{
 		#if UNITY_EDITOR
 		var unit = target as HierarchySystem;
+		posPool = unit.GetComponentInParent<PositionPool>();
 		ApplyShortCut (unit);
 		ApplyVisualization (unit);
 		#endif

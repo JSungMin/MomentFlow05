@@ -15,7 +15,7 @@ public class ScaleTrnasform : BaseUnit {
 
 	// Update is called once per frame
 	void Update () {
-		if(hi.unit.offset == hi.index){
+		if(transform.GetComponentInParent<PositionPool>().offset == hi.index){
 			if (hi.unit.timer >= startTime) {
 				transform.localScale = Vector3.Lerp(transform.rotation.eulerAngles, targetScale, scaleSpeedCurve.Evaluate ((hi.unit.timer-startTime)/endTime));
 			}

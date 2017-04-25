@@ -32,7 +32,7 @@ public class FadeView : BaseUnit {
 	
 	// Update is called once per frame
 	void Update () {
-		if(canUse&&hi.unit.offset == hi.index){
+		if(canUse&&transform.GetComponentInParent<PositionPool>().offset == hi.index){
 			if (hi.unit.timer >= startTime) {
 				gapViewSize = endViewSize - startViewSize;
 				if(isOrthographicSize)

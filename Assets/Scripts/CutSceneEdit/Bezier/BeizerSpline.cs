@@ -40,15 +40,15 @@ public class BeizerSpline : MonoBehaviour {
 	public void OnDrawGizmos(){
 		var unit = GetComponent<HierarchySystem> ().unit;
 		var spline = GetComponent<BeizerSpline>();
-		if(spline.GetComponent<HierarchySystem> ().unit.positionItemList.Count-1<spline.GetComponent<HierarchySystem> ().index + 1){
+		if(spline.transform.GetComponentInParent<PositionPool>().positionItemList.Count-1<spline.GetComponent<HierarchySystem> ().index + 1){
 			return;
 		}
-		if (unit.Selected||unit.pinPath) {
+		if (spline.transform.GetComponentInParent<PositionPool>().selected||unit.pinPath) {
 			Vector3 p0 = spline.transform.position;
 			spline.SetControlPoint (0,p0);
 			//Vector3 p1 = (spline.GetControlPoint (1));
 			
-			Vector3 p2 = spline.GetComponent<HierarchySystem> ().unit.positionItemList [spline.GetComponent<HierarchySystem> ().index + 1].transform.position;
+			Vector3 p2 = spline.transform.GetComponentInParent<PositionPool>().positionItemList [spline.GetComponent<HierarchySystem> ().index + 1].transform.position;
 			spline.SetControlPoint (2, p2);
 
 			Vector3 lineStart = spline.GetPoint (0f);

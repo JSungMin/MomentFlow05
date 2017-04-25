@@ -18,7 +18,7 @@ public class BeizerSplineInspector : Editor {
 		spline = target as BeizerSpline;
 		if (spline != null)
 		{
-			if (spline.GetComponent<HierarchySystem>().unit.positionItemList.Count - 1 < spline.GetComponent<HierarchySystem>().index + 1)
+			if (spline.GetComponentInParent<PositionPool>().positionItemList.Count - 1 < spline.GetComponent<HierarchySystem>().index + 1)
 			{
 				return;
 			}
@@ -35,7 +35,7 @@ public class BeizerSplineInspector : Editor {
 
 		Vector3 p1 = ShowPoint(1);
 
-		Vector3 p2 = spline.GetComponent<HierarchySystem> ().unit.positionItemList [spline.GetComponent<HierarchySystem> ().index + 1].transform.position;
+		Vector3 p2 = spline.GetComponentInParent<PositionPool>().positionItemList [spline.GetComponent<HierarchySystem> ().index + 1].transform.position;
 		spline.SetControlPoint (2, p2);
 
 		Handles.color = Color.gray;

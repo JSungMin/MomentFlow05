@@ -26,7 +26,7 @@ public class DelayTimer : MonoBehaviour {
 	}
 
 	void Update(){
-		if (hi.unit.offset == hi.index) {
+		if (transform.GetComponentInParent<PositionPool>().offset == hi.index) {
 			if (hi.unit.isAction) {
 				if (delayStartTime <= hi.unit.timer && !isUsed) {
 					Pasuse ();
