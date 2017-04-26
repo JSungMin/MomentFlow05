@@ -56,8 +56,8 @@ public class CutSceneManager : MonoBehaviour {
 	}
 
 	public void ReSortPosition(){
-		for(int i =0;i<sceneUnitsList.Count;i++){
-			for(int j=0;j<sceneUnitsList[i].positionItemPool.childCount;j++){
+		/*for(int i =0;i<sceneUnitsList.Count;i++){
+			for(int j=0;j<sceneUnitsList[i].tracks[sceneUnitsList[i].nowTrackIndex].transform.childCount;j++){
 				sceneUnitsList [i].positionItemPool.GetChild (j).name = (j + 1).ToString();
 				sceneUnitsList [i].positionItemPool.GetChild (j).GetComponent<HierarchySystem> ().index = j;
 				sceneUnitsList [i].positionItemList [Mathf.Max (0, j - 1)] = new Struct.PositionItem (Mathf.Max (0, j - 1), sceneUnitsList [i].positionItemList [Mathf.Max (0, j - 1)].transform);
@@ -66,7 +66,7 @@ public class CutSceneManager : MonoBehaviour {
 					sceneUnitsList [i].curveItemList [Mathf.Max (0, j - 2)] = new Struct.CurveItem (Mathf.Max (0, j - 2), sceneUnitsList [i].curveItemList [Mathf.Max (0, j - 2)].curve);
 				}
 			}
-		}
+		}*/
 	}
 	public void Update(){
 		playTime += Time.deltaTime;

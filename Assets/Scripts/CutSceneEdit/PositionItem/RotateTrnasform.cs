@@ -15,7 +15,7 @@ public class RotateTrnasform : BaseUnit {
 
 	// Update is called once per frame
 	void Update () {
-		if(hi.unit.offset == hi.index){
+		if(transform.GetComponentInParent<PositionPool>().offset == hi.index){
 			if (hi.unit.timer >= startTime) {
 				transform.rotation = Quaternion.Euler(Vector3.Lerp(transform.rotation.eulerAngles, targetRotation, rotateSpeedCurve.Evaluate ((hi.unit.timer-startTime)/endTime)));
 			}
