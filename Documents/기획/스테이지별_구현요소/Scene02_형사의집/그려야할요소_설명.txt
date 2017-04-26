@@ -1,0 +1,6 @@
+가장 왼쪽이 BedRoom이고
+중간이 LivingRoom
+오른쪽이 Kitchen이다
+
+Kitchen에 들어갈 table은 식탁과 의자이다
+또한 각 방을 연결하는 문의 닫힌 모습과 열리는 애니메이션이 필요하다
