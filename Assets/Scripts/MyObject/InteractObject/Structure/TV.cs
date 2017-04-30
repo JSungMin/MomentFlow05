@@ -17,9 +17,9 @@ public class TV : InteractInterface
 
     private void WatchTV()
     {
-        if (!isInteract)
+        if (!isInteracted)
         {
-            isInteract = true;
+            isInteracted = true;
             Debug.Log("dialogue로 나오겠지 \n사고로 버스가 어쩌고 저쩌고...");
             cellPhone.RingCellPhone();
         }

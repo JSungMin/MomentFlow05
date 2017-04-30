@@ -9,13 +9,13 @@ public class Chair : InteractInterface {
 	public Vector3 direction;
 
 	public void SitDown(){
-		if (!isInteract&&player.state != MyObject.State.Sit) {
+		if (!isInteracted && player.state != MyObject.State.Sit) {
 			player.state = MyObject.State.Sit;
-			isInteract = true;
+            isInteracted = true;
 		}
 	}
 	public void SitUp(){
-		isInteract = false;
+        isInteracted = false;
 		GameObject.FindObjectOfType<InteractiveManager> ().nowInteract = false;
 	}
 

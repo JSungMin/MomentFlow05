@@ -10,17 +10,15 @@ public class BusStop : InteractInterface {
 	public TweenAlpha fadeOutCam;
 
 	public void CallBus(){
-		if (!isInteract) {
+		if (!isInteracted) {
 			fadeOutCam.PlayForward ();
 			busController.state = BusController.BusState.Move;
             bus.StartAction();
-			isInteract = true;
+            isInteracted = true;
 		}
 	}
 
 	public void DropBus(){
-		//isInteract = false;
-		//GameObject.FindObjectOfType<InteractiveManager> ().nowInteract = false;
 	}
 
 	public void NextScene(){

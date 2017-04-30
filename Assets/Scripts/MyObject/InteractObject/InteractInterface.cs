@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class InteractInterface : MonoBehaviour {
     // 이미 인터렉트를 했냐를 구분하는 변수
-	public bool isInteract = false;
+	public bool isInteracted = false;
 
 	public delegate void InteractWithObject();
 	public delegate void StopInteractWithObject ();
@@ -17,6 +17,8 @@ public class InteractInterface : MonoBehaviour {
 
     protected void Awake()
     {
+
+
         if (GetComponent<Outline>() == null)
         {
             outline = gameObject.AddComponent<Outline>();
@@ -25,11 +27,13 @@ public class InteractInterface : MonoBehaviour {
 
     public void Interact()
     {
-        interact();
+        if(interact != null)
+            interact();
     }
     
     public void StopInteract()
     {
-        stopInteract();
+        if(stopInteract != null)
+            stopInteract();
     }
 }

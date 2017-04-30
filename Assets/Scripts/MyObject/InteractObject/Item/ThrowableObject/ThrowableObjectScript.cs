@@ -56,7 +56,7 @@ public class ThrowableObjectScript : InteractInterface {
 
 	//Interact Function
 	public void GrabObject(){
-		if (!isInteract) {
+		if (!isInteracted) {
 			Debug.Log ("Grab");
 			
 			transform.parent = playerHands.transform;
@@ -69,7 +69,7 @@ public class ThrowableObjectScript : InteractInterface {
 	}
 	//Stop Interact Function
 	public void ReleaseObject(){
-		isInteract = false;
+        isInteracted = false;
 		GameObject.FindObjectOfType<InteractiveManager> ().nowInteract = false;
 		transform.parent = initRootTrans;
 
