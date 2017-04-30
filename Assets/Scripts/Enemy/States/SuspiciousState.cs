@@ -22,9 +22,9 @@ public class SuspiciousState : IState {
 	public bool CheckArrive(){
 		var ePos = enemyObj.transform.position;
 		var tPos = targetPos;
-		ePos.y = 0;
-		tPos.y = 0;
-		if (Vector3.Distance (ePos, tPos)>=0.3f) {
+		ePos.z = 0;
+		tPos.z = 0;
+		if (Vector3.Distance (ePos, tPos)>=0.5f) {
 			CalculateDirection ();
 			return false;
 		}

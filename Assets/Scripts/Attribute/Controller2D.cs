@@ -114,8 +114,11 @@ public class Controller2D : MonoBehaviour {
 				if (browseHits[i][j].collider != null) {
 					if (TimeLayer.EqualTimeLayer (browseHits[i][j].collider.GetComponentInParent<TimeLayer>(), pTimeLayer)||
 						browseHits[i][j].collider.CompareTag("Ground")||browseHits[i][j].collider.CompareTag("GrabableGround")||
-						browseHits[i][j].collider.CompareTag("Bound")
-					) {
+						browseHits[i][j].collider.CompareTag("Bound")) 
+					{
+						if(browseHits[i][j].collider.CompareTag("PassableCollision") && velocity.y >= 0){
+							break;
+						}
 						velocity.y = (browseHits[i][j].distance - skinWidth) * directionY;
 						rayLength = browseHits[i][j].distance;
 

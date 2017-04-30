@@ -36,9 +36,12 @@ public class AttackState : IState {
 			var bInfo = enemyScript.FindNearestCollisionInBrowseInfos (enemyScript.moveSpeed * 1.2f);
 			if (enemyScript.attackRange <= Vector2.Distance (enemyScript.playerObject.transform.position, enemyObj.transform.position)) {
 				if (bInfo.layer != LayerMask.NameToLayer ("Collision")) {
-					Run (enemyObj.transform, (enemyScript.playerObject.transform.position - enemyObj.transform.position).normalized * enemyScript.moveSpeed * 1.2f);
+					dir = (enemyScript.playerObject.transform.position - enemyObj.transform.position).normalized;
+					dir.x = (dir.x > 0) ? 1 : ((dir.x < 0 ) ? -1 : 0);
+					Run (enemyObj.transform, dir * enemyScript.moveSpeed * 1.2f);
 				}
-			} else {
+			}
+			else {
 				Idle();
 				if (fireDelayTimer >= fireDelay) {
 					if (attackType == EnemyAttackType.Gun) {

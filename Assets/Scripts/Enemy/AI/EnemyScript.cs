@@ -109,6 +109,10 @@ public class EnemyScript : MonoBehaviour {
 		transitionDurationTimer = 0;
 	}
 
+	private void BackToStartPoint(){
+
+	}
+
 	public void SetDefaultState(){
 		switch(defaultState){
 		case State.Idle:
@@ -129,10 +133,10 @@ public class EnemyScript : MonoBehaviour {
 	}
 
 	public void PlayEmotion(string animName){
-		if(!emotionBox.activeSelf){
-			emotionBox.SetActive (true);
-			emotionBox.GetComponentInChildren<AnimationBase> ().setAnimation (0, animName, false, 1);
-		}
+		//if(!emotionBox.activeSelf){
+		//	emotionBox.SetActive (true);
+		//	emotionBox.GetComponentInChildren<AnimationBase> ().setAnimation (0, animName, false, 1);
+		//}
 	}
 
 	public void StopEmotion(){

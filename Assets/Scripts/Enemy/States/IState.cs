@@ -7,6 +7,9 @@ public abstract class IState
     protected GameObject enemyObj;
     protected EnemyScript enemyScript;
 
+	protected Vector3 defaultDir;
+	protected Vector3 defaultPosition;
+
 	public Vector3 dir;
 	protected float speed;
 
@@ -18,6 +21,8 @@ public abstract class IState
 	public IState(GameObject obj) 
 	{
         enemyObj = obj;
+		defaultDir = obj.transform.localScale;
+		defaultPosition = obj.transform.position;
 		enemyScript = enemyObj.GetComponent<EnemyScript> ();
 		if(enemyScript == null){
 			enemyScript = enemyObj.transform.GetComponentInChildren<EnemyScript> ();
@@ -51,7 +56,6 @@ public abstract class IState
 	public void SuspiciousWalk(Transform t,Vector3 velocity)
 	{
 		enemyScript.velocity.x = velocity.x;
-
 		enemyScript.anim.SuspiciousWalk();
         t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
 
@@ -59,7 +63,6 @@ public abstract class IState
 	public void Run(Transform t,Vector3 velocity)
 	{
 		enemyScript.velocity.x = velocity.x;
-
 		enemyScript.anim.Run();
 
         t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
