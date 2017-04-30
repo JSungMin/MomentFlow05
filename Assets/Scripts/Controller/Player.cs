@@ -50,8 +50,24 @@ public class Player : MyObject
 	public bool isJump;
 	bool isAir = false;
 
+	[HideInInspector]
+	public Vector2 input;
+	float saveDelay = 0;
+
+	float timer;
 
 	public AnimationState animationState;
+
+	void Start () {
+		pTimeLayer = transform.GetComponentInParent<TimeLayer> ();
+		animator = GetComponent<Animator> ();
+		controller = GetComponent<Controller2D> ();
+		pBoxCollider = GetComponent<BoxCollider2D> ();
+		INIT_COLLIDER_OFFSET = pBoxCollider.offset;
+		SIT_COLLIDER_OFFSET = INIT_COLLIDER_OFFSET - Vector2.up*0.08f;
+		gravity = -9.8f;
+		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
+	}
 
 	public void Damaged(float dAmount){
 		if (hp - dAmount <= 0){
@@ -75,11 +91,6 @@ public class Player : MyObject
 			isAir = true;
 		}
 	}
-	[HideInInspector]
-	public Vector2 input;
-	float saveDelay = 0;
-
-	float timer;
 
 	void ProcessMove(){
 		input = new Vector2 (Input.GetAxis ("Horizontal"), Input.GetAxis ("Vertical"));
@@ -97,7 +108,6 @@ public class Player : MyObject
 			else
 				state = State.Idle;
 		}
-
 	}
 
 	float jumpSaveDelay=0;
@@ -239,26 +249,30 @@ public class Player : MyObject
 		}
 	}
     
+	bool IsVerticalCollision(){
+		for(int i = 0; i < 3; i++){
+			var hits = Physics2D.RaycastAll (Vector3.up*pBoxCollider.bounds.max.y + Vector3.right*pBoxCollider.bounds.min.x * (i / 2), Vector2.up,(INIT_COLLIDER_SIZE.y - SIT_COLLIDER_SIZE.y),controller.collisionMask);
+			for(int j = 0; j < hits.Length; j++){
+				var hit = hits [j];
+				if(hit.collider != null && TimeLayer.EqualTimeLayer(hit.collider.GetComponentInParent<TimeLayer>(),pTimeLayer)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	void ProcessSit(){
 		if (Input.GetKey (KeyCode.S) && !isAir) {
 			isSit = true;
 		} 
 		else {
-			isSit = false;
+			if (!IsVerticalCollision()) {
+				isSit = false;
+			}
 		}
 		Sit ();
 	}
-
-	void Start () {
-		pTimeLayer = transform.GetComponentInParent<TimeLayer> ();
-		animator = GetComponent<Animator> ();
-		controller = GetComponent<Controller2D> ();
-		pBoxCollider = GetComponent<BoxCollider2D> ();
-		INIT_COLLIDER_OFFSET = pBoxCollider.offset;
-		SIT_COLLIDER_OFFSET = INIT_COLLIDER_OFFSET - Vector2.up*0.08f;
-		gravity = -9.8f;
-		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
-    }
 
 	void Update () {
 		if (hp <= 0) {

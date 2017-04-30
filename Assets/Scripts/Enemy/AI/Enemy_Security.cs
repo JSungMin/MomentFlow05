@@ -49,7 +49,7 @@ public class Enemy_Security : EnemyScript {
 			GetComponentInChildren<SkeletonGhost> ().ghostingEnabled = true;
 		}
 
-		if(hp<=0){
+		if(hp <= 0){
 			SetState (State.Stun);
 		}
 		//Detection 이후 일정 시간이 지나면 isDetection = false And Patrol 상태로 만든다.
@@ -90,6 +90,12 @@ public class Enemy_Security : EnemyScript {
         switch (enemyState)
         {
         case State.Idle:
+			if(IsFindPlayer(findOutSight)){
+				findOutGauge = 50;
+				SetState (State.Suspicious);
+				GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo (playerObject.transform.position, moveSpeed * 0.5f);
+				break;
+			}
 			SetState(State.Idle);       
         	break;
 		case State.Patrol:
@@ -103,9 +109,9 @@ public class Enemy_Security : EnemyScript {
 						SetState (State.Suspicious);
 						transitionDurationTimer = 0;
 						GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo (playerObject.transform.position, moveSpeed * 0.5f);
-						StopEmotion ();
+						//StopEmotion ();
 					} else {
-						PlayEmotion ("Question2");
+						//PlayEmotion ("Question2");
 						transitionDurationTimer += Time.deltaTime;
 						findOutGauge = Mathf.Lerp (findOutGauge, 50, Time.deltaTime * findOutGaugeIncrement * 0.1f);
 						anim.SuspiciousWalk();
@@ -145,19 +151,20 @@ public class Enemy_Security : EnemyScript {
 			if(isFindPlayer && 
 				playerObject.GetComponent<Player>().state != MyObject.State.Rolling){
 				findOutGauge = Mathf.Lerp(findOutGauge,110, findOutGaugeIncrement*Time.deltaTime*3/(FindPlayerInBrowseInfos(1).distance));
-				GetSpecifiedState<SuspiciousState>(State.Suspicious).InitSuspiciousInfo (playerObject.transform.position, moveSpeed);
+				GetSpecifiedState<SuspiciousState>(State.Suspicious).InitSuspiciousInfo (playerObject.transform.position, moveSpeed*0.5f);
 			} 
 			else {
+				Debug.Log ("Not Founded");
 				if(GetSpecifiedState<SuspiciousState>(State.Suspicious).CheckArrive()){
 					if (transitionDurationTimer >= transitionDuration) {
-						StopEmotion ();
+						//StopEmotion ();
 						SetState(State.Patrol);  //then isDetection in IState[3] will be true 
 						GetSpecifiedState<PatrolState>(State.Patrol).InitPatrolInfo (patrolDir, moveSpeed);
 						InitToTransition ();
 					} else {
 						transitionDurationTimer += Time.deltaTime*0.25f;
 						anim.Idle ();
-						PlayEmotion ("Confuse2");
+						//PlayEmotion ("Confuse2");
 					}
 				}
 			}

@@ -83,20 +83,19 @@ public class AnimationBase : MonoBehaviour
 	}
 
 	public void Walk(){
-		setAnimation (1, charAnimName + "_Walk", true, 1);
+		setAnimation (1, charAnimName + "Walk", true, 1);
 	}
 
 	public void SuspiciousWalk(){
-        setAnimation(1, charAnimName + "_Suspicious_Walk", true, 1);
+        setAnimation(1, charAnimName + "Suspicious_Walk", true, 1);
 	}
 
 	public void Run(){
-		//setAnimation (1, charAnimName + "_Run", true, 1);
-		setAnimation (1, "Run", true, 1);
+		setAnimation (1, charAnimName + "Run", true, 1);
 	}
 
 	public void Shoot(){
-        setAnimation(1, charAnimName + "_Shoot", true, 1);
+        setAnimation(1, charAnimName + "Shoot", true, 1);
 	}
 
 	public void Stun(){
