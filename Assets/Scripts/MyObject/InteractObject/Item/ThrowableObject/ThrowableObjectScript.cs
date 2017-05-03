@@ -111,7 +111,6 @@ public class ThrowableObjectScript : InteractInterface {
 			}
 		}
 		findOutIndex = colList.IndexOf(colList[index]);
-		Debug.Log (colList.Count + "Count");
 		return colList [index];
 	}
 
@@ -131,7 +130,7 @@ public class ThrowableObjectScript : InteractInterface {
 		Vector2 xDir = Vector2.zero;
 		Vector2 yDir = Vector2.zero;
 
-		for(int i =0;i<rayDensity;i++){
+		for (int i =0; i < rayDensity; i++){
 
 			Collider2D[] tmpColsX = new Collider2D[0];
 			Collider2D[] tmpColsY = new Collider2D[0];
@@ -144,7 +143,8 @@ public class ThrowableObjectScript : InteractInterface {
 				for(int j = 0;j<tmpColsX.Length;j++){
 					tmpColsX [j] = hitsX [i] [j].collider;
 				}
-			} else if(velocity.x<0){
+			} 
+			else if (velocity.x < 0){
 				xDir = Vector2.left;
 				hitsX [i] = Physics2D.RaycastAll (
 					new Vector2 (minX, minY + colYLen * (i / (rayDensity - 1))),

@@ -274,13 +274,23 @@ public class Player : MyObject
 		Sit ();
 	}
 
+	void ProcessWalkOnStair(){
+		if(isJump && velocity.y <= 0 && (controller.nowHGroundTag == "Stair" || controller.nowVGroundTag == "Stair")){
+			controller.isWalkOnStair = true;
+		}else if(controller.isWalkOnStair && controller.nowVGroundTag != "Stair" && controller.nowHGroundTag != "Stair"){
+			controller.isWalkOnStair = false;
+		}
+
+	}
+
 	void Update () {
 		if (hp <= 0) {
 			Destroyed ();
 		}
+		ProcessWalkOnStair ();
 		ProcessGround();
 		ProcessMove();
-        ProcessJump();
+		ProcessJump();
 		ProcessGrabCorner();
 		ProcessSit ();
 		ProcessTimeSwitching();
