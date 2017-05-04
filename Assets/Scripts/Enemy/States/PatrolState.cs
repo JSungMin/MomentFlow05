@@ -26,6 +26,7 @@ public class PatrolState : IState
 	}
 
 	public override void OnStateStay(){
+		enemyScript.patrolDurationTimer += Time.deltaTime;
 		if (walkDurationTimer >= walkDuration) {
 			holdDurationTimer += Time.deltaTime;
 			Hold ();

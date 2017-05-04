@@ -17,6 +17,7 @@ public class EnemyScript : MonoBehaviour {
 	public State defaultState;
 
 	public IState[] istate;
+	public List<int> canUseStateList = new List<int>();
 
 	public AnimationBase anim;
 	public GameObject aim_bone;
@@ -28,6 +29,8 @@ public class EnemyScript : MonoBehaviour {
 	public GameObject findOutGaugePref;
 	private FindOutGaugeScript findOutGaugeScr;
 
+	const float skinWidth = .015f;
+
 	public float maxHp;
 	public float hp;
 
@@ -38,7 +41,8 @@ public class EnemyScript : MonoBehaviour {
 	public float walkDuration;
 
 	public float patrolDuration;
-	protected float patrolDurationTimer = 0;
+	[HideInInspector]
+	public float patrolDurationTimer = 0;
 
 	public float detectionDuration;
 	protected float detectionDurationTimer = 0;
@@ -55,7 +59,7 @@ public class EnemyScript : MonoBehaviour {
 	public float findOutSight = 1;
 	public float findOutGauge = 0;
 	public float findOutGaugeIncrement;
-	public int browseDensity = 3;
+	public int browseDensity = 4;
 	public LayerMask browseMask;
 
 	public float transitionDuration;
@@ -63,12 +67,12 @@ public class EnemyScript : MonoBehaviour {
 
 	protected void InitEnemy(){
 		playerObject = GameObject.FindObjectOfType<Player> ();
-		maxX = GetComponent<Collider2D> ().bounds.max.x;
-		maxY = GetComponent<Collider2D> ().bounds.max.y;
-		minX = GetComponent<Collider2D> ().bounds.min.x;
-		minY = GetComponent<Collider2D> ().bounds.min.y;
-		colXLen = GetComponent<Collider2D> ().bounds.size.x;
-		colYLen = GetComponent<Collider2D> ().bounds.size.y;
+		maxX = GetComponent<Collider> ().bounds.max.x;
+		maxY = GetComponent<Collider> ().bounds.max.y;
+		minX = GetComponent<Collider> ().bounds.min.x;
+		minY = GetComponent<Collider> ().bounds.min.y;
+		colXLen = GetComponent<Collider> ().bounds.size.x;
+		colYLen = GetComponent<Collider> ().bounds.size.y;
 
 		InitToTransition ();
 		GetSpecifiedState<PatrolState>(State.Patrol).InitPatrolInfo (patrolDir, moveSpeed);
@@ -95,9 +99,29 @@ public class EnemyScript : MonoBehaviour {
 	public T GetSpecifiedState<T>(State enemyState) where T:IState{
 		return ((T)GetState (enemyState));
 	}
+	public T GetSpecifiedState<T>() where T:IState{
+		return ((T)GetState (enemyState));
+	}
+
 	//when Use below function then change state (also use OnStateEnter) or stay state (also use OnStateStay)
 	public void SetState(State newState){
 		enemyState = GetState (newState).ChangeState (enemyState);
+	}
+
+	public void AddStateToListWithCheckingOverlap(int layerLevel)
+	{
+		if(!canUseStateList.Contains(layerLevel))
+		{
+			canUseStateList.Add (layerLevel);
+		}
+	}
+
+	public void DeleteStateToList(int layerLevel)
+	{
+		if(canUseStateList.Contains(layerLevel))
+		{
+			canUseStateList.Remove(layerLevel);
+		}
 	}
 
 	float maxX,maxY;
@@ -122,7 +146,6 @@ public class EnemyScript : MonoBehaviour {
 			SetState (State.Sit);
 			break;
 		case State.Patrol:
-			//GetSpecifiedState<PatrolState> (State.Patrol).InitPatrolInfo(patrolDir,moveSpeed);
 			SetState (State.Patrol);
 			break;
 		case State.Suspicious:
@@ -133,6 +156,7 @@ public class EnemyScript : MonoBehaviour {
 	}
 
 	public void PlayEmotion(string animName){
+		//TODO: 이후 추가해야 한다.
 		//if(!emotionBox.activeSelf){
 		//	emotionBox.SetActive (true);
 		//	emotionBox.GetComponentInChildren<AnimationBase> ().setAnimation (0, animName, false, 1);
@@ -141,6 +165,7 @@ public class EnemyScript : MonoBehaviour {
 
 	public void StopEmotion(){
 		if(emotionBox.activeSelf){
+			//TODO: PlayEmotion 추가 후 아래 코드 추가
 			//emotionBox.GetComponentInChildren<AnimationBase> ().setAnimation (0, "None", false, 1);
 			emotionBox.SetActive (false);
 		}
@@ -177,12 +202,12 @@ public class EnemyScript : MonoBehaviour {
 	{
 		public GameObject hittedObj;
 		public float distance;
-		public Vector2 normal;
-		public Vector2 point;
+		public Vector3 normal;
+		public Vector3 point;
 		public string tag;
 		public int layer;
 
-		public void InitBrowseInfo(GameObject obj,float d, Vector2 n, Vector2 p, string t,int l){
+		public void InitBrowseInfo(GameObject obj,float d, Vector3 n, Vector3 p, string t,int l){
 			hittedObj = obj;
 			distance = d;
 			normal = n;
@@ -240,26 +265,27 @@ public class EnemyScript : MonoBehaviour {
 		return false;
 	}
 
-	RaycastHit2D[][] gBrowseHits;
+	RaycastHit[][] gBrowseHits;
 	//만약 탐지 가능한 객체(EqualTimeLayer == true)가 있으면 !null 요소가 만약 객체가 없으면 null
 	public BrowseInfo[] Browse(float rayLen){
-		gBrowseHits = new RaycastHit2D[browseDensity][];
+		gBrowseHits = new RaycastHit[browseDensity][];
 		BrowseInfo[] bInfos = new BrowseInfo[0];
 
-		maxX = GetComponent<Collider2D> ().bounds.max.x;
-		maxY = GetComponent<Collider2D> ().bounds.max.y;
-		minX = GetComponent<Collider2D> ().bounds.min.x;
-		minY = GetComponent<Collider2D> ().bounds.min.y;
-		for(int i =0;i<browseDensity;i++){
+		maxX = GetComponent<Collider> ().bounds.max.x;
+		maxY = GetComponent<Collider> ().bounds.max.y;
+		minX = GetComponent<Collider> ().bounds.min.x;
+		minY = GetComponent<Collider> ().bounds.min.y;
+
+		for(int i = 0; i < browseDensity; i++) {
 			if (transform.localScale.x > 0) {
-				gBrowseHits [i] = Physics2D.RaycastAll (
-					new Vector2 (maxX, maxY - colYLen * (i / (browseDensity - 1))),
-					Vector2.right,rayLen,browseMask);
+				gBrowseHits [i] = Physics.RaycastAll (
+					new Vector3 (maxX, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
+					Vector3.right,rayLen,browseMask);
 			}
 			else{
-				gBrowseHits [i] = Physics2D.RaycastAll (
-					new Vector2 (minX, maxY - colYLen * (i / (browseDensity - 1))),
-					Vector2.left,rayLen,browseMask);
+				gBrowseHits [i] = Physics.RaycastAll (
+					new Vector3 (minX, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
+					Vector3.left,rayLen,browseMask);
 			}
 
 			bInfos = new BrowseInfo[gBrowseHits [i].Length];
@@ -277,37 +303,29 @@ public class EnemyScript : MonoBehaviour {
 
 	protected void VerticalCollisions(){
 
-		RaycastHit2D[][] browseHits = new RaycastHit2D[browseDensity][];
+		float directionY = Mathf.Sign (velocity.y);
+		float rayLength = Mathf.Abs (velocity.y * Time.deltaTime);
 
-		maxX = GetComponent<Collider2D> ().bounds.max.x;
-		maxY = GetComponent<Collider2D> ().bounds.max.y;
-		minX = GetComponent<Collider2D> ().bounds.min.x;
-		minY = GetComponent<Collider2D> ().bounds.min.y;
+		RaycastHit[][] browseHits = new RaycastHit[browseDensity][];
 
-		for(int i =0;i<browseDensity;i++){
-			if (velocity.y > 0) {
-				Debug.DrawLine (new Vector2 (minX + colXLen * (i / (browseDensity - 1)), maxY),
-					new Vector2 (minX + colXLen * (i / (browseDensity - 1)), maxY) + Vector2.up*velocity.y * Time.deltaTime);
-				browseHits [i] = Physics2D.RaycastAll (
-					new Vector2 (minX + colXLen * (i / (browseDensity - 1)), maxY),
-					Vector2.up, velocity.y * Time.deltaTime, browseMask);
-			} else {
-				Debug.DrawLine (new Vector2 (minX + colXLen * (i / (browseDensity - 1)), minY),
-					new Vector2 (minX + colXLen * (i / (browseDensity - 1)), minY) + Vector2.up*velocity.y * Time.deltaTime);
-				browseHits [i] = Physics2D.RaycastAll (
-					new Vector2 (minX + colXLen * (i / (browseDensity - 1)), minY),
-					Vector2.up, velocity.y * Time.deltaTime, browseMask);
-			}
+		maxX = GetComponent<Collider> ().bounds.max.x;
+		maxY = GetComponent<Collider> ().bounds.max.y;
+		minX = GetComponent<Collider> ().bounds.min.x;
+		minY = GetComponent<Collider> ().bounds.min.y;
 
-			for(int j = 0;j<browseHits[i].Length;j++){
+		for(int i = 0;i < browseDensity; i++){
+			var rayOrigin = new Vector3 (minX + colXLen * (i / (browseDensity - 1)),((velocity.y >= 0) ? maxY : minY), transform.position.z);
+			Debug.DrawLine (rayOrigin, rayOrigin + Vector3.up * rayLength * directionY,Color.red);
+			browseHits [i] = Physics.RaycastAll (rayOrigin,	Vector3.up * directionY, rayLength, browseMask);
+
+			for(int j = 0; j < browseHits[i].Length; j++){
+				Debug.Log (browseHits[i][j].collider.name);
 				if(browseHits[i][j].collider != null){
-					//if(browseHits[i][j].transform.gameObject.layer == LayerMask.NameToLayer("Collision")){
 					if(TimeLayer.EqualTimeLayer(pTimeLayer,browseHits[i][j].transform.GetComponentInParent<TimeLayer>())||
 						browseHits[i][j].transform.CompareTag("Ground")||
 						browseHits[i][j].transform.CompareTag("GrabableGround")){
 						velocity.y = 0;
 					}
-					//}
 				}
 			}
 		}
@@ -318,7 +336,7 @@ public class EnemyScript : MonoBehaviour {
 		var newBullet = Instantiate (bullet, Vector3.zero, Quaternion.identity) as GameObject;
 		newBullet.transform.position = aim_bone.transform.position;
 		newBullet.GetComponent<Bullet>().pTimeLayer = pTimeLayer;
-		newBullet.GetComponent<Bullet> ().dir = (playerObject.GetComponent<Collider2D>().bounds.center - GetComponent<Collider2D>().bounds.center).normalized;
+		newBullet.GetComponent<Bullet> ().dir = (playerObject.GetComponent<Collider>().bounds.center - GetComponent<Collider>().bounds.center).normalized;
 	}
 
 	public IEnumerator FireBullets(int num){

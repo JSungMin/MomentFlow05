@@ -5,7 +5,8 @@ using UnityEngine;
 public class Player : MyObject
 {
 	public TimeLayer pTimeLayer;
-
+	public float prevZPos;
+	public float deltaY;
 	public TimeLayer ParentTimeLayer{
 		get{
 			return pTimeLayer;
@@ -24,12 +25,12 @@ public class Player : MyObject
 
 	private Controller2D controller;
 
-	private BoxCollider2D pBoxCollider;
+	private BoxCollider pBoxCollider;
 
-	private Vector2 INIT_COLLIDER_OFFSET;
-	private Vector2 SIT_COLLIDER_OFFSET;
-	private Vector2 INIT_COLLIDER_SIZE = new Vector2(0.2f, 0.36f);
-	private Vector2 SIT_COLLIDER_SIZE = new Vector2 (0.2f,0.2f);
+	private Vector3 INIT_COLLIDER_OFFSET;
+	private Vector3 SIT_COLLIDER_OFFSET;
+	private Vector3 INIT_COLLIDER_SIZE = new Vector3(0.2f, 0.36f,0);
+	private Vector3 SIT_COLLIDER_SIZE = new Vector3 (0.2f,0.2f,0);
 
 	private const float MAX_GRAB_HEIGHT_RATIO = 1.5f;
 
@@ -48,7 +49,8 @@ public class Player : MyObject
 	private float gravity;
 
 	public bool isJump;
-	bool isAir = false;
+	private bool isAir = false;
+	private bool isWalkOnStair = false; 
 
 	[HideInInspector]
 	public Vector2 input;
@@ -62,9 +64,9 @@ public class Player : MyObject
 		pTimeLayer = transform.GetComponentInParent<TimeLayer> ();
 		animator = GetComponent<Animator> ();
 		controller = GetComponent<Controller2D> ();
-		pBoxCollider = GetComponent<BoxCollider2D> ();
-		INIT_COLLIDER_OFFSET = pBoxCollider.offset;
-		SIT_COLLIDER_OFFSET = INIT_COLLIDER_OFFSET - Vector2.up*0.08f;
+		pBoxCollider = GetComponent<BoxCollider> ();
+		INIT_COLLIDER_OFFSET = pBoxCollider.center;
+		SIT_COLLIDER_OFFSET = INIT_COLLIDER_OFFSET - Vector3.up*0.08f;
 		gravity = -9.8f;
 		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
 	}
@@ -112,7 +114,7 @@ public class Player : MyObject
 
 	float jumpSaveDelay=0;
 	void ProcessJump(){
-		if(Input.GetKeyDown(KeyCode.Space)){
+		if(Input.GetKeyDown(KeyCode.Space) && !isWalkOnStair){
 			if (!isJump && velocity.y>= gravity * Time.deltaTime*7.0f) {
 				velocity.y = jumpHeight;
 				isJump = true;
@@ -124,8 +126,11 @@ public class Player : MyObject
         // 다른 레이어의 통과 불가능한 지형들과 플레이어가 충돌한다면
         // 타임 스위칭을 할 수 없다
 		if(Input.GetKeyDown(KeyCode.Tab)){
-			var bc = GetComponent<BoxCollider2D> ();
-			var colPos = transform.position + new Vector3(bc.offset.x,bc.offset.y,0);
+			var newPos = transform.position;
+			newPos.z = 0;
+			transform.position = newPos;
+			var bc = GetComponent<BoxCollider> ();
+			var colPos = transform.position + new Vector3(bc.center.x,bc.center.y,0);
 			var cols = Physics2D.OverlapBoxAll (colPos, new Vector2 (bc.size.x*0.8f, bc.size.y*0.8f), 0,1<<LayerMask.NameToLayer("Collision"));
 
 			bool canSwitching = true;
@@ -152,7 +157,141 @@ public class Player : MyObject
 		}
 		Camera.main.GetComponent<GrayScaleEffect> ().intensity = Mathf.Lerp (Camera.main.GetComponent<GrayScaleEffect> ().intensity, 1 - pTimeLayer.layerNum, Time.deltaTime*2);
 	}
+
+    // isGrabing이 true라면 플레이어의 위치를 벽 코너에 고정한다
+    private bool isGrabing;
+    // 벽의 모서리를 잡는 함수
+    void ProcessGrabCorner()
+    {
+		// if 벽 모서리와 닿아 있다면 isGrabing = true
+		if (isAir && !isClimb) 
+		{
+			Vector2 pos = new Vector2 (transform.position.x, transform.position.y);
+			var cols = Physics2D.OverlapBoxAll (pos, new Vector2 (0.20f, 0.35f), 0);
+			for (int i = 0; i < cols.Length; i++) 
+			{
+				var c = cols [i];
+				if (c.gameObject.layer == LayerMask.NameToLayer ("Collision") && 
+					(c.CompareTag("GrabableObject") && TimeLayer.EqualTimeLayer (pTimeLayer, c.transform.GetComponentInParent<TimeLayer> ()))||
+					(c.CompareTag("GrabableGround"))) 
+				{
+					bool isFoward = (Mathf.Sign ((c.transform.position - transform.position).x) == Mathf.Sign (transform.localScale.x)) ? true : false;
+
+					if (isFoward) 
+					{
+						if (GetComponent<BoxCollider> ().bounds.min.y < c.bounds.max.y) 
+						{
+							if (GetComponent<BoxCollider> ().bounds.max.y >= c.bounds.max.y - 0.1f) 
+							{
+								isGrabing = true;
+								state = State.GrabCorner;
+								grappingObj = c;
+								velocity = Vector3.zero;
+								var newPos = transform.position;
+								newPos.y = c.bounds.max.y - GetComponent<BoxCollider> ().size.y;
+								transform.position = newPos;
+							}
+						}
+					} 
+					else 
+					{
+						isGrabing = false;
+						state = State.Idle;
+						grappingObj = null;
+					}
+				}
+			}
+		}
+		ClimbCorner ();
+    }
 		
+	public bool isSit = false;
+
+	void ProcessSit(){
+		if (Input.GetKey (KeyCode.S) && !isAir) {
+			isSit = true;
+		} 
+		else {
+			if (!IsVerticalCollision()) {
+				isSit = false;
+			}
+		}
+		Sit ();
+	}
+
+	private void ProcessEnterStair (Collider col)
+	{
+		if(col.CompareTag("Stair"))
+		{
+			if(Input.GetKeyDown (KeyCode.W) &&
+				!isWalkOnStair && 
+				TimeLayer.EqualTimeLayer(pTimeLayer,col.GetComponentInParent<TimeLayer>()))
+			{
+				EnterStair (col);
+				stairColliders = col.transform.parent.GetComponentsInChildren<BoxCollider> ();
+				InitStairZone ();
+			}
+		}
+	}
+
+	private void ProcessExitStair (Collider col)
+	{
+		if(isWalkOnStair)
+		{
+			var tmpPos = transform.position;
+			if(transform.position.y > stairMaxY)
+			{
+				tmpPos.y = stairMaxY;
+				transform.position = tmpPos;
+			}
+			else if(transform.position.y <= stairMinY)
+			{
+				tmpPos.y = stairMinY;
+				transform.position = tmpPos;
+			}
+
+			if(transform.position.x > stairMaxX)
+			{
+				ExitStair (col);
+			}
+			else if(transform.position.x <= stairMinX)
+			{
+				ExitStair (col);
+			}
+		}
+	}
+
+	void Sit(){
+		if (isSit) 
+		{
+			pBoxCollider.center = SIT_COLLIDER_OFFSET;
+			pBoxCollider.size = SIT_COLLIDER_SIZE;
+		} 
+		else 
+		{
+			pBoxCollider.center = INIT_COLLIDER_OFFSET;
+			pBoxCollider.size = INIT_COLLIDER_SIZE;
+		}
+	}
+
+	bool IsVerticalCollision()
+	{
+		for(int i = 0; i < 3; i++)
+		{
+			var hits = Physics2D.RaycastAll (Vector3.up*pBoxCollider.bounds.max.y + Vector3.right*pBoxCollider.bounds.min.x * (i / 2), Vector2.up,(INIT_COLLIDER_SIZE.y - SIT_COLLIDER_SIZE.y),controller.collisionMask);
+			for(int j = 0; j < hits.Length; j++)
+			{
+				var hit = hits [j];
+				if(hit.collider != null && 
+					TimeLayer.EqualTimeLayer(hit.collider.GetComponentInParent<TimeLayer>(),pTimeLayer))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	Collider2D grappingObj;
 
 	private bool isClimb = false;
@@ -167,11 +306,58 @@ public class Player : MyObject
 	//만족 스러운 Duration 찾은 후 private나 const로 지정
 	public float climbDelayDuration;
 
-	void ClimbCorner(){
+	private void ResetClimbInfo()
+	{
+		isClimb = false;
+		isGrabing = false;
+
+		state = State.Idle;
+
+		climbDurationTimer = 0;
+		tClimbHeight = 0;
+		tClimbSpeed = 0;
+	}
+
+	private void InitClimbInfo()
+	{
+		isClimb = true;
+		tClimbHeight = GetComponent<BoxCollider> ().bounds.max.y - GetComponent<BoxCollider>().bounds.min.y;
+		tClimbSpeed = tClimbHeight / climbDuration;
+	}
+
+	public BoxCollider[] stairColliders;
+	public float stairMaxX, stairMinX;
+	public float stairMaxY, stairMinY;
+
+	private void InitStairZone ()
+	{
+		List<BoxCollider> stairs = new List<BoxCollider>();
+		for(int i = 0; i< stairColliders.Length; i++){
+			if(stairColliders[i].CompareTag("Stair"))
+			{
+				stairs.Add (stairColliders [i]);
+			}
+		}
+
+		stairMaxX = stairs[0].transform.position.x + stairs[0].bounds.extents.x;
+		stairMaxY = stairs[0].transform.position.y + stairs[0].bounds.extents.y;
+
+		stairMinX = stairs[0].transform.position.x - stairs[0].bounds.extents.x;
+		stairMinY = stairs[0].transform.position.y - stairs[0].bounds.extents.y;
+
+		for(int i = 1; i < stairs.Count; i++){
+			stairMaxX = Mathf.Max (stairMaxX, stairs[i].transform.position.x + stairs[i].bounds.extents.x);
+			stairMaxY = Mathf.Max (stairMaxY, stairs[i].transform.position.y + stairs[i].bounds.extents.y);
+
+			stairMinX = Mathf.Min (stairMinX, stairs[i].transform.position.x - stairs[i].bounds.extents.x);
+			stairMinY = Mathf.Min (stairMinY, stairs[i].transform.position.y - stairs[i].bounds.extents.y);
+		}
+	}
+
+	private void ClimbCorner()
+	{
 		if(isGrabing && Input.GetKeyDown(KeyCode.Space) && !isClimb){
-			isClimb = true;
-			tClimbHeight = GetComponent<BoxCollider2D> ().bounds.max.y - GetComponent<BoxCollider2D>().bounds.min.y;
-			tClimbSpeed = tClimbHeight / climbDuration;
+			InitClimbInfo ();
 		}
 		if(isClimb){
 			if (climbDurationTimer <= climbDuration) {
@@ -180,114 +366,55 @@ public class Player : MyObject
 				transform.position += Vector3.up * tClimbSpeed * Time.deltaTime;
 				state = State.ClimbCorner;
 			} else {
-				isClimb = false;
-				isGrabing = false;
-
-				state = State.Idle;
-
-				climbDurationTimer = 0;
-				tClimbHeight = 0;
-				tClimbSpeed = 0;
+				ResetClimbInfo ();
 
 				velocity = Vector3.zero;
 
 				var newPos = transform.position;
-				newPos.x += (grappingObj.transform.position - transform.position).normalized.x * (GetComponent<BoxCollider2D> ().bounds.extents.x);
+				newPos.x += (grappingObj.transform.position - transform.position).normalized.x * (GetComponent<BoxCollider> ().bounds.extents.x);
 				newPos.y = grappingObj.bounds.max.y;
 				transform.position = newPos;
 			}
 		}
 	}
 
-    // isGrabing이 true라면 플레이어의 위치를 벽 코너에 고정한다
-    private bool isGrabing;
-    // 벽의 모서리를 잡는 함수
-    void ProcessGrabCorner()
-    {
-		// if 벽 모서리와 닿아 있다면 isGrabing = true
-		if (isAir && !isClimb) {
-			Vector2 pos = new Vector2 (transform.position.x, transform.position.y);
-			var cols = Physics2D.OverlapBoxAll (pos, new Vector2 (0.20f, 0.35f), 0);
-			for (int i = 0; i < cols.Length; i++) {
-				var c = cols [i];
-				if (c.gameObject.layer == LayerMask.NameToLayer ("Collision") && 
-					(c.CompareTag("GrabableObject") && TimeLayer.EqualTimeLayer (pTimeLayer, c.transform.GetComponentInParent<TimeLayer> ()))||
-					(c.CompareTag("GrabableGround"))) {
-					bool isFoward = (Mathf.Sign ((c.transform.position - transform.position).x) == Mathf.Sign (transform.localScale.x)) ? true : false;
-					if (isFoward) {
-						if (GetComponent<BoxCollider2D> ().bounds.min.y < c.bounds.max.y) {
-							if (GetComponent<BoxCollider2D> ().bounds.max.y >= c.bounds.max.y - 0.1f) {
-								isGrabing = true;
-								state = State.GrabCorner;
-								grappingObj = c;
-								velocity = Vector3.zero;
-								var newPos = transform.position;
-								newPos.y = c.bounds.max.y - GetComponent<BoxCollider2D> ().size.y;
-								transform.position = newPos;
-							}
-						}
-					} else {
-						isGrabing = false;
-						state = State.Idle;
-						grappingObj = null;
-					}
-				}
-			}
-		}
-		ClimbCorner ();
-    }
-		
-	public bool isSit = false;
-
-	void Sit(){
-		if (isSit) {
-			pBoxCollider.offset = SIT_COLLIDER_OFFSET;
-			pBoxCollider.size = SIT_COLLIDER_SIZE;
-		} else {
-			pBoxCollider.offset = INIT_COLLIDER_OFFSET;
-			pBoxCollider.size = INIT_COLLIDER_SIZE;
-		}
-	}
-    
-	bool IsVerticalCollision(){
-		for(int i = 0; i < 3; i++){
-			var hits = Physics2D.RaycastAll (Vector3.up*pBoxCollider.bounds.max.y + Vector3.right*pBoxCollider.bounds.min.x * (i / 2), Vector2.up,(INIT_COLLIDER_SIZE.y - SIT_COLLIDER_SIZE.y),controller.collisionMask);
-			for(int j = 0; j < hits.Length; j++){
-				var hit = hits [j];
-				if(hit.collider != null && TimeLayer.EqualTimeLayer(hit.collider.GetComponentInParent<TimeLayer>(),pTimeLayer)){
-					return true;
-				}
-			}
-		}
-		return false;
+	public void ChangePlayerZLayer (Vector3 newPos){
+		prevZPos = transform.position.z;
+		transform.position = newPos;
 	}
 
-	void ProcessSit(){
-		if (Input.GetKey (KeyCode.S) && !isAir) {
-			isSit = true;
-		} 
-		else {
-			if (!IsVerticalCollision()) {
-				isSit = false;
-			}
-		}
-		Sit ();
+	private void EnterStair(Collider col)
+	{
+		isWalkOnStair = true;
+		var newPos = col.transform.position;
+		newPos.x = transform.position.x;
+		ChangePlayerZLayer (newPos);
 	}
 
-	void ProcessWalkOnStair(){
-		if(isJump && velocity.y <= 0 && (controller.nowHGroundTag == "Stair" || controller.nowVGroundTag == "Stair")){
-			controller.isWalkOnStair = true;
-		}else if(controller.isWalkOnStair && controller.nowVGroundTag != "Stair" && controller.nowHGroundTag != "Stair"){
-			controller.isWalkOnStair = false;
-		}
+	private void ExitStair(Collider col)
+	{
+		isWalkOnStair = false;
+		var prevPos = transform.position;
+		prevPos.z = prevZPos;
+		ChangePlayerZLayer (prevPos);
+	}
 
+	private void OnTriggerStay(Collider col)
+	{
+		ProcessEnterStair (col);
+		ProcessExitStair (col);
+	}
+
+	private void OnTriggerExit(Collider col)
+	{
+		ProcessExitStair (col);
 	}
 
 	void Update () {
 		if (hp <= 0) {
 			Destroyed ();
 		}
-		ProcessWalkOnStair ();
+		var tmpY = transform.position.y;
 		ProcessGround();
 		ProcessMove();
 		ProcessJump();

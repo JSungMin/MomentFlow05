@@ -138,13 +138,13 @@ public class Scene02 : MonoBehaviour
 
 	private IEnumerator StartChatDialogue(){
 		chatDialogue.StartChat ();
-		yield return StartCoroutine (InputBlocker.WaitForMouseButtonDown(0));
+		yield return StartCoroutine (WaitForClick ());
 	}
 
 	private IEnumerator ContinueChatDialogue(){
-		yield return StartCoroutine (InputBlocker.WaitForMouseButtonDown(0));
+		yield return StartCoroutine (WaitForClick ());
 		chatDialogue.NextPage ();
-		yield return StartCoroutine (InputBlocker.WaitForMouseButtonDown(0));
+		yield return StartCoroutine (WaitForClick ());
 	}
 
     private IEnumerator PickUpLobo()
