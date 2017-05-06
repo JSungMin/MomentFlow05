@@ -27,8 +27,8 @@ public class FollowUpCamera : MonoBehaviour {
 	bool isToRight = false;
 
 	public void RaycastHorizontal(){
-		var max = followTarget.GetComponent<BoxCollider2D> ().bounds.max;
-		var min = followTarget.GetComponent<BoxCollider2D> ().bounds.min;
+		var max = followTarget.GetComponent<BoxCollider> ().bounds.max;
+		var min = followTarget.GetComponent<BoxCollider> ().bounds.min;
 
 		var len = max.y - min.y;
 

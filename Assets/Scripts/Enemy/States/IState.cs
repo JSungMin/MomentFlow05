@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class IState
 {
+	public int layerLevel;
+
     protected GameObject enemyObj;
     protected EnemyScript enemyScript;
 

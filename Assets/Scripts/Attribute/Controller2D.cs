@@ -1,11 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent (typeof (BoxCollider2D))]
+[RequireComponent (typeof (BoxCollider))]
 public class Controller2D : MonoBehaviour {
 	public TimeLayer pTimeLayer{ set; get; }
 
 	public LayerMask collisionMask;
+
+	public bool isWalkOnStair = false;
+
+	public string nowHGroundTag;
+	public string nowVGroundTag;
 
 	const float skinWidth = .015f;
 	public int horizontalRayCount = 4;
@@ -17,12 +22,12 @@ public class Controller2D : MonoBehaviour {
 	float horizontalRaySpacing;
 	float verticalRaySpacing;
 
-	BoxCollider2D collider;
+	BoxCollider col;
 	RaycastOrigins raycastOrigins;
 	public CollisionInfo collisions;
 
 	void Start() {
-		collider = GetComponent<BoxCollider2D> ();
+		col = GetComponent<BoxCollider> ();
 		pTimeLayer = transform.GetComponentInParent<TimeLayer> ();
 		CalculateRaySpacing ();
 	}
@@ -50,50 +55,62 @@ public class Controller2D : MonoBehaviour {
 		float rayLength = Mathf.Abs (velocity.x) + skinWidth;
 
 		for (int i = 0; i < horizontalRayCount; i ++) {
-			Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
-			rayOrigin += Vector2.up * (horizontalRaySpacing * i);
-			RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, collisionMask);
+			Vector3 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
+			rayOrigin += Vector3.up * (horizontalRaySpacing * i);
+			RaycastHit hit;
+			Debug.DrawRay(rayOrigin, Vector3.right * directionX * rayLength,Color.red);
+		
+			if (Physics.Raycast (rayOrigin, Vector3.right * directionX,out hit ,rayLength ,collisionMask)) {
+				float slopeAngle = Vector3.Angle (hit.normal, Vector3.up);
+				nowHGroundTag = hit.collider.tag;
 
-			Debug.DrawRay(rayOrigin, Vector2.right * directionX * rayLength,Color.red);
-
-			if (hit.collider != null) {
-				float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
 				if (i == 0 && slopeAngle <= maxClimbAngle) {
-					if(TimeLayer.EqualTimeLayer(pTimeLayer,hit.collider.transform.GetComponentInParent<TimeLayer>())||
-						hit.collider.CompareTag("Ground")||hit.collider.CompareTag("GrabableGround")||
-						hit.collider.CompareTag("Bound")
-					){
+					if (TimeLayer.EqualTimeLayer (pTimeLayer, hit.collider.transform.GetComponentInParent<TimeLayer> ()) ||
+					   hit.collider.CompareTag ("Ground") || hit.collider.CompareTag ("GrabableGround") ||
+					   hit.collider.CompareTag ("Bound") || hit.collider.CompareTag ("Stair")) {
+						float distanceToSlopeStart = 0;
+					
+						ClimbSlope (ref velocity, slopeAngle);
+
 						if (collisions.descendingSlope) {
 							collisions.descendingSlope = false;
 							velocity = collisions.velocityOld;
 						}
-						float distanceToSlopeStart = 0;
 						if (slopeAngle != collisions.slopeAngleOld) {
-							distanceToSlopeStart = hit.distance-skinWidth;
+							distanceToSlopeStart = hit.distance - skinWidth;
 							velocity.x -= distanceToSlopeStart * directionX;
 						}
-						ClimbSlope(ref velocity, slopeAngle);
-
 						velocity.x += distanceToSlopeStart * directionX;
-					}
+						}
 				}
 
 				if (!collisions.climbingSlope || slopeAngle > maxClimbAngle) {
-					if(TimeLayer.EqualTimeLayer(pTimeLayer,hit.collider.transform.GetComponentInParent<TimeLayer>())||
-						hit.collider.CompareTag("Ground")||hit.collider.CompareTag("GrabableGround")||
-						hit.collider.CompareTag("Bound")){
-						velocity.x = (hit.distance - skinWidth) * directionX;
-						rayLength = hit.distance;
+					if (TimeLayer.EqualTimeLayer (pTimeLayer, hit.collider.transform.GetComponentInParent<TimeLayer> ()) ||
+					   hit.collider.CompareTag ("Ground") || hit.collider.CompareTag ("GrabableGround") ||
+						hit.collider.CompareTag ("Bound") || hit.collider.CompareTag ("Stair") || 
+						hit.collider.CompareTag("PassableCollision")) {
 
-						if (collisions.climbingSlope) {
-							velocity.y = Mathf.Tan(collisions.slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(velocity.x);
+						if (isWalkOnStair && nowHGroundTag == "PassableCollision") {
+							transform.position += Vector3.up * (hit.collider.bounds.max.y - col.bounds.min.y);
+							Debug.Log ("Let me Lift Up");
+							break;
 						}
 
+						velocity.x = (hit.distance - skinWidth) * directionX;
 						collisions.left = directionX == -1;
 						collisions.right = directionX == 1;
+
+						rayLength = hit.distance;
+
+						if (collisions.climbingSlope && isWalkOnStair) {
+							velocity.y = Mathf.Tan (collisions.slopeAngle * Mathf.Deg2Rad) * Mathf.Abs (velocity.x);
+						}
 					}
 
 				}
+			}
+			else {//hit.collider == null
+				nowHGroundTag = "";
 			}
 		}
 	}
@@ -102,25 +119,33 @@ public class Controller2D : MonoBehaviour {
 		float directionY = Mathf.Sign (velocity.y);
 		float rayLength = Mathf.Abs (velocity.y) + skinWidth;
 
-		RaycastHit2D[][] browseHits = new RaycastHit2D[verticalRayCount][];
+		RaycastHit[][] browseHits = new RaycastHit[verticalRayCount][];
 
-		for (int i = 0; i < verticalRayCount; i ++) {
-			Vector2 rayOrigin = (directionY == -1)?raycastOrigins.bottomLeft:raycastOrigins.topLeft;
-			rayOrigin += Vector2.right * (verticalRaySpacing * i + velocity.x);
-			browseHits[i] = Physics2D.RaycastAll(rayOrigin, Vector2.up * directionY, rayLength, collisionMask);
+		for (int i = 0; i < verticalRayCount; i++) {
+			Vector3 rayOrigin = (directionY == -1) ? raycastOrigins.bottomLeft:raycastOrigins.topLeft;
+			rayOrigin += Vector3.right * (verticalRaySpacing * i + velocity.x);
+			browseHits[i] = Physics.RaycastAll(rayOrigin, Vector3.up * directionY, rayLength, collisionMask);
 
-			Debug.DrawRay(rayOrigin, Vector2.up * directionY * rayLength,Color.red);
-			for(int j = 0;j < browseHits[i].Length;j++){
-				if (browseHits[i][j].collider != null) {
-					if (TimeLayer.EqualTimeLayer (browseHits[i][j].collider.GetComponentInParent<TimeLayer>(), pTimeLayer)||
-						browseHits[i][j].collider.CompareTag("Ground")||browseHits[i][j].collider.CompareTag("GrabableGround")||
-						browseHits[i][j].collider.CompareTag("Bound")) 
-					{
-						if(browseHits[i][j].collider.CompareTag("PassableCollision") && velocity.y >= 0){
+			Debug.DrawRay(rayOrigin, Vector3.up * directionY * rayLength,Color.red);
+			for (int j = 0; j < browseHits[i].Length; j++){
+				var hit = browseHits [i] [j].collider;
+				if (hit != null) {
+					nowVGroundTag = hit.tag;
+
+					if (TimeLayer.EqualTimeLayer (hit.GetComponentInParent<TimeLayer> (), pTimeLayer) ||
+					    hit.CompareTag ("Ground") || hit.CompareTag ("GrabableGround") ||
+						hit.CompareTag ("Bound") || hit.CompareTag ("Stair") || 
+						hit.CompareTag("PassableCollision")) {
+						
+						if (hit.CompareTag ("PassableCollision") && velocity.y > 0 && (GetComponent<Player> ().isJump)) {
 							break;
 						}
-						velocity.y = (browseHits[i][j].distance - skinWidth) * directionY;
-						rayLength = browseHits[i][j].distance;
+						if (isWalkOnStair && nowVGroundTag == "PassableCollision") {
+							break;
+						}
+
+						velocity.y = (browseHits [i] [j].distance - skinWidth) * directionY;
+						rayLength = browseHits [i] [j].distance;
 
 						if (collisions.climbingSlope) {
 							velocity.x = velocity.y / Mathf.Tan (collisions.slopeAngle * Mathf.Deg2Rad) * Mathf.Sign (velocity.x);
@@ -128,6 +153,9 @@ public class Controller2D : MonoBehaviour {
 						collisions.below = directionY == -1;
 						collisions.above = directionY == 1;
 					}
+				} 
+				else { // hit == null
+					nowVGroundTag = "";
 				}
 			}
 		}
@@ -135,18 +163,21 @@ public class Controller2D : MonoBehaviour {
 		if (collisions.climbingSlope) {
 			float directionX = Mathf.Sign(velocity.x);
 			rayLength = Mathf.Abs(velocity.x) + skinWidth;
-			Vector2 rayOrigin = ((directionX == -1)?raycastOrigins.bottomLeft:raycastOrigins.bottomRight) + Vector2.up * velocity.y;
-			RaycastHit2D hit = Physics2D.Raycast(rayOrigin,Vector2.right * directionX,rayLength,collisionMask);
+			Vector3 rayOrigin = ((directionX == -1)?raycastOrigins.bottomLeft:raycastOrigins.bottomRight) + Vector3.up * velocity.y;
+			RaycastHit hit;
 
-			if (hit) {
+			if (Physics.Raycast(rayOrigin, Vector3.right * directionX ,out hit ,rayLength, collisionMask)) {
 				if (TimeLayer.EqualTimeLayer (hit.collider.transform.GetComponentInParent<TimeLayer>(), pTimeLayer)||
 					hit.collider.CompareTag("Ground")||
-					hit.collider.CompareTag("Bound")
-				) {
-					float slopeAngle = Vector2.Angle(hit.normal,Vector2.up);
-					if (slopeAngle != collisions.slopeAngle) {
-						velocity.x = (hit.distance - skinWidth) * directionX;
-						collisions.slopeAngle = slopeAngle;
+					hit.collider.CompareTag("Bound")||hit.collider.CompareTag("Stair")
+				) 
+				{
+					if(isWalkOnStair){
+						float slopeAngle = Vector3.Angle(hit.normal,Vector3.up);
+						if (slopeAngle != collisions.slopeAngle) {
+							velocity.x = (hit.distance - skinWidth) * directionX;
+							collisions.slopeAngle = slopeAngle;
+						}
 					}
 				}
 			}
@@ -154,7 +185,6 @@ public class Controller2D : MonoBehaviour {
 	}
 
 	void ClimbSlope(ref Vector3 velocity, float slopeAngle) {
-		Debug.Log ("In ClimbSlope");
 		float moveDistance = Mathf.Abs (velocity.x);
 		float climbVelocityY = Mathf.Sin (slopeAngle * Mathf.Deg2Rad) * moveDistance;
 
@@ -169,11 +199,11 @@ public class Controller2D : MonoBehaviour {
 
 	void DescendSlope(ref Vector3 velocity) {
 		float directionX = Mathf.Sign (velocity.x);
-		Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomRight : raycastOrigins.bottomLeft;
-		RaycastHit2D hit = Physics2D.Raycast (rayOrigin, -Vector2.up, Mathf.Infinity, collisionMask);
-
-		if (hit) {
-			float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
+		Vector3 rayOrigin = (directionX == -1) ? raycastOrigins.bottomRight : raycastOrigins.bottomLeft;
+		RaycastHit hit;
+	
+		if (Physics.Raycast (rayOrigin, -Vector3.up,out hit ,Mathf.Infinity, collisionMask)) {
+			float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
 			if (slopeAngle != 0 && slopeAngle <= maxDescendAngle) {
 				if (Mathf.Sign(hit.normal.x) == directionX) {
 					if (hit.distance - skinWidth <= Mathf.Tan(slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(velocity.x)) {
@@ -195,18 +225,18 @@ public class Controller2D : MonoBehaviour {
 
 	void UpdateRaycastOrigins() {
 		CalculateRaySpacing ();
-		Bounds bounds = collider.bounds;
+		Bounds bounds = col.bounds;
 		bounds.Expand (skinWidth * -2);
 
-		raycastOrigins.bottomLeft = new Vector2 (bounds.min.x, bounds.min.y);
-		raycastOrigins.bottomRight = new Vector2 (bounds.max.x, bounds.min.y);
-		raycastOrigins.topLeft = new Vector2 (bounds.min.x, bounds.max.y);
-		raycastOrigins.topRight = new Vector2 (bounds.max.x, bounds.max.y);
+		raycastOrigins.bottomLeft = new Vector3 (bounds.min.x, bounds.min.y, transform.position.z);
+		raycastOrigins.bottomRight = new Vector3 (bounds.max.x, bounds.min.y, transform.position.z);
+		raycastOrigins.topLeft = new Vector3 (bounds.min.x, bounds.max.y, transform.position.z);
+		raycastOrigins.topRight = new Vector3 (bounds.max.x, bounds.max.y, transform.position.z);
 	}
 
 	void CalculateRaySpacing() {
-		collider = GetComponent<BoxCollider2D> ();
-		Bounds bounds = collider.bounds;
+		col = GetComponent<BoxCollider> ();
+		Bounds bounds = col.bounds;
 		bounds.Expand (skinWidth * -2);
 
 		horizontalRayCount = Mathf.Clamp (horizontalRayCount, 2, int.MaxValue);
@@ -217,8 +247,8 @@ public class Controller2D : MonoBehaviour {
 	}
 
 	struct RaycastOrigins {
-		public Vector2 topLeft, topRight;
-		public Vector2 bottomLeft, bottomRight;
+		public Vector3 topLeft, topRight;
+		public Vector3 bottomLeft, bottomRight;
 	}
 
 	public struct CollisionInfo {
