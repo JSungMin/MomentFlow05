@@ -13,7 +13,7 @@ public class InteractiveManager : MonoBehaviour
     public bool nowInteract = false;
 
     public int index;
-    private float tmpDis;
+    //private float tmpDis;
 
     public void OnTriggerEnter2D(Collider2D col)
     {
@@ -21,15 +21,11 @@ public class InteractiveManager : MonoBehaviour
         {
             if (!nearNpcList.Contains(col))
                 nearNpcList.Add(col);
-
-            Debug.Log("Find NPC");
         }
         else if (col.gameObject.layer == LayerMask.NameToLayer("Object"))
         {
             if (!nearObjList.Contains(col))
                 nearObjList.Add(col);
-
-            Debug.Log("Find Object");
         }
     }
 
@@ -57,50 +53,44 @@ public class InteractiveManager : MonoBehaviour
         /*Set nearest NPC Outline*/
         if (nearNpcList.Count >= 1)
         {
-            tmpDis = Vector3.Distance(new Vector3(transform.position.x, transform.position.y, 0), new Vector3(nearNpcList[0].transform.position.x, nearNpcList[0].transform.position.y, 0));
-            index = 0;
-            nearNpcList[index].GetComponentInChildren<cakeslice.Outline>().eraseRenderer = true;
-            for (int i = 1; i < nearNpcList.Count; i++)
+            int minIndex = FindNearestColIndex(nearNpcList);
+            for (int i = 0; i < nearNpcList.Count; i++)
             {
-                var pPos = transform.position;
-                var nPos = nearNpcList[i].transform.position;
-                var dis = Vector3.Distance(nPos, pPos);
-                if (tmpDis >= dis)
+                var outlines = nearNpcList[i].GetComponentsInChildren<cakeslice.Outline>();
+
+                for (int j = 0; j < outlines.Length; j++)
                 {
-                    index = i;
-                    tmpDis = dis;
+                    outlines[j].eraseRenderer = (i == minIndex) ? false : true;
                 }
-                nearNpcList[i].GetComponentInChildren<cakeslice.Outline>().eraseRenderer = true;
             }
-            nearNpcList[index].GetComponentInChildren<cakeslice.Outline>().eraseRenderer = false;
         }
         //Set nearest Object Outline
         if (nearObjList.Count >= 1)
         {
-            tmpDis = Vector3.Distance(new Vector3(transform.position.x, transform.position.y, 0), new Vector3(nearObjList[0].transform.position.x, nearObjList[0].transform.position.y, 0));
-            index = 0;
-            nearObjList[index].GetComponentInChildren<cakeslice.Outline>().eraseRenderer = true;
-            for (int i = 1; i < nearObjList.Count; i++)
-            {
-                var pPos = transform.position;
-                var nPos = nearObjList[i].transform.position;
-                var dis = Vector3.Distance(nPos, pPos);
-                if (tmpDis >= dis)
-                {
-                    index = i;
-                    tmpDis = dis;
-                }
-                var outlines = nearObjList[i].GetComponentsInChildren<cakeslice.Outline>();
-                for (int j = 0; j < outlines.Length; j++)
-                {
-                    outlines[j].eraseRenderer = true;
-                }
-            }
-            var outlinesSet = nearObjList[index].GetComponentsInChildren<cakeslice.Outline>();
-            for (int j = 0; j < outlinesSet.Length; j++)
-            {
-                outlinesSet[j].eraseRenderer = false;
-            }
+            //tmpDis = Vector3.Distance(new Vector3(transform.position.x, transform.position.y, 0), new Vector3(nearObjList[0].transform.position.x, nearObjList[0].transform.position.y, 0));
+            //index = 0;
+            //nearObjList[index].GetComponentInChildren<cakeslice.Outline>().eraseRenderer = true;
+            //for (int i = 1; i < nearObjList.Count; i++)
+            //{
+            //    var pPos = transform.position;
+            //    var nPos = nearObjList[i].transform.position;
+            //    var dis = Vector3.Distance(nPos, pPos);
+            //    if (tmpDis >= dis)
+            //    {
+            //        index = i;
+            //        tmpDis = dis;
+            //    }
+            //    var outlines = nearObjList[i].GetComponentsInChildren<cakeslice.Outline>();
+            //    for (int j = 0; j < outlines.Length; j++)
+            //    {
+            //        outlines[j].eraseRenderer = true;
+            //    }
+            //}
+            //var outlinesSet = nearObjList[index].GetComponentsInChildren<cakeslice.Outline>();
+            //for (int j = 0; j < outlinesSet.Length; j++)
+            //{
+            //    outlinesSet[j].eraseRenderer = false;
+            //}
         }
 
         //Interact Part
@@ -136,5 +126,25 @@ public class InteractiveManager : MonoBehaviour
                 }
             }
         }
+    }
+    
+    private int FindNearestColIndex(List<Collider2D> cols)
+    {
+        float minDis = float.MaxValue;
+        int minIndex = -1;
+
+        for (int i = 1; i < cols.Count; i++)
+        {
+            float dis = Vector3.Distance(new Vector3(transform.position.x, transform.position.y, 0), 
+                new Vector3(cols[i].transform.position.x, cols[i].transform.position.y, 0));
+
+            if (minDis <= dis)
+            {
+                minDis = dis;
+                minIndex = i;
+            }
+        }
+
+        return minIndex;
     }
 }

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using cakeslice;
 using UnityEngine;
 
-public class InteractInterface : MonoBehaviour {
+public class InteractInterface : MonoBehaviour
+{
     // 이미 인터렉트를 했냐를 구분하는 변수
 	public bool isInteracted = false;
 
@@ -17,8 +18,6 @@ public class InteractInterface : MonoBehaviour {
 
     protected void Awake()
     {
-
-
         if (GetComponent<Outline>() == null)
         {
             outline = gameObject.AddComponent<Outline>();
