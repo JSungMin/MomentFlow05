@@ -26,6 +26,16 @@ public class GameSceneManager : MonoBehaviour
     }
 
     private static GameSceneManager instance;
+    private FollowUpCamera followUpCamera;
+    private ElasticityGaugeManager elasticityGaugeManager;
+
+    private void Awake()
+    {
+        followUpCamera = GameObject.FindObjectOfType<FollowUpCamera>();
+        elasticityGaugeManager = GetComponent<ElasticityGaugeManager>();
+        if (elasticityGaugeManager == null)
+            elasticityGaugeManager = gameObject.AddComponent<ElasticityGaugeManager>();
+    }
 
     public void ReplayCurrentScene()
     {
@@ -34,9 +44,21 @@ public class GameSceneManager : MonoBehaviour
 
     private IEnumerator FadeOutAndReplay(string sceneName)
     {
-        UI2DSprite aa = GameObject.FindObjectOfType<UI2DSprite>();
-        aa.GetComponent<TweenAlpha>().enabled = true;
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.0f);
+        followUpCamera.fadeOut.duration = 1.5f;
+        followUpCamera.fadeOut.enabled = true;
+
+        yield return new WaitForSeconds(2.0f);
         SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+    }
+
+    public void AddElasticityGauge(int gauge)
+    {
+        elasticityGaugeManager.AddGauge(gauge);
+    }
+
+    public void SubElasticityGauge(int gauge)
+    {
+        elasticityGaugeManager.SubGauge(gauge);
     }
 }

@@ -136,6 +136,7 @@ public class Player : MyObject
             if (input.x != 0)
             {
                 state = State.Walk;
+                anim.SetDir((Mathf.Sign(input.x) > 0) ? false : true);
             }
             else
             {
@@ -207,40 +208,50 @@ public class Player : MyObject
         // 타임 스위칭을 할 수 없다
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            var newPos = transform.position;
-            newPos.z = 0;
-            transform.position = newPos;
-            var bc = GetComponent<BoxCollider>();
-            var colPos = transform.position + new Vector3(bc.center.x, bc.center.y, 0);
-            var cols = Physics.OverlapBox(colPos, new Vector3(bc.size.x * 0.8f, bc.size.y * 0.8f, bc.size.z), Quaternion.identity, 1 << LayerMask.NameToLayer("Collision"));
-
-            bool canSwitching = true;
-
-            int toLayer = 0;
-            if (pTimeLayer.layerNum == 0)
-            {
-                toLayer = 1;
-            }
-
-            for (int i = 0; i < cols.Length; i++)
-            {
-                var c = cols[i];
-                Debug.Log("Name : " + c.gameObject.name + " toLayer : " + toLayer + " hit : " + c.GetComponentInParent<TimeLayer>().layerNum);
-                if (c.GetComponentInParent<TimeLayer>().layerNum == toLayer)
-                {
-                    Debug.Log("Overlap");
-                    canSwitching = false;
-                }
-            }
-
-            if (canSwitching)
-            {
-                TimeLayerManager.GetInstance.MoveObjectToLayer(gameObject, toLayer);
-                pTimeLayer = transform.GetComponentInParent<TimeLayer>();
-                controller.pTimeLayer = pTimeLayer;
-            }
+            DoTimeSwitch();
         }
         Camera.main.GetComponent<GrayScaleEffect>().intensity = Mathf.Lerp(Camera.main.GetComponent<GrayScaleEffect>().intensity, 1 - pTimeLayer.layerNum, Time.deltaTime * 2);
+    }
+
+    public void DoTimeSwitch()
+    {
+        int toLayer = OppositeLayer(pTimeLayer.layerNum);
+        if (CanSwitchingTime(toLayer))
+        {
+            TimeLayerManager.GetInstance.MoveObjectToLayer(gameObject, toLayer);
+            pTimeLayer = transform.GetComponentInParent<TimeLayer>();
+            controller.pTimeLayer = pTimeLayer;
+        }
+    }
+
+    public bool CanSwitchingTime(int toLayer)
+    {
+        bool canSwitching = true;
+
+        var bc = GetComponent<BoxCollider>();
+        var colPos = transform.position + new Vector3(bc.center.x, bc.center.y, 0);
+        
+        var cols = Physics.OverlapBox(colPos, 
+            new Vector3(bc.size.x * 0.8f, bc.size.y * 0.8f, bc.size.z), 
+            Quaternion.identity, 
+            1 << LayerMask.NameToLayer("Collision"));
+
+        for (int i = 0; i < cols.Length; i++)
+        {
+            var c = cols[i];
+
+            if (c.GetComponentInParent<TimeLayer>().layerNum == toLayer)
+            {
+                canSwitching = false;
+            }
+        }
+
+        return canSwitching;
+    }
+
+    public int OppositeLayer(int nowLayer)
+    {
+        return pTimeLayer.layerNum == 0 ? 1 : 0;
     }
 
     // isGrabing이 true라면 플레이어의 위치를 벽 코너에 고정한다

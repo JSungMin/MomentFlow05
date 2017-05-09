@@ -48,14 +48,12 @@ public class AnimationBase : MonoBehaviour
 
     public void SetDir(bool isToLeft)
     {
-        if (dir != Direction.Left && isToLeft)
+        if (isToLeft)
         {
-            dir = Direction.Left;
             transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         }
         else
         {
-            dir = Direction.Right;
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         }
     }

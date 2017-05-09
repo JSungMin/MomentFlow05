@@ -88,16 +88,6 @@ public class PlayerAnim : AnimationBase {
             audioSource.Stop();
 
         if (!isCutScene) {
-			var inputX = player.input.x;
-			var pastDir = dir;
-
-			if (inputX > 0) {
-				dir = Direction.Right;
-				transform.localScale = new Vector3 (1, transform.localScale.y, transform.localScale.z);
-			} else if (inputX < 0) {
-				dir = Direction.Left;
-				transform.localScale = new Vector3 (-1, transform.localScale.y, transform.localScale.z);
-			}
 			if(player.enabled){
 				switch(player.state){
 				case MyObject.State.Walk:
