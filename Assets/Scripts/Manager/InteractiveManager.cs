@@ -6,16 +6,15 @@ public class InteractiveManager : MonoBehaviour
 {
     public LayerMask masking;
 
-    public List<Collider2D> nearNpcList = new List<Collider2D>();
-    public List<Collider2D> nearObjList = new List<Collider2D>();
+    public List<Collider> nearNpcList = new List<Collider>();
+    public List<Collider> nearObjList = new List<Collider>();
 
     // 현재 플레이어가 인터렉트를 하고 있는 지
     public bool nowInteract = false;
 
     public int index;
-    //private float tmpDis;
 
-    public void OnTriggerEnter2D(Collider2D col)
+    public void OnTriggerEnter(Collider col)
     {
         if (col.gameObject.layer == LayerMask.NameToLayer("NPC"))
         {
@@ -29,7 +28,7 @@ public class InteractiveManager : MonoBehaviour
         }
     }
 
-    public void OnTriggerExit2D(Collider2D col)
+    public void OnTriggerExit(Collider col)
     {
         if (col.gameObject.layer == LayerMask.NameToLayer("NPC"))
         {
@@ -50,47 +49,18 @@ public class InteractiveManager : MonoBehaviour
 
     void Update()
     {
-        /*Set nearest NPC Outline*/
+        //Set nearest NPC Outline
         if (nearNpcList.Count >= 1)
         {
             int minIndex = FindNearestColIndex(nearNpcList);
-            for (int i = 0; i < nearNpcList.Count; i++)
-            {
-                var outlines = nearNpcList[i].GetComponentsInChildren<cakeslice.Outline>();
-
-                for (int j = 0; j < outlines.Length; j++)
-                {
-                    outlines[j].eraseRenderer = (i == minIndex) ? false : true;
-                }
-            }
+            EnableOutLinesOnly(nearNpcList, minIndex);
         }
+
         //Set nearest Object Outline
         if (nearObjList.Count >= 1)
         {
-            //tmpDis = Vector3.Distance(new Vector3(transform.position.x, transform.position.y, 0), new Vector3(nearObjList[0].transform.position.x, nearObjList[0].transform.position.y, 0));
-            //index = 0;
-            //nearObjList[index].GetComponentInChildren<cakeslice.Outline>().eraseRenderer = true;
-            //for (int i = 1; i < nearObjList.Count; i++)
-            //{
-            //    var pPos = transform.position;
-            //    var nPos = nearObjList[i].transform.position;
-            //    var dis = Vector3.Distance(nPos, pPos);
-            //    if (tmpDis >= dis)
-            //    {
-            //        index = i;
-            //        tmpDis = dis;
-            //    }
-            //    var outlines = nearObjList[i].GetComponentsInChildren<cakeslice.Outline>();
-            //    for (int j = 0; j < outlines.Length; j++)
-            //    {
-            //        outlines[j].eraseRenderer = true;
-            //    }
-            //}
-            //var outlinesSet = nearObjList[index].GetComponentsInChildren<cakeslice.Outline>();
-            //for (int j = 0; j < outlinesSet.Length; j++)
-            //{
-            //    outlinesSet[j].eraseRenderer = false;
-            //}
+            int minIndex = FindNearestColIndex(nearObjList);
+            EnableOutLinesOnly(nearObjList, minIndex);
         }
 
         //Interact Part
@@ -128,17 +98,17 @@ public class InteractiveManager : MonoBehaviour
         }
     }
     
-    private int FindNearestColIndex(List<Collider2D> cols)
+    private int FindNearestColIndex(List<Collider> cols)
     {
         float minDis = float.MaxValue;
         int minIndex = -1;
 
-        for (int i = 1; i < cols.Count; i++)
+        for (int i = 0; i < cols.Count; i++)
         {
-            float dis = Vector3.Distance(new Vector3(transform.position.x, transform.position.y, 0), 
-                new Vector3(cols[i].transform.position.x, cols[i].transform.position.y, 0));
-
-            if (minDis <= dis)
+            float dis = Vector3.Distance(new Vector3(transform.position.x, transform.position.y, 0),
+                    new Vector3(cols[i].transform.position.x, cols[i].transform.position.y, 0));
+            
+            if (minDis >= dis)
             {
                 minDis = dis;
                 minIndex = i;
@@ -146,5 +116,19 @@ public class InteractiveManager : MonoBehaviour
         }
 
         return minIndex;
+    }
+
+    // cols 중에서 id와 인덱스가 같은 col에 아웃라인을 켠다
+    private void EnableOutLinesOnly(List<Collider> cols, int id)
+    {
+        for (int i = 0; i < cols.Count; i++)
+        {
+            var outlines = cols[i].GetComponentsInChildren<cakeslice.Outline>();
+
+            for (int j = 0; j < outlines.Length; j++)
+            {
+                outlines[j].eraseRenderer = (i == id) ? false : true;
+            }
+        }
     }
 }

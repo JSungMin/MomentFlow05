@@ -2,33 +2,54 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StunState : IState {
+public class StunState : IState
+{
+    public StunState(GameObject obj) : base(obj) { }
 
-	public StunState(GameObject obj) : base(obj){}
+    public override void OnStateEnter()
+    {
+    }
 
-	public override void OnStateEnter(){
-		//TODO:애니메이션 추가 시 아래 문장 사용
-		//enemyScript.anim.setAnimation (0, enemyScript.charAnimName + "_Stun", true, 1);
-	}
+    private float deadVanishTimer = 0.0f;
+    private const float deadVanish = 3.0f;
+    private const float deadVanishComplete = 4.0f;
 
-	public override void OnStateStay(){
+    public override void OnStateStay()
+    {
+        deadVanishTimer += Time.deltaTime;
+        if (deadVanishTimer >= deadVanishComplete)
+        {
+            // 아예 사라지는 루틴
+            enemyScript.SetMaterialAlpha(0.0f);
+        }
+        else if (deadVanishTimer >= deadVanish)
+        {
+            // 서서히 사라지는 루틴
+            enemyScript.SetMaterialAlpha((deadVanishComplete - deadVanishTimer) / (deadVanishComplete - deadVanish));
+        }
+    }
 
-	}
+    public override void OnStateExit()
+    {
+    }
 
-	public override void OnStateExit(){
+    //현재 State가 Patrol인지를 따진 후, Stay or Enter를 호출한다.
+    public override State ChangeState(State nowState)
+    {
+        if (nowState == State.Stun)
+        {
+            OnStateStay();
+        }
+        else
+        {
+            if (CheckState())
+                OnStateEnter();
+        }
+        return State.Stun;
+    }
 
-	}
-	//현재 State가 Patrol인지를 따진 후, Stay or Enter를 호출한다.
-	public override State ChangeState(State nowState){
-		if (nowState == State.Stun) {
-			OnStateStay ();
-		} else {
-			if(CheckState())
-				OnStateEnter ();
-		}
-		return State.Stun;	
-	}
-	public override bool CheckState (){
-		return true;
-	}
+    public override bool CheckState()
+    {
+        return true;
+    }
 }

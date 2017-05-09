@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Door : MonoBehaviour
 {
-    private BoxCollider2D boxCollider2D;
+    private BoxCollider boxCollider;
     private SpriteRenderer spriteRenderer;
     public bool isOpened { private set; get; }
 
     private void Awake()
     {
-        boxCollider2D = GetComponent<BoxCollider2D>();
+        boxCollider = GetComponent<BoxCollider>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         // 기본 상태는 문을 닫은 상태임
         CloseDoor();
@@ -18,7 +18,7 @@ public class Door : MonoBehaviour
 
     public void OpenDoor()
     {
-        boxCollider2D.enabled = false;
+        boxCollider.enabled = false;
         // TODO: 문이 닫히고 열린 상태를 애니메이션으로 처리할 것
         spriteRenderer.enabled = false;
         isOpened = true;
@@ -26,7 +26,7 @@ public class Door : MonoBehaviour
 
     public void CloseDoor()
     {
-        boxCollider2D.enabled = true;
+        boxCollider.enabled = true;
         spriteRenderer.enabled = true;
         isOpened = false;
     }
