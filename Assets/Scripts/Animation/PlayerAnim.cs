@@ -18,21 +18,25 @@ public class PlayerAnim : AnimationBase {
         audioSource = GetComponent<AudioSource>();
     }
 
-	public void SetSit(){
+	public void SetDefaultIdle(){
+		setAnimation (0, "Idle", true, 1);
+	}
+
+	public void SetDefaultSit(){
 		setAnimation (0, "Sit", true, 1);
 	}
 
-	public void SetHide(){
+	public void SetDefaultHide(){
 		setAnimation (0, "Hide", true, 1);
 	}
 
-	public void SetSitWalk(){
+	public void SetDefaultSitWalk(){
 		setAnimation (0, "Run", true, 1);
 	}
 
-	public void SetWalk(){
+	public void SetDefaultWalk(){
 		if (player.isSit) {
-			SetSitWalk ();
+			SetDefaultSitWalk ();
 		} else {
 			setAnimation (0, "Run", true, 1);
 		}
@@ -82,6 +86,9 @@ public class PlayerAnim : AnimationBase {
 			case MyObject.State.Jump:
 				break;
 			case MyObject.State.Fall:
+				break;
+			case MyObject.State.Attack:
+				setAnimation (0, "Lobo_Punch", false, 1);
 				break;
 			case MyObject.State.GrabCorner:
 				SetGrabCorner ();

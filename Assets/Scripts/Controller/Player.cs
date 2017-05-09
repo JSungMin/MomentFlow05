@@ -25,7 +25,7 @@ public class Player : MyObject
 
 	private Controller2D controller;
 
-	public BoxCollider pBoxCollider;
+	private BoxCollider pBoxCollider;
 
 	private Vector3 INIT_COLLIDER_OFFSET;
 	private Vector3 SIT_COLLIDER_OFFSET;
@@ -62,6 +62,7 @@ public class Player : MyObject
 
 	void Start () {
 		pTimeLayer = transform.GetComponentInParent<TimeLayer> ();
+		pBoxCollider = GetComponent<BoxCollider> ();
 		animator = GetComponent<Animator> ();
 		controller = GetComponent<Controller2D> ();
 		INIT_COLLIDER_OFFSET = pBoxCollider.center;
@@ -101,7 +102,7 @@ public class Player : MyObject
 		velocity.x += input.x*moveSpeed*moveStep.Evaluate(timer);
 		velocity.y += gravity * Time.deltaTime;
 
-		if (!isOnLadder) {
+		if (!isOnLadder && !isAttack) {
 			if (input.x != 0) {
 				state = State.Walk;
 			} 
@@ -115,6 +116,8 @@ public class Player : MyObject
 		}
 		else
 		{
+			if (isAttack)
+				return;
 			if (input.x != 0) {
 				state = State.Walk;
 			} 
@@ -130,7 +133,10 @@ public class Player : MyObject
 
 	float jumpSaveDelay=0;
 	void ProcessJump(){
-		if(Input.GetKeyDown(KeyCode.Space) && !isWalkOnStair && !isOnLadder){
+		if(Input.GetKeyDown(KeyCode.Space) && 
+			!isWalkOnStair &&
+			!isOnLadder &&
+			!isAttack){
 			if (!isJump && velocity.y>= gravity * Time.deltaTime*7.0f) {
 				velocity.y = jumpHeight;
 				isJump = true;
@@ -141,7 +147,10 @@ public class Player : MyObject
 	IEnumerator ProcessAttack(Collider col){
 		if(IsAttackable(col)){
 			isAttack = true;
+			col.GetComponent<EnemyScript> ().enemyState = global::State.Stun;
+			state = State.Attack;
 			yield return new WaitForSeconds (0.8f);
+			state = State.Idle;
 			isAttack = false;
 		}
 		yield return null;
@@ -151,7 +160,8 @@ public class Player : MyObject
 		if(pTimeLayer.layerNum == col.GetComponentInParent<TimeLayer>().layerNum &&
 			col.gameObject.layer == LayerMask.NameToLayer("Enemy") &&
 			Mathf.Sign(col.transform.localScale.x) == Mathf.Sign(transform.localScale.x) && 
-			Input.GetKeyDown(KeyCode.E)
+			Input.GetKeyDown(KeyCode.E) && 
+			(state == State.Idle || state == State.Run)
 		){
 			Debug.Log (col.name);
 			return true;
@@ -201,7 +211,7 @@ public class Player : MyObject
     void ProcessGrabCorner()
     {
 		// if 벽 모서리와 닿아 있다면 isGrabing = true
-		if (isAir && !isClimb) 
+		if (isAir && !isClimb && !isAttack) 
 		{
 			Vector2 pos = new Vector2 (transform.position.x, transform.position.y);
 			var cols = Physics.OverlapBox (pos, new Vector2 (0.20f, 0.35f), Quaternion.identity);
@@ -251,7 +261,7 @@ public class Player : MyObject
 
 	private void ProcessClimbLadder()
 	{
-		if(Input.GetKey(KeyCode.W))
+		if(Input.GetKey(KeyCode.W) && !isAttack)
 		{
 			var cols = Physics.OverlapBox (transform.position, 
 				new Vector3 (pBoxCollider.bounds.extents.x, pBoxCollider.bounds.extents.y, pBoxCollider.bounds.extents.z), 
@@ -531,7 +541,7 @@ public class Player : MyObject
 		ProcessSit ();
 		ProcessTimeSwitching();
 		ProcessMove();
-		if(!isGrabing && !isOnLadder){
+		if(!isGrabing && !isOnLadder && !isAttack){
 			controller.Move ( velocity * Time.deltaTime);
 			velocity.x = 0;
 		}
