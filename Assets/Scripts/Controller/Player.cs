@@ -25,7 +25,7 @@ public class Player : MyObject
 
 	private Controller2D controller;
 
-	private BoxCollider pBoxCollider;
+	public BoxCollider pBoxCollider;
 
 	private Vector3 INIT_COLLIDER_OFFSET;
 	private Vector3 SIT_COLLIDER_OFFSET;
@@ -64,7 +64,6 @@ public class Player : MyObject
 		pTimeLayer = transform.GetComponentInParent<TimeLayer> ();
 		animator = GetComponent<Animator> ();
 		controller = GetComponent<Controller2D> ();
-		pBoxCollider = GetComponent<BoxCollider> ();
 		INIT_COLLIDER_OFFSET = pBoxCollider.center;
 		SIT_COLLIDER_OFFSET = INIT_COLLIDER_OFFSET - Vector3.up*0.08f;
 		gravity = -9.8f;
@@ -138,6 +137,27 @@ public class Player : MyObject
 			}
 		}
 	}
+	public bool isAttack = false;
+	IEnumerator ProcessAttack(Collider col){
+		if(IsAttackable(col)){
+			isAttack = true;
+			yield return new WaitForSeconds (0.8f);
+			isAttack = false;
+		}
+		yield return null;
+	}
+
+	private bool IsAttackable(Collider col){
+		if(pTimeLayer.layerNum == col.GetComponentInParent<TimeLayer>().layerNum &&
+			col.gameObject.layer == LayerMask.NameToLayer("Enemy") &&
+			Mathf.Sign(col.transform.localScale.x) == Mathf.Sign(transform.localScale.x) && 
+			Input.GetKeyDown(KeyCode.E)
+		){
+			Debug.Log (col.name);
+			return true;
+		}
+		return false;
+	}
 
 	void ProcessTimeSwitching(){
         // 다른 레이어의 통과 불가능한 지형들과 플레이어가 충돌한다면
@@ -148,7 +168,7 @@ public class Player : MyObject
 			transform.position = newPos;
 			var bc = GetComponent<BoxCollider> ();
 			var colPos = transform.position + new Vector3(bc.center.x,bc.center.y,0);
-			var cols = Physics.OverlapBox (colPos, new Vector3 (bc.size.x*0.8f, bc.size.y*0.8f,bc.size.z),Quaternion.identity,1<<LayerMask.NameToLayer("Collision"));
+			var cols = Physics.OverlapBox (colPos, new Vector3 (bc.size.x*0.8f, bc.size.y*0.8f,bc.size.z),Quaternion.identity,1 << LayerMask.NameToLayer("Collision"));
 
 			bool canSwitching = true;
 
@@ -368,7 +388,7 @@ public class Player : MyObject
 	{
 		for(int i = 0; i < 3; i++)
 		{
-			var hits = Physics.RaycastAll (Vector3.up*pBoxCollider.bounds.max.y + Vector3.right*pBoxCollider.bounds.min.x * (i / 2), Vector2.up,(INIT_COLLIDER_SIZE.y - SIT_COLLIDER_SIZE.y),controller.collisionMask);
+			var hits = Physics.RaycastAll (Vector3.up * pBoxCollider.bounds.max.y + Vector3.right*pBoxCollider.bounds.min.x * (i / 2), Vector2.up,(INIT_COLLIDER_SIZE.y - SIT_COLLIDER_SIZE.y),controller.collisionMask);
 			for(int j = 0; j < hits.Length; j++)
 			{
 				var hit = hits [j];
@@ -413,9 +433,9 @@ public class Player : MyObject
 		tClimbSpeed = tClimbHeight / climbDuration;
 	}
 
-	public BoxCollider[] stairColliders;
-	public float stairMaxX, stairMinX;
-	public float stairMaxY, stairMinY;
+	private BoxCollider[] stairColliders;
+	private float stairMaxX, stairMinX;
+	private float stairMaxY, stairMinY;
 
 	private void InitStairZone ()
 	{
@@ -491,6 +511,7 @@ public class Player : MyObject
 	{
 		ProcessEnterStair (col);
 		ProcessExitStair (col);
+		StartCoroutine (ProcessAttack(col));
 	}
 
 	private void OnTriggerExit(Collider col)

@@ -99,6 +99,7 @@ public class EnemyScript : MonoBehaviour
     {
         return istate[(int)enemyState];
     }
+
     //this function will return derived class from IState
     public T GetSpecifiedState<T>(State enemyState) where T : IState
     {

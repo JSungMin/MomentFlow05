@@ -55,7 +55,6 @@ public class Controller2D : MonoBehaviour {
 			Vector3 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
 			rayOrigin += Vector3.up * (horizontalRaySpacing * i);
 			RaycastHit hit;
-			Debug.DrawRay(rayOrigin, Vector3.right * directionX * rayLength,Color.red);
 		
 			if (Physics.Raycast (rayOrigin, Vector3.right * directionX,out hit ,rayLength ,collisionMask)) {
 				float slopeAngle = Vector3.Angle (hit.normal, Vector3.up);
@@ -113,7 +112,6 @@ public class Controller2D : MonoBehaviour {
 			rayOrigin += Vector3.right * (verticalRaySpacing * i + velocity.x);
 			browseHits[i] = Physics.RaycastAll(rayOrigin, Vector3.up * directionY, rayLength, collisionMask);
 
-			Debug.DrawRay(rayOrigin, Vector3.up * directionY * rayLength,Color.red);
 			for (int j = 0; j < browseHits[i].Length; j++){
 				var hit = browseHits [i] [j].collider;
 				if (hit != null) {
