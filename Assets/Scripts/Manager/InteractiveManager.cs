@@ -8,6 +8,7 @@ public class InteractiveManager : MonoBehaviour
 
     public List<Collider> nearNpcList = new List<Collider>();
     public List<Collider> nearObjList = new List<Collider>();
+    private List<Collider> nearEneList = new List<Collider>();
 
     // 현재 플레이어가 인터렉트를 하고 있는 지
     public bool nowInteract = false;
@@ -16,6 +17,9 @@ public class InteractiveManager : MonoBehaviour
     
     public void OnTriggerEnter(Collider col)
     {
+        if (!TimeLayer.EqualTimeLayer(col.gameObject, gameObject))
+            return;
+
         if (col.gameObject.layer == LayerMask.NameToLayer("NPC"))
         {
             if (!nearNpcList.Contains(col))
@@ -26,10 +30,16 @@ public class InteractiveManager : MonoBehaviour
             if (!nearObjList.Contains(col))
                 nearObjList.Add(col);
         }
+        else if(col.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        {
+            if (!nearEneList.Contains(col))
+                nearEneList.Add(col);
+        }
     }
 
     public void OnTriggerExit(Collider col)
     {
+        //TimeLayer.EqualTimeLayer();
         if (col.gameObject.layer == LayerMask.NameToLayer("NPC"))
         {
             col.gameObject.GetComponentInChildren<cakeslice.Outline>().eraseRenderer = true;
@@ -42,6 +52,10 @@ public class InteractiveManager : MonoBehaviour
             for (int i = 0; i < outlines.Length; i++)
                 outlines[i].eraseRenderer = true;
             nearObjList.Remove(col);
+        }
+        else if (col.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        {
+            nearEneList.Remove(col);
         }
     }
 
@@ -97,6 +111,15 @@ public class InteractiveManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    // 가장 가까이 있는 적의 충돌체를 찾는다
+    public EnemyScript FindNearestEnemy()
+    {
+        if (nearEneList.Count > 0)
+            return nearEneList[FindNearestColIndex(nearEneList)].GetComponent<EnemyScript>();
+        else
+            return null;
     }
     
     private int FindNearestColIndex(List<Collider> cols)

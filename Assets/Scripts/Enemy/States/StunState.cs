@@ -5,14 +5,14 @@ using UnityEngine;
 public class StunState : IState
 {
     public StunState(GameObject obj) : base(obj) { }
-
-    public override void OnStateEnter()
-    {
-    }
-
+    
     private float deadVanishTimer = 0.0f;
     private const float deadVanish = 3.0f;
     private const float deadVanishComplete = 4.0f;
+    
+    public override void OnStateEnter()
+    {
+    }
 
     public override void OnStateStay()
     {

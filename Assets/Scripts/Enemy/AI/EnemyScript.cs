@@ -81,6 +81,7 @@ public class EnemyScript : MonoBehaviour
         findOutGaugeScr.InitFindOutGaugeScript(this);
         meshRenderer = GetComponentInChildren<MeshRenderer>();
         skeletonGost = GetComponentInChildren<SkeletonGhost>();
+        boxCollider = GetComponent<BoxCollider>();
     }
 
     protected void InitEnemy()
@@ -417,6 +418,7 @@ public class EnemyScript : MonoBehaviour
     
     private MeshRenderer meshRenderer;
     private SkeletonGhost skeletonGost;
+    private BoxCollider boxCollider;
 
     public void SetMaterialAlpha(float alpha)
     {
