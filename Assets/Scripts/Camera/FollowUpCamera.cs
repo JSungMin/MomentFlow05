@@ -69,6 +69,7 @@ public class FollowUpCamera : MonoBehaviour {
 				tape += Time.deltaTime;
 			} else {
 				tape = 0;
+				mainCamera.orthographicSize = initOrthosize;
 				isZoomIn = false;
 			}
 		}

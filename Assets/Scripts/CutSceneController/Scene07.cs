@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Scene07 : MonoBehaviour {
-	public EnemyScript security01;
 	public Player player;
 	private PlayerAnim playerAnim;
 	public ChatDialogue callingChat;
@@ -17,26 +16,28 @@ public class Scene07 : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		//if(security01.enemyState == State.Stun && offset == 0)
-		//{
-		//	StartCoroutine(StartCutScene());
-		//}
+		
 	}
 
-	private IEnumerator StartCutScene(){
-		offset++;
-		yield return new WaitForSeconds (3);
-		player.state = MyObject.State.Idle;
-		player.enabled = false;
+	public void StartCutScene(){
+		Debug.Log ("StartCutScene");
+		StartCoroutine(DialogCut());
+	}
+
+	private IEnumerator DialogCut(){
 		callingChat.StartChat ();
 		yield return WaitForClick ();
 		callingChat.NextPage ();
 		yield return WaitForClick ();
+		player.enabled = true;
+		callingChat.EndChat ();
+		yield return null;
 	}
 
 	private IEnumerator WaitForClick(){
 		while(true){
 			if(Input.GetMouseButtonDown(0)){
+				yield return null;
 				break;
 			}
 			yield return null;
