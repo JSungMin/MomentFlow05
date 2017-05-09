@@ -319,7 +319,6 @@ public class EnemyScript : MonoBehaviour {
 			browseHits [i] = Physics.RaycastAll (rayOrigin,	Vector3.up * directionY, rayLength, browseMask);
 
 			for(int j = 0; j < browseHits[i].Length; j++){
-				Debug.Log (browseHits[i][j].collider.name);
 				if(browseHits[i][j].collider != null){
 					if(TimeLayer.EqualTimeLayer(pTimeLayer,browseHits[i][j].transform.GetComponentInParent<TimeLayer>())||
 						browseHits[i][j].transform.CompareTag("Ground")||
