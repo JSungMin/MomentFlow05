@@ -40,27 +40,28 @@ public class InteractiveManager : MonoBehaviour
         {
             var outlines = col.gameObject.GetComponentsInChildren<cakeslice.Outline>();
             for (int i = 0; i < outlines.Length; i++)
-            {
                 outlines[i].eraseRenderer = true;
-            }
             nearObjList.Remove(col);
         }
     }
 
     void Update()
     {
-        //Set nearest NPC Outline
-        if (nearNpcList.Count >= 1)
+        if (!nowInteract)
         {
-            int minIndex = FindNearestColIndex(nearNpcList);
-            EnableOutLinesOnly(nearNpcList, minIndex);
-        }
+            //Set nearest NPC Outline
+            if (nearNpcList.Count >= 1)
+            {
+                int minIndex = FindNearestColIndex(nearNpcList);
+                EnableOutLinesOnly(nearNpcList, minIndex);
+            }
 
-        //Set nearest Object Outline
-        if (nearObjList.Count >= 1)
-        {
-            int minIndex = FindNearestColIndex(nearObjList);
-            EnableOutLinesOnly(nearObjList, minIndex);
+            //Set nearest Object Outline
+            if (nearObjList.Count >= 1)
+            {
+                int minIndex = FindNearestColIndex(nearObjList);
+                EnableOutLinesOnly(nearObjList, minIndex);
+            }
         }
 
         //Interact Part
@@ -68,31 +69,35 @@ public class InteractiveManager : MonoBehaviour
         {
             if (nearNpcList.Count >= 1)
             {
+                int minIndex = FindNearestColIndex(nearNpcList);
                 if (!nowInteract)
                 {
-                    nearNpcList[index].GetComponent<NPC>().Interact();
+                    nearNpcList[minIndex].GetComponent<NPC>().Interact();
                     nowInteract = true;
                 }
             }
+
             if (nearObjList.Count >= 1)
             {
-                if (!nowInteract)
+                int minIndex = FindNearestColIndex(nearObjList);
+
+                if (nowInteract)
                 {
-                    if (nearObjList[index].GetComponent<InteractInterface>() != null)
-                        nearObjList[index].GetComponent<InteractInterface>().Interact();
-                    
-                    if (nearObjList[index].GetComponent<ThrowableObjectScript>() != null)
-                        nowInteract = true;
+                    if (nearObjList[minIndex].GetComponent<InteractInterface>() != null)
+                    {
+                        if (nearObjList[minIndex].GetComponent<ThrowableObjectScript>() != null)
+                            nowInteract = false;
+
+                        nearObjList[minIndex].GetComponent<InteractInterface>().StopInteract();
+                    }
                 }
                 else
                 {
-                    if (nearObjList[index].GetComponent<InteractInterface>() != null)
-                    {
-                        if (nearObjList[index].GetComponent<ThrowableObjectScript>() != null)
-                            nowInteract = false;
+                    if (nearObjList[minIndex].GetComponent<InteractInterface>() != null)
+                        nearObjList[minIndex].GetComponent<InteractInterface>().Interact();
 
-                        nearObjList[index].GetComponent<InteractInterface>().StopInteract();
-                    }
+                    if (nearObjList[minIndex].GetComponent<ThrowableObjectScript>() != null)
+                        nowInteract = true;
                 }
             }
         }

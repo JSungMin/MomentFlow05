@@ -21,11 +21,17 @@ public class StunState : IState
         {
             // 아예 사라지는 루틴
             enemyScript.SetMaterialAlpha(0.0f);
+            enemyScript.DisableGhosting();
         }
         else if (deadVanishTimer >= deadVanish)
         {
             // 서서히 사라지는 루틴
             enemyScript.SetMaterialAlpha((deadVanishComplete - deadVanishTimer) / (deadVanishComplete - deadVanish));
+        }
+        else
+        {
+            // 스턴 애니메이션하는 루틴
+            // Stun(enemyScript.transform, Vector3.zero);
         }
     }
 

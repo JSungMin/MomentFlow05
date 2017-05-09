@@ -18,16 +18,20 @@ public class InteractInterface : MonoBehaviour
 
     protected void Awake()
     {
-        if (GetComponent<Outline>() == null)
-        {
+        outline = GetComponent<Outline>();
+        if (outline == null)
+            outline = GetComponentInChildren<Outline>();
+        if (outline == null)
             outline = gameObject.AddComponent<Outline>();
-        }
     }
 
     public void Interact()
     {
-        if(interact != null)
+        if (interact != null)
+        {
             interact();
+            outline.eraseRenderer = true;
+        }
     }
     
     public void StopInteract()

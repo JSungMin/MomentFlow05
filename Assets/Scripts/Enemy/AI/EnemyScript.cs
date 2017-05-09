@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+using Spine.Unity.Modules;
 using Spine.Unity;
 using Spine;
 
@@ -76,8 +77,10 @@ public class EnemyScript : MonoBehaviour
             newGauge.transform.localScale = Vector3.one;
             findOutGaugeScr = newGauge.GetComponent<FindOutGaugeScript>();
         }
+
         findOutGaugeScr.InitFindOutGaugeScript(this);
         meshRenderer = GetComponentInChildren<MeshRenderer>();
+        skeletonGost = GetComponentInChildren<SkeletonGhost>();
     }
 
     protected void InitEnemy()
@@ -367,7 +370,7 @@ public class EnemyScript : MonoBehaviour
 
             for (int j = 0; j < browseHits[i].Length; j++)
             {
-                Debug.Log(browseHits[i][j].collider.name);
+                // Debug.Log(browseHits[i][j].collider.name);
                 if (browseHits[i][j].collider != null)
                 {
                     if (TimeLayer.EqualTimeLayer(pTimeLayer, browseHits[i][j].transform.GetComponentInParent<TimeLayer>()) ||
@@ -413,6 +416,8 @@ public class EnemyScript : MonoBehaviour
     }
     
     private MeshRenderer meshRenderer;
+    private SkeletonGhost skeletonGost;
+
     public void SetMaterialAlpha(float alpha)
     {
         meshRenderer.material.color =
@@ -420,5 +425,10 @@ public class EnemyScript : MonoBehaviour
             meshRenderer.material.color.g,
             meshRenderer.material.color.b,
             alpha);
+    }
+
+    public void DisableGhosting()
+    {
+        skeletonGost.ghostingEnabled = false;
     }
 }

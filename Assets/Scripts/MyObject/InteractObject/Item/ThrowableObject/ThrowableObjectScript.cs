@@ -70,8 +70,6 @@ public class ThrowableObjectScript : InteractInterface
     {
         if (!isInteracted)
         {
-            Debug.Log("Grab");
-
             transform.parent = playerHands.transform;
             transform.localPosition = Vector3.zero;
 
@@ -95,7 +93,6 @@ public class ThrowableObjectScript : InteractInterface
     //triggered when is grabbed and mouse left button click
     public void ThrowObject()
     {
-        Debug.Log("Throw");
         ReleaseObject();
         CalculateThrowVelocity();
     }
@@ -109,8 +106,7 @@ public class ThrowableObjectScript : InteractInterface
         for (int i = 0; i < cols.Length; i++)
         {
             if (TimeLayer.EqualTimeLayer(cols[i].transform.GetComponentInParent<TimeLayer>(), pTimeLayer) ||
-                cols[i].transform.CompareTag("Ground") ||
-                cols[i].transform.CompareTag("GrabableGround"))
+                cols[i].transform.CompareTag("Ground") || cols[i].transform.CompareTag("GrabableGround"))
             {
                 colList.Add(cols[i]);
             }

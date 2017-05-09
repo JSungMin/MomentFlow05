@@ -8,12 +8,4 @@ public class SecurityAnim : AnimationBase
     {
         base.Awake();
     }
-
-	public void Idle(){
-		setAnimation (1, charAnimName + "Idle", true, 1);
-	}
-
-	public void Walk(){
-		setAnimation (1, charAnimName + "Walk", true, 1);
-	}
 }

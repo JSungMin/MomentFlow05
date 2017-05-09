@@ -18,8 +18,7 @@ public abstract class IState
     // TODO!!!!!!!!!!!!!!!!!!!!!!!!!!
     // 부모에서 awake를 구현하고 자식에서 따로 오버라이드 하지 않으면 아마 부모의 awake가 불릴걸? 시험해봐야함
 	public IState(){ }
-
-
+    
 	public IState(GameObject obj) 
 	{
         enemyObj = obj;
@@ -49,30 +48,33 @@ public abstract class IState
 	public void Walk(Transform t,Vector3 velocity)
     {
 		enemyScript.velocity.x = velocity.x;
-
         enemyScript.anim.Walk();
-
 		t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
-	
     }
-	public void SuspiciousWalk(Transform t,Vector3 velocity)
+
+    public void SuspiciousWalk(Transform t,Vector3 velocity)
 	{
 		enemyScript.velocity.x = velocity.x;
 		enemyScript.anim.SuspiciousWalk();
         t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
-
 	}
-	public void Run(Transform t,Vector3 velocity)
+
+    public void Run(Transform t,Vector3 velocity)
 	{
 		enemyScript.velocity.x = velocity.x;
 		enemyScript.anim.Run();
-
         t.localScale = new Vector3 (Mathf.Sign (velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
-	
 	}
 
-	public void LookAround(){
+    public void Stun(Transform t, Vector3 velocity)
+    {
+        enemyScript.velocity = velocity;
+        enemyScript.anim.Stun();
+        t.localScale = new Vector3(Mathf.Sign(velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
+    }
 
+	public void LookAround()
+    {
 	}
 
     public abstract void OnStateEnter();
