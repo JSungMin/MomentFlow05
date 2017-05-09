@@ -102,19 +102,36 @@ public class Player : MyObject
 		velocity.x += input.x*moveSpeed*moveStep.Evaluate(timer);
 		velocity.y += gravity * Time.deltaTime;
 
-		if (input.x != 0) {
-			state = State.Walk;
-		} else {
-			if (isSit)
-				state = State.Sit;
+		if (!isOnLadder) {
+			if (input.x != 0) {
+				state = State.Walk;
+			} 
 			else
-				state = State.Idle;
+			{
+				if (isSit)
+					state = State.Sit;
+				else
+					state = State.Idle;
+			}
+		}
+		else
+		{
+			if (input.x != 0) {
+				state = State.Walk;
+			} 
+			else
+			{
+				if (isSit)
+					state = State.Sit;
+				else
+					state = State.Idle;
+			}
 		}
 	}
 
 	float jumpSaveDelay=0;
 	void ProcessJump(){
-		if(Input.GetKeyDown(KeyCode.Space) && !isWalkOnStair){
+		if(Input.GetKeyDown(KeyCode.Space) && !isWalkOnStair && !isOnLadder){
 			if (!isJump && velocity.y>= gravity * Time.deltaTime*7.0f) {
 				velocity.y = jumpHeight;
 				isJump = true;
@@ -131,7 +148,7 @@ public class Player : MyObject
 			transform.position = newPos;
 			var bc = GetComponent<BoxCollider> ();
 			var colPos = transform.position + new Vector3(bc.center.x,bc.center.y,0);
-			var cols = Physics2D.OverlapBoxAll (colPos, new Vector2 (bc.size.x*0.8f, bc.size.y*0.8f), 0,1<<LayerMask.NameToLayer("Collision"));
+			var cols = Physics.OverlapBox (colPos, new Vector3 (bc.size.x*0.8f, bc.size.y*0.8f,bc.size.z),Quaternion.identity,1<<LayerMask.NameToLayer("Collision"));
 
 			bool canSwitching = true;
 
@@ -140,7 +157,7 @@ public class Player : MyObject
 				toLayer = 1;
 			}
 
-			for(int i = 0;i<cols.Length;i++){
+			for(int i = 0;i < cols.Length; i++){
 				var c = cols [i];
 				Debug.Log ("Name : " + c.gameObject.name + " toLayer : " + toLayer + " hit : " + c.GetComponentInParent<TimeLayer>().layerNum);
 				if(c.GetComponentInParent<TimeLayer>().layerNum == toLayer){
@@ -159,7 +176,7 @@ public class Player : MyObject
 	}
 
     // isGrabing이 true라면 플레이어의 위치를 벽 코너에 고정한다
-    private bool isGrabing;
+	public bool isGrabing;
     // 벽의 모서리를 잡는 함수
     void ProcessGrabCorner()
     {
@@ -167,7 +184,7 @@ public class Player : MyObject
 		if (isAir && !isClimb) 
 		{
 			Vector2 pos = new Vector2 (transform.position.x, transform.position.y);
-			var cols = Physics2D.OverlapBoxAll (pos, new Vector2 (0.20f, 0.35f), 0);
+			var cols = Physics.OverlapBox (pos, new Vector2 (0.20f, 0.35f), Quaternion.identity);
 			for (int i = 0; i < cols.Length; i++) 
 			{
 				var c = cols [i];
@@ -179,16 +196,17 @@ public class Player : MyObject
 
 					if (isFoward) 
 					{
-						if (GetComponent<BoxCollider> ().bounds.min.y < c.bounds.max.y) 
+						if (pBoxCollider.bounds.min.y < c.bounds.max.y) 
 						{
-							if (GetComponent<BoxCollider> ().bounds.max.y >= c.bounds.max.y - 0.1f) 
+							if (pBoxCollider.bounds.max.y >= c.bounds.max.y - 0.1f) 
 							{
+								Debug.Log ("Grab Corner : " + pBoxCollider.bounds.min.y +" : " + c.bounds.max.y + " , " + pBoxCollider.bounds.max.y + " : " + (c.bounds.max.y - 0.1f));
 								isGrabing = true;
 								state = State.GrabCorner;
 								grappingObj = c;
 								velocity = Vector3.zero;
 								var newPos = transform.position;
-								newPos.y = c.bounds.max.y - GetComponent<BoxCollider> ().size.y;
+								newPos.y = c.bounds.max.y - pBoxCollider.size.y;
 								transform.position = newPos;
 							}
 						}
@@ -196,6 +214,7 @@ public class Player : MyObject
 					else 
 					{
 						isGrabing = false;
+						Debug.Log ("Is Not Forward");
 						state = State.Idle;
 						grappingObj = null;
 					}
@@ -204,7 +223,78 @@ public class Player : MyObject
 		}
 		ClimbCorner ();
     }
-		
+
+	public bool isOnLadder = false;
+
+	float lMaxX, lMaxY;
+	float lMinX, lMinY;
+
+	private void ProcessClimbLadder()
+	{
+		if(Input.GetKey(KeyCode.W))
+		{
+			var cols = Physics.OverlapBox (transform.position, 
+				new Vector3 (pBoxCollider.bounds.extents.x, pBoxCollider.bounds.extents.y, pBoxCollider.bounds.extents.z), 
+				Quaternion.identity, 
+				1 << LayerMask.NameToLayer ("Trigger"));
+
+
+			for(int i = 0; i < cols.Length; i++)
+			{
+				var col = cols [i];
+				if(col.CompareTag("Ladder"))
+				{
+					lMaxX = col.bounds.max.x;
+					lMaxY = col.bounds.max.y;
+					lMinX = col.bounds.min.x;
+					lMinY = col.bounds.min.y;
+
+					if(pBoxCollider.bounds.min.y >= lMaxY)
+					{
+						isOnLadder = false;
+						velocity = Vector3.zero;
+						break;
+					}
+
+					if (!isOnLadder)
+						isOnLadder = true;
+					state = State.ClimbLadder;
+					transform.position += Vector3.up * moveSpeed * Time.deltaTime;
+				}
+			}
+		}
+		else if(Input.GetKey(KeyCode.S))
+		{
+			var cols = Physics.OverlapBox (transform.position, 
+				new Vector3 (pBoxCollider.bounds.extents.x, pBoxCollider.bounds.extents.y, pBoxCollider.bounds.extents.z), 
+				Quaternion.identity, 
+				1 << LayerMask.NameToLayer ("Trigger"));
+			
+			for(int i = 0; i < cols.Length; i++)
+			{
+				var col = cols [i];
+				if(col.CompareTag("Ladder"))
+				{
+					lMaxX = col.bounds.max.x;
+					lMaxY = col.bounds.max.y;
+					lMinX = col.bounds.min.x;
+					lMinY = col.bounds.min.y;
+
+					if(pBoxCollider.bounds.min.y <= lMinY)
+					{
+						velocity = Vector3.zero;
+						isOnLadder = false;
+						break;
+					}
+					if (!isOnLadder)
+						isOnLadder = true;
+					state = State.ClimbLadder;
+					transform.position -= Vector3.up * moveSpeed * Time.deltaTime;
+				}
+			}
+		}
+	}
+
 	public bool isSit = false;
 
 	void ProcessSit(){
@@ -278,7 +368,7 @@ public class Player : MyObject
 	{
 		for(int i = 0; i < 3; i++)
 		{
-			var hits = Physics2D.RaycastAll (Vector3.up*pBoxCollider.bounds.max.y + Vector3.right*pBoxCollider.bounds.min.x * (i / 2), Vector2.up,(INIT_COLLIDER_SIZE.y - SIT_COLLIDER_SIZE.y),controller.collisionMask);
+			var hits = Physics.RaycastAll (Vector3.up*pBoxCollider.bounds.max.y + Vector3.right*pBoxCollider.bounds.min.x * (i / 2), Vector2.up,(INIT_COLLIDER_SIZE.y - SIT_COLLIDER_SIZE.y),controller.collisionMask);
 			for(int j = 0; j < hits.Length; j++)
 			{
 				var hit = hits [j];
@@ -292,7 +382,7 @@ public class Player : MyObject
 		return false;
 	}
 
-	Collider2D grappingObj;
+	Collider grappingObj;
 
 	private bool isClimb = false;
 	//만족 스러운 Duration 찾은 후 private나 const로 지정
@@ -311,8 +401,6 @@ public class Player : MyObject
 		isClimb = false;
 		isGrabing = false;
 
-		state = State.Idle;
-
 		climbDurationTimer = 0;
 		tClimbHeight = 0;
 		tClimbSpeed = 0;
@@ -321,7 +409,7 @@ public class Player : MyObject
 	private void InitClimbInfo()
 	{
 		isClimb = true;
-		tClimbHeight = GetComponent<BoxCollider> ().bounds.max.y - GetComponent<BoxCollider>().bounds.min.y;
+		tClimbHeight = pBoxCollider.bounds.max.y - pBoxCollider.bounds.min.y;
 		tClimbSpeed = tClimbHeight / climbDuration;
 	}
 
@@ -367,12 +455,12 @@ public class Player : MyObject
 				state = State.ClimbCorner;
 			} else {
 				ResetClimbInfo ();
-
 				velocity = Vector3.zero;
 
 				var newPos = transform.position;
-				newPos.x += (grappingObj.transform.position - transform.position).normalized.x * (GetComponent<BoxCollider> ().bounds.extents.x);
+				newPos.x += (grappingObj.transform.position - transform.position).normalized.x * (pBoxCollider.bounds.extents.x);
 				newPos.y = grappingObj.bounds.max.y;
+				Debug.Log (newPos.y);
 				transform.position = newPos;
 			}
 		}
@@ -416,12 +504,13 @@ public class Player : MyObject
 		}
 		var tmpY = transform.position.y;
 		ProcessGround();
-		ProcessMove();
 		ProcessJump();
 		ProcessGrabCorner();
+		ProcessClimbLadder ();
 		ProcessSit ();
 		ProcessTimeSwitching();
-		if(!isGrabing){
+		ProcessMove();
+		if(!isGrabing && !isOnLadder){
 			controller.Move ( velocity * Time.deltaTime);
 			velocity.x = 0;
 		}

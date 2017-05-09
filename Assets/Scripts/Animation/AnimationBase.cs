@@ -78,8 +78,8 @@ public class AnimationBase : MonoBehaviour
 
     // idle 애니메이션을 실행시킨다
 	public void Idle(){
-        //setAnimation(1, charAnimName + "_Idle", true, 1);
-		setAnimation(1, "Idle", true, 1);
+        setAnimation(1, charAnimName + "Idle", true, 1);
+		//setAnimation(1, "Idle", true, 1);
 	}
 
 	public void Walk(){

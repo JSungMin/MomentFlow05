@@ -1,145 +1,145 @@
 
 skeleton.png
-size: 1024,256
+size: 2048,256
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
 Detective/Bottom
-  rotate: true
-  xy: 368, 82
+  rotate: false
+  xy: 1571, 182
   size: 80, 20
   orig: 80, 20
   offset: 0, 0
   index: -1
 Detective/Coat
-  rotate: false
-  xy: 2, 2
+  rotate: true
+  xy: 401, 139
   size: 110, 150
   orig: 110, 150
   offset: 0, 0
   index: -1
 Detective/Gun
   rotate: false
-  xy: 757, 174
+  xy: 1355, 174
   size: 60, 75
   orig: 60, 75
   offset: 0, 0
   index: -1
 Detective/Head
   rotate: false
-  xy: 518, 129
+  xy: 827, 129
   size: 120, 120
   orig: 120, 120
   offset: 0, 0
   index: -1
 Detective/Leg_Straight
   rotate: true
-  xy: 819, 204
+  xy: 1417, 204
   size: 45, 90
   orig: 45, 90
   offset: 0, 0
   index: -1
 Detective/LowerArm_Left
   rotate: true
-  xy: 588, 92
+  xy: 1411, 130
   size: 35, 65
   orig: 35, 65
   offset: 0, 0
   index: -1
 Detective/LowerArm_Right
-  rotate: false
-  xy: 390, 92
+  rotate: true
+  xy: 1693, 209
   size: 40, 75
   orig: 40, 75
   offset: 0, 0
   index: -1
 Detective/LowerLeg
   rotate: true
-  xy: 655, 82
+  xy: 154, 15
   size: 45, 65
   orig: 45, 65
   offset: 0, 0
   index: -1
 Detective/Torso
   rotate: true
-  xy: 381, 169
+  xy: 1218, 169
   size: 80, 135
   orig: 80, 135
   offset: 0, 0
   index: -1
 Detective/UpperArm_Left
-  rotate: false
-  xy: 474, 92
+  rotate: true
+  xy: 1066, 127
   size: 35, 75
   orig: 35, 75
   offset: 0, 0
   index: -1
 Detective/UpperArm_Right
   rotate: true
-  xy: 819, 167
+  xy: 1770, 214
   size: 35, 80
   orig: 35, 80
   offset: 0, 0
   index: -1
 Detective/UpperLeg
   rotate: false
-  xy: 722, 82
+  xy: 1653, 157
   size: 30, 45
   orig: 30, 45
   offset: 0, 0
   index: -1
 Security/Bottom
   rotate: false
-  xy: 241, 5
+  xy: 1571, 160
   size: 80, 20
   orig: 80, 20
   offset: 0, 0
   index: -1
 Security/Head
   rotate: false
-  xy: 640, 129
+  xy: 949, 129
   size: 115, 120
   orig: 115, 120
   offset: 0, 0
   index: -1
 Security/Leg_Straight
   rotate: true
-  xy: 911, 204
+  xy: 1509, 204
   size: 45, 90
   orig: 45, 90
   offset: 0, 0
   index: -1
 Security/Lobo_Face_Angry
-  rotate: false
-  xy: 114, 17
+  rotate: true
+  xy: 553, 124
   size: 125, 135
   orig: 125, 135
   offset: 0, 0
   index: -1
 Security/Lobo_Face_Idle
-  rotate: false
-  xy: 241, 27
+  rotate: true
+  xy: 690, 124
   size: 125, 135
   orig: 125, 135
   offset: 0, 0
   index: -1
 Security/LowerArm_Left
   rotate: true
-  xy: 804, 130
+  xy: 1478, 130
   size: 35, 65
   orig: 35, 65
   offset: 0, 0
   index: -1
 Security/LowerArm_Right
-  rotate: false
-  xy: 432, 92
+  rotate: true
+  xy: 1143, 122
   size: 40, 75
   orig: 40, 75
   offset: 0, 0
   index: -1
 Security/LowerLeg
-  rotate: false
-  xy: 757, 107
+  rotate: true
+  xy: 1297, 122
   size: 45, 65
   orig: 45, 65
   offset: 0, 0
@@ -153,29 +153,113 @@ Security/Rifle
   index: -1
 Security/Torso
   rotate: true
-  xy: 229, 164
+  xy: 1066, 164
   size: 85, 150
   orig: 85, 150
   offset: 0, 0
   index: -1
 Security/UpperArm_Left
   rotate: true
-  xy: 511, 92
+  xy: 1417, 167
   size: 35, 75
   orig: 35, 75
   offset: 0, 0
   index: -1
 Security/UpperArm_Right
   rotate: true
-  xy: 901, 167
+  xy: 1852, 214
   size: 35, 80
   orig: 35, 80
   offset: 0, 0
   index: -1
 Security/UpperLeg
-  rotate: true
-  xy: 871, 135
+  rotate: false
+  xy: 1685, 157
   size: 30, 45
   orig: 30, 45
+  offset: 0, 0
+  index: -1
+Selma/Head_norm
+  rotate: false
+  xy: 2, 2
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+Selma/Leg_Straight
+  rotate: true
+  xy: 1601, 204
+  size: 45, 90
+  orig: 45, 90
+  offset: 0, 0
+  index: -1
+Selma/LowerArm_Left
+  rotate: true
+  xy: 1483, 93
+  size: 35, 65
+  orig: 35, 65
+  offset: 0, 0
+  index: -1
+Selma/LowerArm_Right
+  rotate: true
+  xy: 1220, 127
+  size: 40, 75
+  orig: 40, 75
+  offset: 0, 0
+  index: -1
+Selma/LowerLeg
+  rotate: false
+  xy: 1364, 107
+  size: 45, 65
+  orig: 45, 65
+  offset: 0, 0
+  index: -1
+Selma/Mask_On
+  rotate: true
+  xy: 154, 62
+  size: 90, 70
+  orig: 90, 70
+  offset: 0, 0
+  index: -1
+Selma/Torso
+  rotate: true
+  xy: 229, 159
+  size: 90, 170
+  orig: 90, 170
+  offset: 0, 0
+  index: -1
+Selma/UpperArm_Left
+  rotate: true
+  xy: 1494, 167
+  size: 35, 75
+  orig: 35, 75
+  offset: 0, 0
+  index: -1
+Selma/UpperArm_Right
+  rotate: true
+  xy: 1934, 214
+  size: 35, 80
+  orig: 35, 80
+  offset: 0, 0
+  index: -1
+Selma/UpperLeg
+  rotate: false
+  xy: 1717, 162
+  size: 30, 45
+  orig: 30, 45
+  offset: 0, 0
+  index: -1
+Selma/glass_off
+  rotate: false
+  xy: 1411, 103
+  size: 70, 25
+  orig: 70, 25
+  offset: 0, 0
+  index: -1
+Selma/glass_on
+  rotate: true
+  xy: 2016, 174
+  size: 75, 30
+  orig: 75, 30
   offset: 0, 0
   index: -1

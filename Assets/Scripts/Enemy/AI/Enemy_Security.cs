@@ -113,8 +113,14 @@ public class Enemy_Security : EnemyScript {
 	private void EnemyLostPlayerByDifferentTimeLayer()
 	{
 		if (!TimeLayer.EqualTimeLayer (playerObject.ParentTimeLayer.gameObject, pTimeLayer.gameObject)) {
-			GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo (playerObject.transform.position, moveSpeed * 0.5f);
-			SetState (State.Suspicious);
+			if(!isAttack)
+			{
+				DeleteStateToList (GetStateLayerKey (State.Attack));
+				DeleteStateToList (GetStateLayerKey (State.Detection));
+				GetSpecifiedState<DetectionState> (State.Detection).isDetection = false;
+				
+				detectionDurationTimer = 0;
+			}
 			//findOutGauge = 99;
 		}
 	}
@@ -133,7 +139,7 @@ public class Enemy_Security : EnemyScript {
 			switch(enemyState)
 			{
 			case State.Suspicious:
-				findOutGauge = Mathf.Clamp(findOutGauge + Time.deltaTime * findOutGaugeIncrement * (findOutSight / dist),0,100);
+				findOutGauge = Mathf.Clamp(findOutGauge + Time.deltaTime * findOutGaugeIncrement * (findOutSight / dist)*5,0,100);
 				break;
 			}
 		}
@@ -141,7 +147,7 @@ public class Enemy_Security : EnemyScript {
 
 	private void DecreaseFindOutGauge()
 	{
-		if(!IsFindPlayer(findOutSight))
+		if(!IsFindPlayer(findOutSight) && !GetSpecifiedState<DetectionState>(State.Detection).isDetection)
 		{
 			var pPos = playerObject.transform.position;
 			pPos.z = 0;
@@ -231,11 +237,11 @@ public class Enemy_Security : EnemyScript {
 		//이 부분 이후에 리펙토링 필요 => Clear
 		ProcessTimeEffect();
 		//ProcessDead ();
-
 		//Detection 이후 일정 시간이 지나면 isDetection = false And Patrol 상태로 만든다.
 		AutoReleaseDetectionState();
 		//Patrol 이후 일정 시간이 지나면 State Set to DefaultState
 		AutoReleasePatrolState ();
+
 
 		if(CheckEscapeConditioin()){
 			SetState (State.Escape);
@@ -250,13 +256,12 @@ public class Enemy_Security : EnemyScript {
 		CheckDetectionState ();
 		CheckAttackState ();
 
+		EnemyLostPlayerByDifferentTimeLayer ();
+
 		StartCoroutine (ProcessStateList ());
 					
 		velocity.y -= 2.8f * Time.deltaTime;
 		VerticalCollisions ();
 		transform.Translate (velocity * Time.deltaTime);
     }
-	void FixedUpdate(){
-		
-	}
 }

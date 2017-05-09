@@ -42,7 +42,7 @@ public class AttackState : IState {
 				}
 			}
 			else {
-				Idle();
+				Idle ();
 				if (fireDelayTimer >= fireDelay) {
 					if (attackType == EnemyAttackType.Gun) {
 						enemyScript.fireBullets = enemyScript.FireBullets (fireNum);

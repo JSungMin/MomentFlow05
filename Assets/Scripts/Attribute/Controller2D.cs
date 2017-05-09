@@ -9,9 +9,6 @@ public class Controller2D : MonoBehaviour {
 
 	public bool isWalkOnStair = false;
 
-	public string nowHGroundTag;
-	public string nowVGroundTag;
-
 	const float skinWidth = .015f;
 	public int horizontalRayCount = 4;
 	public int verticalRayCount = 4;
@@ -62,7 +59,6 @@ public class Controller2D : MonoBehaviour {
 		
 			if (Physics.Raycast (rayOrigin, Vector3.right * directionX,out hit ,rayLength ,collisionMask)) {
 				float slopeAngle = Vector3.Angle (hit.normal, Vector3.up);
-				nowHGroundTag = hit.collider.tag;
 
 				if (i == 0 && slopeAngle <= maxClimbAngle) {
 					if (TimeLayer.EqualTimeLayer (pTimeLayer, hit.collider.transform.GetComponentInParent<TimeLayer> ()) ||
@@ -90,12 +86,6 @@ public class Controller2D : MonoBehaviour {
 						hit.collider.CompareTag ("Bound") || hit.collider.CompareTag ("Stair") || 
 						hit.collider.CompareTag("PassableCollision")) {
 
-						if (isWalkOnStair && nowHGroundTag == "PassableCollision") {
-							transform.position += Vector3.up * (hit.collider.bounds.max.y - col.bounds.min.y);
-							Debug.Log ("Let me Lift Up");
-							break;
-						}
-
 						velocity.x = (hit.distance - skinWidth) * directionX;
 						collisions.left = directionX == -1;
 						collisions.right = directionX == 1;
@@ -108,9 +98,6 @@ public class Controller2D : MonoBehaviour {
 					}
 
 				}
-			}
-			else {//hit.collider == null
-				nowHGroundTag = "";
 			}
 		}
 	}
@@ -130,7 +117,6 @@ public class Controller2D : MonoBehaviour {
 			for (int j = 0; j < browseHits[i].Length; j++){
 				var hit = browseHits [i] [j].collider;
 				if (hit != null) {
-					nowVGroundTag = hit.tag;
 
 					if (TimeLayer.EqualTimeLayer (hit.GetComponentInParent<TimeLayer> (), pTimeLayer) ||
 					    hit.CompareTag ("Ground") || hit.CompareTag ("GrabableGround") ||
@@ -138,9 +124,6 @@ public class Controller2D : MonoBehaviour {
 						hit.CompareTag("PassableCollision")) {
 						
 						if (hit.CompareTag ("PassableCollision") && velocity.y > 0 && (GetComponent<Player> ().isJump)) {
-							break;
-						}
-						if (isWalkOnStair && nowVGroundTag == "PassableCollision") {
 							break;
 						}
 
@@ -154,9 +137,6 @@ public class Controller2D : MonoBehaviour {
 						collisions.above = directionY == 1;
 					}
 				} 
-				else { // hit == null
-					nowVGroundTag = "";
-				}
 			}
 		}
 

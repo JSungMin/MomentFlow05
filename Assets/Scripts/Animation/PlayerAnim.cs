@@ -86,6 +86,9 @@ public class PlayerAnim : AnimationBase {
 			case MyObject.State.GrabCorner:
 				SetGrabCorner ();
 				break;
+			case MyObject.State.ClimbLadder:
+				setAnimation (0,"Run", true, 1);
+				break;
 			case MyObject.State.ClimbCorner:
 				SetClimb ();
 				break;

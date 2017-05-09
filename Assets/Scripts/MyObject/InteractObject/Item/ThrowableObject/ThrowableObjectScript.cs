@@ -9,8 +9,8 @@ public class ThrowableObjectScript : InteractInterface
     private Transform playerHands;
 
     private bool isGrabbed;
-    private RaycastHit2D[][] hitsX;
-    private RaycastHit2D[][] hitsY;
+    private RaycastHit[][] hitsX;
+    private RaycastHit[][] hitsY;
 
     public LayerMask mask;
     public LayerMask alertMask;
@@ -35,13 +35,16 @@ public class ThrowableObjectScript : InteractInterface
     //below function will be used.
     public void AlertToNearEnemy()
     {
-        var colliders = Physics2D.OverlapCircleAll(transform.position, alertRadius, alertMask);
+		var colliders = Physics.OverlapSphere(transform.position, alertRadius, alertMask);
 
         for (int i = 0; i < colliders.Length; i++)
         {
             var escr = colliders[i].GetComponent<EnemyScript>();
 
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, (escr.transform.position - transform.position).normalized, alertRadius, mask);
+			RaycastHit hit;
+			if (Physics.Raycast (transform.position, (escr.transform.position - transform.position).normalized,out hit, alertRadius, mask)) {
+
+			}
             Debug.DrawLine(transform.position, transform.position + (escr.transform.position - transform.position).normalized * alertRadius, Color.red);
             if (null != escr)
             {
@@ -97,11 +100,11 @@ public class ThrowableObjectScript : InteractInterface
         CalculateThrowVelocity();
     }
 
-    public Collider2D FindOutNearestCollider(Collider2D[] cols)
+    public Collider FindOutNearestCollider(Collider[] cols)
     {
         float minDis = 0;
         int minIndex = 0;
-        List<Collider2D> colList = new List<Collider2D>();
+        List<Collider> colList = new List<Collider>();
 
         for (int i = 0; i < cols.Length; i++)
         {
@@ -143,27 +146,27 @@ public class ThrowableObjectScript : InteractInterface
     int findOutIndex = 0;
     public void RayCastByVelocity()
     {
-        hitsX = new RaycastHit2D[rayDensity][];
-        hitsY = new RaycastHit2D[rayDensity][];
-        maxX = GetComponent<Collider2D>().bounds.max.x;
-        maxY = GetComponent<Collider2D>().bounds.max.y;
-        minX = GetComponent<Collider2D>().bounds.min.x;
-        minY = GetComponent<Collider2D>().bounds.min.y;
+        hitsX = new RaycastHit[rayDensity][];
+        hitsY = new RaycastHit[rayDensity][];
+        maxX = GetComponent<Collider>().bounds.max.x;
+        maxY = GetComponent<Collider>().bounds.max.y;
+        minX = GetComponent<Collider>().bounds.min.x;
+        minY = GetComponent<Collider>().bounds.min.y;
 
         Vector2 xDir = Vector2.zero;
         Vector2 yDir = Vector2.zero;
 
         for (int i = 0; i < rayDensity; i++)
         {
-            Collider2D[] tmpColsX = new Collider2D[0];
-            Collider2D[] tmpColsY = new Collider2D[0];
+            Collider[] tmpColsX = new Collider[0];
+            Collider[] tmpColsY = new Collider[0];
             if (velocity.x > 0)
             {
                 xDir = Vector2.right;
-                hitsX[i] = Physics2D.RaycastAll(
+                hitsX[i] = Physics.RaycastAll(
                     new Vector2(maxX, minY + colYLen * (i / (rayDensity - 1))),
                     xDir, Mathf.Abs(velocity.x) * Time.deltaTime, mask);
-                tmpColsX = new Collider2D[hitsX[i].Length];
+                tmpColsX = new Collider[hitsX[i].Length];
                 for (int j = 0; j < tmpColsX.Length; j++)
                 {
                     tmpColsX[j] = hitsX[i][j].collider;
@@ -172,10 +175,10 @@ public class ThrowableObjectScript : InteractInterface
             else if (velocity.x < 0)
             {
                 xDir = Vector2.left;
-                hitsX[i] = Physics2D.RaycastAll(
+                hitsX[i] = Physics.RaycastAll(
                     new Vector2(minX, minY + colYLen * (i / (rayDensity - 1))),
                     xDir, Mathf.Abs(velocity.x) * Time.deltaTime, mask);
-                tmpColsX = new Collider2D[hitsX[i].Length];
+                tmpColsX = new Collider[hitsX[i].Length];
                 for (int j = 0; j < tmpColsX.Length; j++)
                 {
                     tmpColsX[j] = hitsX[i][j].collider;
@@ -185,10 +188,10 @@ public class ThrowableObjectScript : InteractInterface
             if (velocity.y > 0)
             {
                 yDir = Vector2.up;
-                hitsY[i] = Physics2D.RaycastAll(
+                hitsY[i] = Physics.RaycastAll(
                     new Vector2(minX + colXLen * (i / (rayDensity - 1)), maxY),
                     yDir, Mathf.Abs(velocity.y) * Time.deltaTime, mask);
-                tmpColsY = new Collider2D[hitsY[i].Length];
+                tmpColsY = new Collider[hitsY[i].Length];
                 for (int j = 0; j < tmpColsY.Length; j++)
                 {
                     tmpColsY[j] = hitsY[i][j].collider;
@@ -198,10 +201,10 @@ public class ThrowableObjectScript : InteractInterface
             else if (velocity.y < 0)
             {
                 yDir = Vector2.down;
-                hitsY[i] = Physics2D.RaycastAll(
+                hitsY[i] = Physics.RaycastAll(
                     new Vector2(minX + colXLen * (i / (rayDensity - 1)), minY),
                     yDir, Mathf.Abs(velocity.y) * Time.deltaTime, mask);
-                tmpColsY = new Collider2D[hitsY[i].Length];
+                tmpColsY = new Collider[hitsY[i].Length];
                 for (int j = 0; j < tmpColsY.Length; j++)
                 {
                     tmpColsY[j] = hitsY[i][j].collider;
