@@ -55,8 +55,9 @@ public class FollowUpCamera : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		RaycastHorizontal ();
-		//if (!isToLeft&&!isToRight) {
+		if(null != followTarget)
+		{
+			RaycastHorizontal ();
 			var targetPos = followTarget.position;
 			targetPos.z = 0;
 			var nowPos = mainCamera.transform.position;
@@ -66,8 +67,17 @@ public class FollowUpCamera : MonoBehaviour {
 			var pos = Vector3.Lerp (nowPos, targetPos + tmpVector, followSpeed * Time.deltaTime);
 			pos.z = -30;
 			mainCamera.transform.position = pos;
-		//} else {
-		//
-		//}
+		}
+	}
+
+	public void SetFollowTargetToNull(){
+		followTarget = null;
+	}
+
+	public void SetFollowTarget(Transform target) {
+		if (null != target)
+			followTarget = target;
+		else
+			SetFollowTargetToNull ();
 	}
 }
