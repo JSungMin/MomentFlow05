@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MyObject : MonoBehaviour {
 
-	public float hp;
+	public float hp = 100;
 
     // resource manger pattern
     // factory pattern, single pattern
@@ -32,8 +32,4 @@ public class MyObject : MonoBehaviour {
 	}
 
 	public State state;
-
-	public void Destroyed(){
-		state = State.Dead;
-	}
 }

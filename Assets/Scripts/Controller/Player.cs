@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MyObject
 {
@@ -79,18 +80,26 @@ public class Player : MyObject
         jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
     }
 
-    public void Damaged(float dAmount)
+    // 어느쪽에서 데미지를 받는지 결정함
+    public void Damaged(float dAmount, bool isFromLeft)
     {
+        if (state == State.Dead)
+            return;
+
         hp -= dAmount;
         if (hp <= 0)
         {
-            Dead();
+            Dead(isFromLeft);
             return;
         }
     }
 
-    public void Dead()
+    public void Dead(bool isFromLeft)
     {
+        state = State.Dead;
+        anim.SetDir(isFromLeft);
+        anim.SetDie();
+        GameSceneManager.getInstance.ReplayCurrentScene();
     }
 
     public void ProcessGround()
@@ -114,6 +123,7 @@ public class Player : MyObject
         {
             return;
         }
+
         input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
         timer = input.x == 0 ? 0 : timer + Time.deltaTime;
@@ -578,10 +588,9 @@ public class Player : MyObject
 
     void Update()
     {
-        if (hp <= 0)
-        {
-            Destroyed();
-        }
+        if (state == State.Dead)
+            return;
+
         var tmpY = transform.position.y;
         ProcessGround();
         ProcessJump();

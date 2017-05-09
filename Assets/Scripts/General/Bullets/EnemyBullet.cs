@@ -29,8 +29,12 @@ public class EnemyBullet : Bullet
     {
         if (obj.layer == LayerMask.NameToLayer("Player"))
         {
-            obj.transform.GetComponent<Player>().Damaged(damage);
+            damage = 1000;
+            if (transform.position.x < obj.transform.position.x)
+                obj.transform.GetComponent<Player>().Damaged(damage, true);
+            else
+                obj.transform.GetComponent<Player>().Damaged(damage, false);
+            DestroyBullet();
         }
-        DestroyBullet();
     }
 }
