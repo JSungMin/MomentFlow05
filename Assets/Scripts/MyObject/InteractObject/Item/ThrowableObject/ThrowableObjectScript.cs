@@ -70,20 +70,22 @@ public class ThrowableObjectScript : InteractInterface
     {
         if (!isInteracted)
         {
+            GameObject.FindObjectOfType<InteractiveManager>().nowInteract = true;
             transform.parent = playerHands.transform;
             transform.localPosition = Vector3.zero;
 
             velocity = Vector3.zero;
             applyGravity = false;
             isGrabbed = true;
+            outline.eraseRenderer = true;
         }
     }
 
     //Stop Interact Function
     public void ReleaseObject()
     {
-        isInteracted = false;
         GameObject.FindObjectOfType<InteractiveManager>().nowInteract = false;
+        isInteracted = false;
         transform.parent = initRootTrans;
 
         applyGravity = true;

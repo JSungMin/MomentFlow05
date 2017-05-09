@@ -28,10 +28,7 @@ public class InteractInterface : MonoBehaviour
     public void Interact()
     {
         if (interact != null)
-        {
             interact();
-            outline.eraseRenderer = true;
-        }
     }
     
     public void StopInteract()

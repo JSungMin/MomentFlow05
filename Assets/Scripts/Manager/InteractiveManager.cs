@@ -11,9 +11,9 @@ public class InteractiveManager : MonoBehaviour
 
     // 현재 플레이어가 인터렉트를 하고 있는 지
     public bool nowInteract = false;
-
-    public int index;
-
+    // 현재 플레이어가 인터렉트 하고 있는 오브젝트
+    private InteractInterface interactingObj;
+    
     public void OnTriggerEnter(Collider col)
     {
         if (col.gameObject.layer == LayerMask.NameToLayer("NPC"))
@@ -47,6 +47,8 @@ public class InteractiveManager : MonoBehaviour
 
     void Update()
     {
+        // 인터렉팅 중이 아니라면
+        // 가장 가까운 오브젝트 아웃라인 활성화
         if (!nowInteract)
         {
             //Set nearest NPC Outline
@@ -77,27 +79,21 @@ public class InteractiveManager : MonoBehaviour
                 }
             }
 
+            // 
             if (nearObjList.Count >= 1)
             {
-                int minIndex = FindNearestColIndex(nearObjList);
-
                 if (nowInteract)
                 {
-                    if (nearObjList[minIndex].GetComponent<InteractInterface>() != null)
-                    {
-                        if (nearObjList[minIndex].GetComponent<ThrowableObjectScript>() != null)
-                            nowInteract = false;
-
-                        nearObjList[minIndex].GetComponent<InteractInterface>().StopInteract();
-                    }
+                    interactingObj.StopInteract();
                 }
                 else
                 {
+                    int minIndex = FindNearestColIndex(nearObjList);
                     if (nearObjList[minIndex].GetComponent<InteractInterface>() != null)
+                    {
+                        interactingObj = nearObjList[minIndex].GetComponent<InteractInterface>();
                         nearObjList[minIndex].GetComponent<InteractInterface>().Interact();
-
-                    if (nearObjList[minIndex].GetComponent<ThrowableObjectScript>() != null)
-                        nowInteract = true;
+                    }
                 }
             }
         }
