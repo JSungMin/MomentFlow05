@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MyObject
 {
@@ -79,18 +80,26 @@ public class Player : MyObject
         jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
     }
 
-    public void Damaged(float dAmount)
+    // 어느쪽에서 데미지를 받는지 결정함
+    public void Damaged(float dAmount, bool isFromLeft)
     {
+        if (state == State.Dead)
+            return;
+
         hp -= dAmount;
         if (hp <= 0)
         {
-            Dead();
+            Dead(isFromLeft);
             return;
         }
     }
 
-    public void Dead()
+    public void Dead(bool isFromLeft)
     {
+        state = State.Dead;
+        anim.SetDir(isFromLeft);
+        anim.SetDie();
+        GameSceneManager.getInstance.ReplayCurrentScene();
     }
 
     public void ProcessGround()
@@ -114,6 +123,7 @@ public class Player : MyObject
         {
             return;
         }
+
         input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
         timer = input.x == 0 ? 0 : timer + Time.deltaTime;
@@ -126,6 +136,7 @@ public class Player : MyObject
             if (input.x != 0)
             {
                 state = State.Walk;
+                anim.SetDir((Mathf.Sign(input.x) > 0) ? false : true);
             }
             else
             {
@@ -197,40 +208,50 @@ public class Player : MyObject
         // 타임 스위칭을 할 수 없다
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            var newPos = transform.position;
-            newPos.z = 0;
-            transform.position = newPos;
-            var bc = GetComponent<BoxCollider>();
-            var colPos = transform.position + new Vector3(bc.center.x, bc.center.y, 0);
-            var cols = Physics.OverlapBox(colPos, new Vector3(bc.size.x * 0.8f, bc.size.y * 0.8f, bc.size.z), Quaternion.identity, 1 << LayerMask.NameToLayer("Collision"));
-
-            bool canSwitching = true;
-
-            int toLayer = 0;
-            if (pTimeLayer.layerNum == 0)
-            {
-                toLayer = 1;
-            }
-
-            for (int i = 0; i < cols.Length; i++)
-            {
-                var c = cols[i];
-                Debug.Log("Name : " + c.gameObject.name + " toLayer : " + toLayer + " hit : " + c.GetComponentInParent<TimeLayer>().layerNum);
-                if (c.GetComponentInParent<TimeLayer>().layerNum == toLayer)
-                {
-                    Debug.Log("Overlap");
-                    canSwitching = false;
-                }
-            }
-
-            if (canSwitching)
-            {
-                TimeLayerManager.GetInstance.MoveObjectToLayer(gameObject, toLayer);
-                pTimeLayer = transform.GetComponentInParent<TimeLayer>();
-                controller.pTimeLayer = pTimeLayer;
-            }
+            DoTimeSwitch();
         }
         Camera.main.GetComponent<GrayScaleEffect>().intensity = Mathf.Lerp(Camera.main.GetComponent<GrayScaleEffect>().intensity, 1 - pTimeLayer.layerNum, Time.deltaTime * 2);
+    }
+
+    public void DoTimeSwitch()
+    {
+        int toLayer = OppositeLayer(pTimeLayer.layerNum);
+        if (CanSwitchingTime(toLayer))
+        {
+            TimeLayerManager.GetInstance.MoveObjectToLayer(gameObject, toLayer);
+            pTimeLayer = transform.GetComponentInParent<TimeLayer>();
+            controller.pTimeLayer = pTimeLayer;
+        }
+    }
+
+    public bool CanSwitchingTime(int toLayer)
+    {
+        bool canSwitching = true;
+
+        var bc = GetComponent<BoxCollider>();
+        var colPos = transform.position + new Vector3(bc.center.x, bc.center.y, 0);
+        
+        var cols = Physics.OverlapBox(colPos, 
+            new Vector3(bc.size.x * 0.8f, bc.size.y * 0.8f, bc.size.z), 
+            Quaternion.identity, 
+            1 << LayerMask.NameToLayer("Collision"));
+
+        for (int i = 0; i < cols.Length; i++)
+        {
+            var c = cols[i];
+
+            if (c.GetComponentInParent<TimeLayer>().layerNum == toLayer)
+            {
+                canSwitching = false;
+            }
+        }
+
+        return canSwitching;
+    }
+
+    public int OppositeLayer(int nowLayer)
+    {
+        return pTimeLayer.layerNum == 0 ? 1 : 0;
     }
 
     // isGrabing이 true라면 플레이어의 위치를 벽 코너에 고정한다
@@ -578,10 +599,9 @@ public class Player : MyObject
 
     void Update()
     {
-        if (hp <= 0)
-        {
-            Destroyed();
-        }
+        if (state == State.Dead)
+            return;
+
         var tmpY = transform.position.y;
         ProcessGround();
         ProcessJump();

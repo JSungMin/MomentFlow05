@@ -264,12 +264,7 @@ public class Enemy_Security : EnemyScript
         CheckSuspiciousState();
         CheckDetectionState();
         CheckAttackState();
-
-        /////////////////////////Test code
-        if (Input.GetKeyDown(KeyCode.M))
-            enemyState = State.Stun;
         CheckStunState();
-        //////////////////////////////////
 
         EnemyLostPlayerByDifferentTimeLayer();
 
