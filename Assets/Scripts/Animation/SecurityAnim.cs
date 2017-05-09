@@ -8,4 +8,8 @@ public class SecurityAnim : AnimationBase
     {
         base.Awake();
     }
+
+	public void SetStrangle(){
+		setAnimation (0, "Strangle", false, 1);
+	}
 }

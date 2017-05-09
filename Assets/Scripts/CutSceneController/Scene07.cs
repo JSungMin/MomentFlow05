@@ -17,10 +17,10 @@ public class Scene07 : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(security01.enemyState == State.Stun && offset == 0)
-		{
-			StartCoroutine(StartCutScene());
-		}
+		//if(security01.enemyState == State.Stun && offset == 0)
+		//{
+		//	StartCoroutine(StartCutScene());
+		//}
 	}
 
 	private IEnumerator StartCutScene(){
