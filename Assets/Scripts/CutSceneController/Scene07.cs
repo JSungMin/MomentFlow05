@@ -25,10 +25,12 @@ public class Scene07 : MonoBehaviour {
 
 	private IEnumerator StartCutScene(){
 		offset++;
-		yield return new WaitForSeconds (2);
+		yield return new WaitForSeconds (3);
 		player.state = MyObject.State.Idle;
 		player.enabled = false;
 		callingChat.StartChat ();
+		yield return WaitForClick ();
+		callingChat.NextPage ();
 		yield return WaitForClick ();
 	}
 
