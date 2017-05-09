@@ -71,7 +71,12 @@ public class PlayerAnim : AnimationBase {
 	public void SetJumpUp(){
 		setAnimation (0, "Jump_Up", false, 1);
 	}
-
+	public void SetGrayColor(){
+		GetComponentInChildren<MeshRenderer> ().material.SetColor("_Color",new Color(125,125,125));
+	}
+	public void SetWhiteColor(){
+		GetComponentInChildren<MeshRenderer> ().material.SetColor("_Color",new Color(255,255,255));
+	}
 
 	void Update () {
         if (curAnimation[1] == "Walk")
