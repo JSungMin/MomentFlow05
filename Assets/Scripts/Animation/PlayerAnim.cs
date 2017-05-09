@@ -52,6 +52,13 @@ public class PlayerAnim : AnimationBase {
 		setAnimation (0, "Run", true, 1);
 	}
     
+	public void SetLoboPunch(){
+		setAnimation (0, "Lobo_Punch", false, 1);
+	}
+	public void SetBackAttack(){
+		setAnimation (0, "BackAttack", false, 1);
+	}
+
 	void Update () {
         if (curAnimation[1] == "Walk")
         {
@@ -72,33 +79,34 @@ public class PlayerAnim : AnimationBase {
 				dir = Direction.Left;
 				transform.localScale = new Vector3 (-1, transform.localScale.y, transform.localScale.z);
 			}
-        
-			switch(player.state){
-			case MyObject.State.Walk:
-				setAnimation (0, "Run", true, 1);
-				break;
-			case MyObject.State.Idle:
-				setAnimation (0, "Idle", true, 1);
-				break;
-			case MyObject.State.Sit:
-				setAnimation (0, "Sit", true, 1);
-				break;
-			case MyObject.State.Jump:
-				break;
-			case MyObject.State.Fall:
-				break;
-			case MyObject.State.Attack:
-				setAnimation (0, "Lobo_Punch", false, 1);
-				break;
-			case MyObject.State.GrabCorner:
-				SetGrabCorner ();
-				break;
-			case MyObject.State.ClimbLadder:
-				setAnimation (0,"Run", true, 1);
-				break;
-			case MyObject.State.ClimbCorner:
-				SetClimb ();
-				break;
+			if(player.enabled){
+				switch(player.state){
+				case MyObject.State.Walk:
+					setAnimation (0, "Run", true, 1);
+					break;
+				case MyObject.State.Idle:
+					setAnimation (0, "Idle", true, 1);
+					break;
+				case MyObject.State.Sit:
+					setAnimation (0, "Sit", true, 1);
+					break;
+				case MyObject.State.Jump:
+					break;
+				case MyObject.State.Fall:
+					break;
+				case MyObject.State.Attack:
+					setAnimation (0, "BackAttack", false, 1);
+					break;
+				case MyObject.State.GrabCorner:
+					SetGrabCorner ();
+					break;
+				case MyObject.State.ClimbLadder:
+					setAnimation (0,"Run", true, 1);
+					break;
+				case MyObject.State.ClimbCorner:
+					SetClimb ();
+					break;
+				}
 			}
 		}
 	}

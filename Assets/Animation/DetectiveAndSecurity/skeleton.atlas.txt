@@ -90,7 +90,7 @@ Detective/UpperLeg
   index: -1
 Security/Bottom
   rotate: false
-  xy: 1571, 160
+  xy: 1478, 145
   size: 80, 20
   orig: 80, 20
   offset: 0, 0
@@ -125,7 +125,7 @@ Security/Lobo_Face_Idle
   index: -1
 Security/LowerArm_Left
   rotate: true
-  xy: 1478, 130
+  xy: 1411, 93
   size: 35, 65
   orig: 35, 65
   offset: 0, 0
@@ -179,6 +179,13 @@ Security/UpperLeg
   orig: 30, 45
   offset: 0, 0
   index: -1
+Selma/Bottom
+  rotate: false
+  xy: 1571, 160
+  size: 80, 20
+  orig: 80, 20
+  offset: 0, 0
+  index: -1
 Selma/Head_norm
   rotate: false
   xy: 2, 2
@@ -195,7 +202,7 @@ Selma/Leg_Straight
   index: -1
 Selma/LowerArm_Left
   rotate: true
-  xy: 1483, 93
+  xy: 1478, 108
   size: 35, 65
   orig: 35, 65
   offset: 0, 0
@@ -251,7 +258,7 @@ Selma/UpperLeg
   index: -1
 Selma/glass_off
   rotate: false
-  xy: 1411, 103
+  xy: 1478, 81
   size: 70, 25
   orig: 70, 25
   offset: 0, 0
