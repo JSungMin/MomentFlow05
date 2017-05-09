@@ -52,12 +52,26 @@ public class PlayerAnim : AnimationBase {
 		setAnimation (0, "Run", true, 1);
 	}
     
+	public void SetLoboWalk(){
+		setAnimation (0, "Lobo_Walk", true, 1);
+	}
+
 	public void SetLoboPunch(){
 		setAnimation (0, "Lobo_Punch", false, 1);
 	}
 	public void SetBackAttack(){
 		setAnimation (0, "BackAttack", false, 1);
 	}
+	public void SetDie(){
+		setAnimation (0, "Die", false, 1);
+	}
+	public void SetJumpDown(){
+		setAnimation (0, "Jump_Down",false, 1);
+	}
+	public void SetJumpUp(){
+		setAnimation (0, "Jump_Up", false, 1);
+	}
+
 
 	void Update () {
         if (curAnimation[1] == "Walk")
