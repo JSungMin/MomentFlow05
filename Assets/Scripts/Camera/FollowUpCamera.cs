@@ -5,6 +5,9 @@ using UnityEngine;
 public class FollowUpCamera : MonoBehaviour {
 
 	public Transform followTarget;
+
+	public TweenAlpha fadeOut;
+
 	public LayerMask mask;
 	private Camera mainCamera;
 
@@ -15,12 +18,18 @@ public class FollowUpCamera : MonoBehaviour {
 	public Vector3 paddingVector;
 
 	public bool isActive = true;
+	public bool isZoomIn = false;
+
+	public AnimationCurve zoomInCurve;
+
+	private float initOrthosize;
 
 	Vector2 input;
 
 	// Use this for initialization
 	void Start () {
 		mainCamera = GetComponent<Camera> ();	
+		initOrthosize = mainCamera.orthographicSize;
 	}
 
 	bool isToLeft = false;
@@ -53,6 +62,18 @@ public class FollowUpCamera : MonoBehaviour {
 			}
 	}
 
+	void ProcessZoomIn(){
+		if (isZoomIn) {
+			if (tape <= 1) {
+				mainCamera.orthographicSize = (initOrthosize) * (1 - zoomInCurve.Evaluate (tape) * 0.35f);
+				tape += Time.deltaTime;
+			} else {
+				tape = 0;
+				isZoomIn = false;
+			}
+		}
+	}
+
 	// Update is called once per frame
 	void Update () {
 		if(null != followTarget)
@@ -67,7 +88,14 @@ public class FollowUpCamera : MonoBehaviour {
 			var pos = Vector3.Lerp (nowPos, targetPos + tmpVector, followSpeed * Time.deltaTime);
 			pos.z = -30;
 			mainCamera.transform.position = pos;
+
+			ProcessZoomIn ();
 		}
+	}
+	private float tape = 0;
+	public void StartInstantZoomIn(){
+		isZoomIn = true;
+		tape = 0;
 	}
 
 	public void SetFollowTargetToNull(){
