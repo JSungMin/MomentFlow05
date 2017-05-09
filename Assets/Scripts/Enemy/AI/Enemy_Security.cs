@@ -135,7 +135,6 @@ public class Enemy_Security : EnemyScript {
 			ePos.z = 0;
 			var dist = Vector3.Distance (pPos,ePos);
 
-			Debug.Log (dist);
 			switch(enemyState)
 			{
 			case State.Suspicious:
