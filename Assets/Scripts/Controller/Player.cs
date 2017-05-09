@@ -95,6 +95,10 @@ public class Player : MyObject
 	}
 
 	void ProcessMove(){
+		if (isAttack) {
+			state = State.Attack;
+			return;
+		}
 		input = new Vector2 (Input.GetAxis ("Horizontal"), Input.GetAxis ("Vertical"));
 
 		timer = input.x == 0 ? 0 : timer + Time.deltaTime;
@@ -102,7 +106,8 @@ public class Player : MyObject
 		velocity.x += input.x*moveSpeed*moveStep.Evaluate(timer);
 		velocity.y += gravity * Time.deltaTime;
 
-		if (!isOnLadder && !isAttack) {
+
+		if (!isOnLadder) {
 			if (input.x != 0) {
 				state = State.Walk;
 			} 
@@ -116,8 +121,6 @@ public class Player : MyObject
 		}
 		else
 		{
-			if (isAttack)
-				return;
 			if (input.x != 0) {
 				state = State.Walk;
 			} 
@@ -149,8 +152,9 @@ public class Player : MyObject
 			isAttack = true;
 			col.GetComponent<EnemyScript> ().enemyState = global::State.Stun;
 			state = State.Attack;
-			yield return new WaitForSeconds (0.8f);
+			yield return new WaitForSeconds (0.25f);
 			state = State.Idle;
+			velocity = Vector2.zero;
 			isAttack = false;
 		}
 		yield return null;
@@ -160,7 +164,7 @@ public class Player : MyObject
 		if(pTimeLayer.layerNum == col.GetComponentInParent<TimeLayer>().layerNum &&
 			col.gameObject.layer == LayerMask.NameToLayer("Enemy") &&
 			Mathf.Sign(col.transform.localScale.x) == Mathf.Sign(transform.localScale.x) && 
-			Input.GetKeyDown(KeyCode.E) && 
+			Input.GetKey(KeyCode.E) && 
 			(state == State.Idle || state == State.Run)
 		){
 			Debug.Log (col.name);
@@ -293,7 +297,7 @@ public class Player : MyObject
 				}
 			}
 		}
-		else if(Input.GetKey(KeyCode.S))
+		else if(Input.GetKey(KeyCode.S) && !isAttack)
 		{
 			var cols = Physics.OverlapBox (transform.position, 
 				new Vector3 (pBoxCollider.bounds.extents.x, pBoxCollider.bounds.extents.y, pBoxCollider.bounds.extents.z), 
@@ -517,11 +521,18 @@ public class Player : MyObject
 		ChangePlayerZLayer (prevPos);
 	}
 
+	private void OnTriggerEnter(Collider col)
+	{
+		StartCoroutine (ProcessAttack(col));
+	}
+
 	private void OnTriggerStay(Collider col)
 	{
-		ProcessEnterStair (col);
-		ProcessExitStair (col);
-		StartCoroutine (ProcessAttack(col));
+		if (enabled) {
+			ProcessEnterStair (col);
+			ProcessExitStair (col);
+			StartCoroutine (ProcessAttack(col));
+		}
 	}
 
 	private void OnTriggerExit(Collider col)
