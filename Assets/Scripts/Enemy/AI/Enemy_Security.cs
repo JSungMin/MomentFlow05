@@ -16,7 +16,7 @@ public class Enemy_Security : EnemyScript
 
     private void InitStates()
     {
-        istate = new IState[8];
+        istate = new IState[9];
         istate[0] = new IdleState(gameObject);
         istate[1] = new PatrolState(gameObject);
         istate[2] = new SuspiciousState(gameObject);
@@ -25,17 +25,20 @@ public class Enemy_Security : EnemyScript
         istate[5] = new AttackState(gameObject);
         istate[6] = new EscapeState(gameObject);
         istate[7] = new StunState(gameObject);
+        istate[8] = new DeadState(gameObject);
     }
+
     private void SetStatesLevel()
     {
-        levelValue[0] = State.Stun;
-        levelValue[1] = State.Escape;
-        levelValue[2] = State.Attack;
-        levelValue[3] = State.Alert;
-        levelValue[4] = State.Detection;
-        levelValue[5] = State.Suspicious;
-        levelValue[6] = State.Patrol;
-        levelValue[7] = State.Idle;
+        levelValue[0] = State.Dead;
+        levelValue[1] = State.Stun;
+        levelValue[2] = State.Escape;
+        levelValue[3] = State.Attack;
+        levelValue[4] = State.Alert;
+        levelValue[5] = State.Detection;
+        levelValue[6] = State.Suspicious;
+        levelValue[7] = State.Patrol;
+        levelValue[8] = State.Idle;
     }
 
     public int GetStateLayerKey(State s)

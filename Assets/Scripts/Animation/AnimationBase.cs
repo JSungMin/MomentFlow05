@@ -107,4 +107,9 @@ public class AnimationBase : MonoBehaviour
     {
         setAnimation(1, charAnimName + "Stun", false, 1);
     }
+
+    public void SetStrangle()
+    {
+        setAnimation(1, "Strangle", false, 1);
+    }
 }
