@@ -31,6 +31,7 @@ public class Player : MyObject
     private Controller2D controller;
 
     private BoxCollider pBoxCollider;
+	private Camera mainCamera;
 
     private Vector3 INIT_COLLIDER_OFFSET;
     private Vector3 SIT_COLLIDER_OFFSET;
@@ -73,6 +74,7 @@ public class Player : MyObject
         animator = GetComponent<Animator>();
         controller = GetComponent<Controller2D>();
         interacitveManager = GameObject.FindObjectOfType<InteractiveManager>();
+		mainCamera = Camera.main;
 
         INIT_COLLIDER_OFFSET = pBoxCollider.center;
         SIT_COLLIDER_OFFSET = INIT_COLLIDER_OFFSET - Vector3.up * 0.08f;
@@ -102,6 +104,23 @@ public class Player : MyObject
         GameSceneManager.getInstance.ReplayCurrentScene();
     }
 
+	private void ProcessCustomEventTrigger (Collider col)
+	{
+		if (IsCutsomEventTrigger (col)) {
+			col.GetComponent<CustomEventTrigger> ().StartTriggerEvent ();
+		}
+	}
+
+	void SetAirState ()
+	{
+		if (velocity.y > 0.25f) {
+			state = State.Jump;
+		}
+		else if (velocity.y < -0.25f){
+			state = State.Fall;
+		}
+	}
+
     public void ProcessGround()
     {
         if (controller.collisions.above || controller.collisions.below)
@@ -114,8 +133,14 @@ public class Player : MyObject
         else
         {
             isAir = true;
+			SetAirState ();
         }
     }
+
+	bool IsPlayerCompletlyIdle ()
+	{
+		return !isSit && !isGrabing && !isClimb && !isAir;
+	}
 
     void ProcessMove()
     {
@@ -131,35 +156,35 @@ public class Player : MyObject
         velocity.x += input.x * moveSpeed * moveStep.Evaluate(timer);
         velocity.y += gravity * Time.deltaTime;
         
-        if (!isOnLadder)
-        {
-            if (input.x != 0)
-            {
-                state = State.Walk;
-                anim.SetDir((Mathf.Sign(input.x) > 0) ? false : true);
-            }
-            else
-            {
-                if (isSit)
-                    state = State.Sit;
-                else
-                    state = State.Idle;
-            }
-        }
-        else
-        {
-            if (input.x != 0)
-            {
-                state = State.Walk;
-            }
-            else
-            {
-                if (isSit)
-                    state = State.Sit;
-                else
-                    state = State.Idle;
-            }
-        }
+		if(isOnLadder)
+		{
+			if (input.x != 0)
+			{
+				state = State.Walk;
+			}
+			else
+			{
+				if (isSit)
+					state = State.Sit;
+				else
+					state = State.Idle;
+			}
+			return;
+		}
+			
+        if (input.x != 0)    
+		{
+			if(IsPlayerCompletlyIdle()){
+				state = State.Walk;
+				anim.SetDir((Mathf.Sign(input.x) > 0) ? false : true);
+			}
+		}  
+		else
+		{
+			if (IsPlayerCompletlyIdle ()) {
+				state = State.Idle;
+			}
+		}
     }
 
     void ProcessAttack()
@@ -208,15 +233,38 @@ public class Player : MyObject
         }
     }
 
+	bool IsPlayerInPast ()
+	{
+		return pTimeLayer.layerNum == 0;
+	}
+
+	void SetGrayScreen ()
+	{
+		mainCamera.GetComponent<GrayScaleEffect> ().IsActived = true;
+	}
+
+	void SetColorScreen ()
+	{
+		mainCamera.GetComponent<GrayScaleEffect> ().IsActived = false;
+	}
+
     void ProcessTimeSwitching()
     {
         // 다른 레이어의 통과 불가능한 지형들과 플레이어가 충돌한다면
         // 타임 스위칭을 할 수 없다
         if (Input.GetKeyDown(KeyCode.Tab))
         {
+			if (IsPlayerInPast ()) {
+				mainCamera.GetComponent<FollowUpCamera> ().DoElasticEffect ();
+			}
             DoTimeSwitch();
         }
-        Camera.main.GetComponent<GrayScaleEffect>().intensity = Mathf.Lerp(Camera.main.GetComponent<GrayScaleEffect>().intensity, 1 - pTimeLayer.layerNum, Time.deltaTime * 2);
+
+		if (IsPlayerInPast ()) {
+			SetGrayScreen ();
+		} else {
+			SetColorScreen ();
+		}
     }
 
     public void DoTimeSwitch()
@@ -232,6 +280,8 @@ public class Player : MyObject
 
     public bool CanSwitchingTime(int toLayer)
     {
+		if (isWalkOnStair)
+			return false;
         bool canSwitching = true;
 
         var bc = GetComponent<BoxCollider>();
@@ -285,12 +335,12 @@ public class Player : MyObject
                         {
                             if (pBoxCollider.bounds.max.y >= c.bounds.max.y - 0.1f)
                             {
-                                Debug.Log("Grab Corner : " + pBoxCollider.bounds.min.y + " : " + c.bounds.max.y + " , " + pBoxCollider.bounds.max.y + " : " + (c.bounds.max.y - 0.1f));
                                 isGrabing = true;
                                 state = State.GrabCorner;
                                 grappingObj = c;
                                 velocity = Vector3.zero;
                                 var newPos = transform.position;
+								newPos.x = (transform.localScale.x > 0) ? c.bounds.min.x - pBoxCollider.size.x * 0.3f : c.bounds.max.x + pBoxCollider.size.x * 0.3f;
                                 newPos.y = c.bounds.max.y - pBoxCollider.size.y;
                                 transform.position = newPos;
                             }
@@ -584,9 +634,19 @@ public class Player : MyObject
         prevPos.z = prevZPos;
         ChangePlayerZLayer(prevPos);
     }
+
+	private bool IsCutsomEventTrigger (Collider col)
+	{
+		return null != col.GetComponent<CustomEventTrigger> () && TimeLayer.EqualTimeLayer(gameObject, col.gameObject);
+	}
+
+
     
     private void OnTriggerEnter(Collider col)
     {
+		if (enabled) {
+			ProcessCustomEventTrigger (col);
+		}
     }
 
     private void OnTriggerStay(Collider col)

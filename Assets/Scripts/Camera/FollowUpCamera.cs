@@ -153,7 +153,7 @@ public class FollowUpCamera : MonoBehaviour
     }
 
     private const float deltaTm = 0.02f;
-    private const float DISTORTION_MAX = 10.0f;
+    private const float DISTORTION_MAX = 5.0f;
     private IEnumerator IncreaseElasticEffectDistortion(float excutionTm)
     {
         float nowTm = 0.0f;
@@ -169,7 +169,7 @@ public class FollowUpCamera : MonoBehaviour
     private IEnumerator DecreaseElasticEffectDistortion(float excutionTm)
     {
         float nowTm = 0.0f;
-        elasticFilter.Distortion = 10.0f;
+        elasticFilter.Distortion = 5.0f;
         while (nowTm < excutionTm)
         {
             elasticFilter.Distortion = (1 - (nowTm / excutionTm)) * DISTORTION_MAX;

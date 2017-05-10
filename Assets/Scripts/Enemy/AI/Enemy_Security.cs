@@ -71,7 +71,7 @@ public class Enemy_Security : EnemyScript
         if (TimeLayer.EqualTimeLayer(playerObject.ParentTimeLayer, pTimeLayer))
         {
             ((SecurityAnim)anim).PresentColor();
-            GetComponentInChildren<SkeletonGhost>().ghostingEnabled = false;
+			GetComponentInChildren<SkeletonGhost>().ghostingEnabled = false;
         }
         else
         {
@@ -122,7 +122,6 @@ public class Enemy_Security : EnemyScript
 
                 detectionDurationTimer = 0;
             }
-            //findOutGauge = 99;
         }
     }
 

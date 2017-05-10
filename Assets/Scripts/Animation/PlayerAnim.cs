@@ -44,12 +44,12 @@ public class PlayerAnim : AnimationBase {
 
 	//TODO: Run -> GrabCorner
 	public void SetGrabCorner(){
-		setAnimation (0, "Run", true ,1);
+		setAnimation (0, "Grab", true ,3);
 	}
 
 	//TODO: Run -> Climb
 	public void SetClimb(){
-		setAnimation (0, "Run", true, 1);
+		setAnimation (0, "Climb", false, 1);
 	}
     
 	public void SetLoboWalk(){
@@ -66,10 +66,10 @@ public class PlayerAnim : AnimationBase {
 		setAnimation (0, "Die", false, 1);
 	}
 	public void SetJumpDown(){
-		setAnimation (0, "Jump_Down",false, 1);
+		setAnimation (0, "Jump_Down",false, 4);
 	}
 	public void SetJumpUp(){
-		setAnimation (0, "Jump_Up", false, 1);
+		setAnimation (0, "Jump_Up", false, 2);
 	}
 	public void SetGrayColor(){
 		GetComponentInChildren<MeshRenderer> ().material.SetColor("_Color",new Color(125,125,125));
@@ -100,8 +100,10 @@ public class PlayerAnim : AnimationBase {
 					setAnimation (0, "Sit", true, 1);
 					break;
 				case MyObject.State.Jump:
+					SetJumpUp ();
 					break;
 				case MyObject.State.Fall:
+					SetJumpDown ();
 					break;
 				case MyObject.State.Attack:
 					setAnimation (0, "BackAttack", false, 1);
