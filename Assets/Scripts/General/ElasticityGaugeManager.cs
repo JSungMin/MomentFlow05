@@ -42,7 +42,6 @@ public class ElasticityGaugeManager : MonoBehaviour
             player.Dead(true);
 
         followUpCamera.DoElasticEffect();
-        // 튕겨나가는 effect
         // player 행동 undo
     }
 }

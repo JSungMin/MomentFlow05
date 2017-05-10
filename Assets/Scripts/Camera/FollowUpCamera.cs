@@ -112,6 +112,12 @@ public class FollowUpCamera : MonoBehaviour
 
             ProcessZoomIn();
         }
+
+        // TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // 지금이 과거라면을 체크해서 더하는 루틴이 필요함
+        if (Input.GetKeyDown(KeyCode.M))
+            GameSceneManager.getInstance.AddElasticityGauge(100);
+        // TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     }
     private float tape = 0;
     public void StartInstantZoomIn()
@@ -140,33 +146,34 @@ public class FollowUpCamera : MonoBehaviour
 
     private IEnumerator DoElasticEffectCo()
     {
-        for (int i = 0; i < 3; i++)
-        {
-            yield return StartCoroutine(IncreaseElasticEffectDistortion(1.0f));
-            
-            yield return StartCoroutine(DecreaseElasticEffectDistortion(1.0f));
-        }
+        elasticFilter.enabled = true;
+        yield return StartCoroutine(IncreaseElasticEffectDistortion(0.1f));
+        yield return StartCoroutine(DecreaseElasticEffectDistortion(0.0f));
+        elasticFilter.enabled = false;
     }
 
     private const float deltaTm = 0.02f;
+    private const float DISTORTION_MAX = 10.0f;
     private IEnumerator IncreaseElasticEffectDistortion(float excutionTm)
     {
+        float nowTm = 0.0f;
         elasticFilter.Distortion = 0.0f;
-        float iterTm = excutionTm / deltaTm;
-        for (int j = 0; j < (int)iterTm; j++)
+        while(nowTm < excutionTm)
         {
-            elasticFilter.Distortion += 10 / iterTm;
+            elasticFilter.Distortion = (nowTm / excutionTm) * DISTORTION_MAX;
+            nowTm += deltaTm;
             yield return new WaitForSeconds(deltaTm);
         }
     }
 
     private IEnumerator DecreaseElasticEffectDistortion(float excutionTm)
     {
+        float nowTm = 0.0f;
         elasticFilter.Distortion = 10.0f;
-        float iterTm = excutionTm / deltaTm;
-        for (int j = 0; j < (int)iterTm; j++)
+        while (nowTm < excutionTm)
         {
-            elasticFilter.Distortion -= 10 / iterTm;
+            elasticFilter.Distortion = (1 - (nowTm / excutionTm)) * DISTORTION_MAX;
+            nowTm += deltaTm;
             yield return new WaitForSeconds(deltaTm);
         }
     }
