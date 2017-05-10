@@ -172,6 +172,12 @@ public class Player : MyObject
                 if (enemyScript.enemyState != global::State.Stun &&
                     Mathf.Sign(enemyScript.transform.localScale.x) == Mathf.Sign(transform.localScale.x))
                 {
+                    // 위치 맞춤
+                    if(anim.isLeft())
+                        transform.position = new Vector3(enemyScript.transform.position.x + 0.1f, enemyScript.transform.position.y, transform.position.z);
+                    else
+                        transform.position = new Vector3(enemyScript.transform.position.x - 0.1f, enemyScript.transform.position.y, transform.position.z);
+
                     state = State.Attack;
                     enemyScript.enemyState = global::State.Stun;
                     velocity = Vector2.zero;
