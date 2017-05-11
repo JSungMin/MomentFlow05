@@ -25,7 +25,6 @@ public class ThrowableObjectScript : InteractInterface
 
     public void CalculateThrowVelocity()
     {
-        Debug.Log("???");
         Vector3 mp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 dir = (mp - transform.position).normalized;
         velocity.x = dir.x * flingPower * 2;
@@ -53,8 +52,10 @@ public class ThrowableObjectScript : InteractInterface
                     {
                         if (!escr.GetSpecifiedState<DetectionState>(State.Detection).isDetection)
                         {
-                            escr.GetSpecifiedState<SuspiciousState>(State.Suspicious).InitSuspiciousInfo(transform.position, escr.moveSpeed * 0.5f);
-                            escr.SetState(State.Suspicious);
+                            escr.GetSpecifiedState<SuspiciousState>(State.Suspicious).InitSuspiciousInfo(
+                                Vector3.Lerp(escr.transform.position,transform.position,0.9f)
+                                , escr.moveSpeed * 1.0f);
+                            escr.AddStateToListWithCheckingOverlap(escr.GetStateLayerKey(State.Suspicious));
                         }
                     }
                 }

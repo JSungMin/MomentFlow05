@@ -13,9 +13,6 @@ public class Enemy_Security : EnemyScript
 
 	SkeletonGhost skeletonGhost;
 
-    //public Dictionary<int, State> levelValue = new Dictionary<int, State>();
-    public State[] levelValue = new State[8];
-
     private void InitStates()
     {
         istate = new IState[9];
@@ -41,18 +38,6 @@ public class Enemy_Security : EnemyScript
         levelValue[6] = State.Suspicious;
         levelValue[7] = State.Patrol;
         levelValue[8] = State.Idle;
-    }
-
-    public int GetStateLayerKey(State s)
-    {
-        for (int i = 0; i < levelValue.Length; i++)
-        {
-            if (levelValue[i] == s)
-            {
-                return i;
-            }
-        }
-        return -1;
     }
 
     private new void Awake()
@@ -201,7 +186,7 @@ public class Enemy_Security : EnemyScript
             {
                 AddStateToListWithCheckingOverlap(GetStateLayerKey(State.Detection));
             }
-            else if (findOutGauge <= 0)
+            else if (findOutGauge <= 0 && Vector3.Distance(transform.position, GetSpecifiedState<SuspiciousState>(State.Suspicious).targetPos) < 1.0f)
             {
                 AddStateToListWithCheckingOverlap(GetStateLayerKey(State.Patrol));
                 DeleteStateToList(GetStateLayerKey(State.Suspicious));

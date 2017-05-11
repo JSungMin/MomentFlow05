@@ -63,6 +63,9 @@ public class EnemyScript : MonoBehaviour
     public int browseDensity = 4;
     public LayerMask browseMask;
 
+    //public Dictionary<int, State> levelValue = new Dictionary<int, State>();
+    public State[] levelValue = new State[8];
+
     public float transitionDuration;
     protected float transitionDurationTimer = 0;
 
@@ -111,6 +114,18 @@ public class EnemyScript : MonoBehaviour
     public T GetSpecifiedState<T>() where T : IState
     {
         return ((T)GetState(enemyState));
+    }
+
+    public int GetStateLayerKey(State s)
+    {
+        for (int i = 0; i < levelValue.Length; i++)
+        {
+            if (levelValue[i] == s)
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 
     //when Use below function then change state (also use OnStateEnter) or stay state (also use OnStateStay)
@@ -314,18 +329,14 @@ public class EnemyScript : MonoBehaviour
             if (transform.localScale.x > 0)
             {
                 gBrowseHits[i] = Physics.RaycastAll(
-					new Vector3(minX - 0.2f, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
+                    new Vector3(maxX, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
                     Vector3.right, rayLen, browseMask);
-				Debug.DrawLine (new Vector3 (minX - 0.2f, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
-					new Vector3 (minX - 0.2f, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z) + Vector3.right * rayLen, Color.red);
             }
             else
             {
                 gBrowseHits[i] = Physics.RaycastAll(
-					new Vector3(maxX + 0.2f, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
+                    new Vector3(minX, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
                     Vector3.left, rayLen, browseMask);
-				Debug.DrawLine (new Vector3 (maxX + 0.2f, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
-					new Vector3 (maxX + 0.2f, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z) + Vector3.left * rayLen, Color.red);
             }
 
             bInfos = new BrowseInfo[gBrowseHits[i].Length];
