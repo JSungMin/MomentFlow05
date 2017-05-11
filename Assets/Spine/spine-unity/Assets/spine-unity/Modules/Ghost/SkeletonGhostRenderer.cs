@@ -40,8 +40,8 @@ namespace Spine.Unity.Modules {
 
 		Color32[] colors;
 		Color32 black = new Color32(0, 0, 0, 0);
-		MeshFilter meshFilter;
-		MeshRenderer meshRenderer;
+		public MeshFilter meshFilter;
+		public MeshRenderer meshRenderer;
 
 		void Awake () {
 			meshRenderer = gameObject.AddComponent<MeshRenderer>();

@@ -116,7 +116,7 @@ public class Player : MyObject
 		if (velocity.y > 0.25f) {
 			state = State.Jump;
 		}
-		else if (velocity.y < -0.25f){
+		else if (velocity.y < -5f){
 			state = State.Fall;
 		}
 	}
@@ -394,7 +394,9 @@ public class Player : MyObject
                     if (!isOnLadder)
                         isOnLadder = true;
                     state = State.ClimbLadder;
-                    transform.position += Vector3.up * moveSpeed * Time.deltaTime;
+					var newPos = transform.position + Vector3.up * moveSpeed * Time.deltaTime;
+					newPos.x = col.bounds.center.x;
+					transform.position = newPos;
                 }
             }
         }
@@ -424,7 +426,11 @@ public class Player : MyObject
                     if (!isOnLadder)
                         isOnLadder = true;
                     state = State.ClimbLadder;
-                    transform.position -= Vector3.up * moveSpeed * Time.deltaTime;
+					var newPos = transform.position - Vector3.up * moveSpeed * Time.deltaTime;
+					newPos.x = col.bounds.center.x;
+					transform.position = newPos;
+
+					transform.position = newPos;
                 }
             }
         }
@@ -596,7 +602,7 @@ public class Player : MyObject
             {
                 climbDurationTimer += Time.deltaTime;
 
-                transform.position += Vector3.up * tClimbSpeed * Time.deltaTime;
+				transform.position += (Vector3.up * tClimbSpeed) * Time.deltaTime;
                 state = State.ClimbCorner;
             }
             else
@@ -605,7 +611,7 @@ public class Player : MyObject
                 velocity = Vector3.zero;
 
                 var newPos = transform.position;
-                newPos.x += (grappingObj.transform.position - transform.position).normalized.x * (pBoxCollider.bounds.extents.x);
+				newPos.x += (grappingObj.transform.position - transform.position).normalized.x * (pBoxCollider.bounds.extents.x);
                 newPos.y = grappingObj.bounds.max.y;
                 Debug.Log(newPos.y);
                 transform.position = newPos;

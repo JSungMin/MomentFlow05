@@ -49,7 +49,7 @@ public class PlayerAnim : AnimationBase {
 
 	//TODO: Run -> Climb
 	public void SetClimb(){
-		setAnimation (0, "Climb", false, 1);
+		setAnimation (0, "Climb", false, 1.25f);
 	}
     
 	public void SetLoboWalk(){
@@ -66,10 +66,10 @@ public class PlayerAnim : AnimationBase {
 		setAnimation (0, "Die", false, 1);
 	}
 	public void SetJumpDown(){
-		setAnimation (0, "Jump_Down",false, 4);
+		setAnimation (0, "Jump_Down",false, 1.5f);
 	}
 	public void SetJumpUp(){
-		setAnimation (0, "Jump_Up", false, 2);
+		setAnimation (0, "Jump_Up", false, 1.5f);
 	}
 	public void SetGrayColor(){
 		GetComponentInChildren<MeshRenderer> ().material.SetColor("_Color",new Color(125,125,125));

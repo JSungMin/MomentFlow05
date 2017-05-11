@@ -57,10 +57,11 @@ namespace Spine.Unity.Modules {
 		public bool sortWithDistanceOnly;
 		public float zOffset = 0f;
 
+		public SkeletonGhostRenderer[] pool;
+		public SkeletonRenderer skeletonRenderer;
+
 		float nextSpawnTime;
-		SkeletonGhostRenderer[] pool;
 		int poolIndex = 0;
-		SkeletonRenderer skeletonRenderer;
 		MeshRenderer meshRenderer;
 		MeshFilter meshFilter;
 
@@ -75,11 +76,17 @@ namespace Spine.Unity.Modules {
 			meshRenderer = GetComponent<MeshRenderer>();
 			nextSpawnTime = Time.time + spawnRate;
 			pool = new SkeletonGhostRenderer[maximumGhosts];
+
 			for (int i = 0; i < maximumGhosts; i++) {
 				GameObject go = new GameObject(gameObject.name + " Ghost", typeof(SkeletonGhostRenderer));
 				pool[i] = go.GetComponent<SkeletonGhostRenderer>();
 				go.SetActive(false);
 				go.hideFlags = GhostHideFlags;
+			}
+
+			for(int i = 0; i < pool.Length; i++){
+				pool [i].meshRenderer.sortingLayerID = meshRenderer.sortingLayerID;
+				pool [i].meshRenderer.sortingOrder = meshRenderer.sortingOrder;
 			}
 
 			var skeletonAnimation = skeletonRenderer as Spine.Unity.IAnimationStateComponent;

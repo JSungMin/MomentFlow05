@@ -11,6 +11,8 @@ public class Enemy_Security : EnemyScript
     public float stateChange = 2;
     private float stateChangeTimer = 0;
 
+	SkeletonGhost skeletonGhost;
+
     //public Dictionary<int, State> levelValue = new Dictionary<int, State>();
     public State[] levelValue = new State[8];
 
@@ -60,23 +62,32 @@ public class Enemy_Security : EnemyScript
         Debug.Log("Enemy Name : " + gameObject.name + "  Layer : " + pTimeLayer.transform.name);
         anim = GetComponent<AnimationBase>();
 
+		skeletonGhost = GetComponentInChildren<SkeletonGhost> ();
+
         InitStates();
         SetStatesLevel();
         AddStateToListWithCheckingOverlap(GetStateLayerKey(defaultState));
         InitEnemy();
     }
 
+
+
     private void ProcessTimeEffect()
     {
         if (TimeLayer.EqualTimeLayer(playerObject.ParentTimeLayer, pTimeLayer))
         {
             ((SecurityAnim)anim).PresentColor();
-			GetComponentInChildren<SkeletonGhost>().ghostingEnabled = false;
+			skeletonGhost.ghostingEnabled = false;
+
         }
         else
         {
             ((SecurityAnim)anim).PastColor();
-            GetComponentInChildren<SkeletonGhost>().ghostingEnabled = true;
+			skeletonGhost.ghostingEnabled = true;
+			for(int i = 0; i < skeletonGhost.pool.Length; i++) {
+				skeletonGhost.pool [i].meshRenderer.sortingLayerID = anim.skel.GetComponent<MeshRenderer> ().sortingLayerID;
+				skeletonGhost.pool [i].meshRenderer.sortingOrder = 10;
+			}
         }
     }
 
