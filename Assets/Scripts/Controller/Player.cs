@@ -160,16 +160,13 @@ public class Player : MyObject
         
 		if(isOnLadder)
 		{
-			if (input.x != 0)
+			if (input.y != 0)
 			{
 				state = State.Walk;
 			}
 			else
 			{
-				if (isSit)
-					state = State.Sit;
-				else
-					state = State.Idle;
+				state = State.Idle;
 			}
 			return;
 		}
@@ -464,22 +461,6 @@ public class Player : MyObject
 
     public bool isSit = false;
 
-    void ProcessSit()
-    {
-        if (Input.GetKey(KeyCode.S) && !isAir)
-        {
-            isSit = true;
-        }
-        else
-        {
-            if (!IsVerticalCollision())
-            {
-                isSit = false;
-            }
-        }
-        Sit();
-    }
-
     private void ProcessEnterStair(Collider col)
     {
         if (col.CompareTag("Stair"))
@@ -705,7 +686,6 @@ public class Player : MyObject
         ProcessJump();
         ProcessGrabCorner();
         ProcessClimbLadder();
-        ProcessSit();
         ProcessTimeSwitching();
         ProcessMove();
         ProcessAttack();

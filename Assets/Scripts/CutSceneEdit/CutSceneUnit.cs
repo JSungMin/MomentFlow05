@@ -480,7 +480,7 @@ public class CutSceneUnit : MonoBehaviour {
 					if(tracks[nowTrackIndex].eventItemList[i].targetIndex == tracks[nowTrackIndex].offset){
 						for(int j=0;j<tracks[nowTrackIndex].eventItemList[i].eventTimeList.Count;j++){
 							if(tracks[nowTrackIndex].eventItemList[i].eventTimeList[j]<=timer){
-								if (tracks[nowTrackIndex].eventItemList [i].OccurEvent != null&&!tracks[nowTrackIndex].eventItemList[i].isUsed[j]) {
+								if (null != tracks[nowTrackIndex].eventItemList [i].OccurEvent&&!tracks[nowTrackIndex].eventItemList[i].isUsed[j]) {
 									tracks[nowTrackIndex].eventItemList [i].OccurEvent.Invoke ();
 									tracks[nowTrackIndex].eventItemList [i].isUsed [j] = true;
 								}

@@ -186,7 +186,7 @@ public class Enemy_Security : EnemyScript
             {
                 AddStateToListWithCheckingOverlap(GetStateLayerKey(State.Detection));
             }
-            else if (findOutGauge <= 0 && Vector3.Distance(transform.position, GetSpecifiedState<SuspiciousState>(State.Suspicious).targetPos) < 1.0f)
+            else if (findOutGauge <= 0 && Vector3.Distance(transform.position, GetSpecifiedState<SuspiciousState>(State.Suspicious).targetPos) < 0.25f)
             {
                 AddStateToListWithCheckingOverlap(GetStateLayerKey(State.Patrol));
                 DeleteStateToList(GetStateLayerKey(State.Suspicious));

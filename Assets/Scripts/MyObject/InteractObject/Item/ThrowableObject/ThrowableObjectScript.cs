@@ -52,8 +52,10 @@ public class ThrowableObjectScript : InteractInterface
                     {
                         if (!escr.GetSpecifiedState<DetectionState>(State.Detection).isDetection)
                         {
+							var targetPos = transform.position;
+							targetPos.y = escr.transform.position.y;
                             escr.GetSpecifiedState<SuspiciousState>(State.Suspicious).InitSuspiciousInfo(
-                                Vector3.Lerp(escr.transform.position,transform.position,0.9f)
+								Vector3.Lerp(escr.transform.position,targetPos,0.9f)
                                 , escr.moveSpeed * 1.0f);
                             escr.AddStateToListWithCheckingOverlap(escr.GetStateLayerKey(State.Suspicious));
                         }
