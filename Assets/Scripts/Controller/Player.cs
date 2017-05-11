@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public delegate void UndoDelegate();
+
 public class Player : MyObject
 {
     public TimeLayer pTimeLayer;
@@ -74,7 +76,7 @@ public class Player : MyObject
         animator = GetComponent<Animator>();
         controller = GetComponent<Controller2D>();
         interacitveManager = GameObject.FindObjectOfType<InteractiveManager>();
-		mainCamera = Camera.main;
+        mainCamera = Camera.main;
 
         INIT_COLLIDER_OFFSET = pBoxCollider.center;
         SIT_COLLIDER_OFFSET = INIT_COLLIDER_OFFSET - Vector3.up * 0.08f;
@@ -186,8 +188,24 @@ public class Player : MyObject
 			}
 		}
     }
+   
 
-    void ProcessAttack()
+    private void UndoAttack()
+    {
+        if (isLeft())
+            transform.position = new Vector3(transform.position.x + 0.1f, transform.position.y, transform.position.z);
+        else
+            transform.position = new Vector3(transform.position.x - 0.1f, transform.position.y, transform.position.z);
+        state = State.Idle;
+        velocity = Vector2.zero;
+    }
+
+    private bool isLeft()
+    {
+        return Mathf.Sign(transform.localScale.x) == 1.0f ? false : true;
+    }
+
+    private void ProcessAttack()
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
@@ -197,15 +215,23 @@ public class Player : MyObject
                 if (enemyScript.enemyState != global::State.Stun &&
                     Mathf.Sign(enemyScript.transform.localScale.x) == Mathf.Sign(transform.localScale.x))
                 {
-                    // 위치 맞춤
-                    if(anim.isLeft())
-                        transform.position = new Vector3(enemyScript.transform.position.x + 0.1f, enemyScript.transform.position.y, transform.position.z);
+                    if (IsPlayerInPast())
+                    {
+                        state = State.Attack;
+                        GameSceneManager.getInstance.AddElasticityGauge(100, UndoAttack);
+                    }
                     else
-                        transform.position = new Vector3(enemyScript.transform.position.x - 0.1f, enemyScript.transform.position.y, transform.position.z);
+                    { 
+                        // 위치 맞춤
+                        if (anim.isLeft())
+                            transform.position = new Vector3(enemyScript.transform.position.x + 0.1f, enemyScript.transform.position.y, transform.position.z);
+                        else
+                            transform.position = new Vector3(enemyScript.transform.position.x - 0.1f, enemyScript.transform.position.y, transform.position.z);
 
-                    state = State.Attack;
-                    enemyScript.enemyState = global::State.Stun;
-                    velocity = Vector2.zero;
+                        state = State.Attack;
+                        enemyScript.enemyState = global::State.Stun;
+                        velocity = Vector2.zero;
+                    }
                 }
             }
         }

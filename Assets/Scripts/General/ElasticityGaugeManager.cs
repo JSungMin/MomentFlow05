@@ -23,25 +23,28 @@ public class ElasticityGaugeManager : MonoBehaviour
             nowGauge = 0;
     }
 
-    public void AddGauge(int gauge)
+    public void AddGauge(int gauge, UndoDelegate undoDelegate)
     {
         nowGauge += gauge;
         if (nowGauge >= MAX_GAUGE)
         {
             nowGauge = MAX_GAUGE;
-            ThrownOut();
+            StartCoroutine(ThrownOut(undoDelegate));
         }
     }
 
-    private void ThrownOut()
+    private IEnumerator ThrownOut(UndoDelegate undoDelegate)
     {
         int toLayer = player.OppositeLayer(player.pTimeLayer.layerNum);
+        // 다른 레이어로 갈 수 있다면 시간을 바꾸고
+        // 갈 수 없다면 죽인다
         if (player.CanSwitchingTime(toLayer))
+        {
             player.DoTimeSwitch();
+            yield return StartCoroutine(followUpCamera.DoElasticEffect());
+            undoDelegate();
+        }
         else
             player.Dead(true);
-
-        followUpCamera.DoElasticEffect();
-        // player 행동 undo
     }
 }

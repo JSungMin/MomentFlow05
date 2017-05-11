@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class FollowUpCamera : MonoBehaviour
 {
-
     public Transform followTarget;
     public TweenAlpha fadeOut;
+    public TweenAlpha whiteOut;
     public CameraFilterPack_TV_Vintage elasticFilter;
 
     public LayerMask mask;
@@ -93,8 +93,7 @@ public class FollowUpCamera : MonoBehaviour
             }
         }
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
         if (null != followTarget)
@@ -112,12 +111,6 @@ public class FollowUpCamera : MonoBehaviour
 
             ProcessZoomIn();
         }
-
-        // TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // 지금이 과거라면을 체크해서 더하는 루틴이 필요함
-        if (Input.GetKeyDown(KeyCode.M))
-            GameSceneManager.getInstance.AddElasticityGauge(100);
-        // TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     }
     private float tape = 0;
     public void StartInstantZoomIn()
@@ -138,43 +131,15 @@ public class FollowUpCamera : MonoBehaviour
         else
             SetFollowTargetToNull();
     }
-
-    public void DoElasticEffect()
+    
+    public IEnumerator DoElasticEffect()
     {
-        StartCoroutine(DoElasticEffectCo());
-    }
+        whiteOut.enabled = true;
+        whiteOut.ResetToBeginning();
 
-    private IEnumerator DoElasticEffectCo()
-    {
-        elasticFilter.enabled = true;
-        yield return StartCoroutine(IncreaseElasticEffectDistortion(0.1f));
-        yield return StartCoroutine(DecreaseElasticEffectDistortion(0.0f));
-        elasticFilter.enabled = false;
-    }
+        yield return new WaitForSeconds(whiteOut.duration);
 
-    private const float deltaTm = 0.02f;
-    private const float DISTORTION_MAX = 5.0f;
-    private IEnumerator IncreaseElasticEffectDistortion(float excutionTm)
-    {
-        float nowTm = 0.0f;
-        elasticFilter.Distortion = 0.0f;
-        while(nowTm < excutionTm)
-        {
-            elasticFilter.Distortion = (nowTm / excutionTm) * DISTORTION_MAX;
-            nowTm += deltaTm;
-            yield return new WaitForSeconds(deltaTm);
-        }
-    }
-
-    private IEnumerator DecreaseElasticEffectDistortion(float excutionTm)
-    {
-        float nowTm = 0.0f;
-        elasticFilter.Distortion = 5.0f;
-        while (nowTm < excutionTm)
-        {
-            elasticFilter.Distortion = (1 - (nowTm / excutionTm)) * DISTORTION_MAX;
-            nowTm += deltaTm;
-            yield return new WaitForSeconds(deltaTm);
-        }
+        whiteOut.enabled = false;
+        whiteOut.ResetToBeginning();
     }
 }

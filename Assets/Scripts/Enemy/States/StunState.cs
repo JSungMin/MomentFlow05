@@ -37,6 +37,7 @@ public class StunState : IState
         }
         else if (deadVanishTimer >= playerFinishAttack)
         {
+            // 플레이어의 공격 모션이 끝나는 루틴
             if (!isPlayerFinishedAttack)
             {
                 player = GameObject.FindObjectOfType<Player>();

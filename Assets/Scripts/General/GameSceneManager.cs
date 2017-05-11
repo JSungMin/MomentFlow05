@@ -52,9 +52,9 @@ public class GameSceneManager : MonoBehaviour
         SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
     }
 
-    public void AddElasticityGauge(int gauge)
+    public void AddElasticityGauge(int gauge, UndoDelegate undoDelegate)
     {
-        elasticityGaugeManager.AddGauge(gauge);
+        elasticityGaugeManager.AddGauge(gauge, undoDelegate);
     }
 
     public void SubElasticityGauge(int gauge)
