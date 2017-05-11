@@ -24,34 +24,50 @@ public class AttackState : IState {
 		fireNum = fireN;
 		enemyScript.fireBullets = enemyScript.FireBullets (fireNum);
 	}
+
+	private bool IsOnAttackableRange ()
+	{
+		return enemyScript.attackRange <= Vector2.Distance (enemyScript.playerObject.transform.position, enemyObj.transform.position);
+	}
+	
+	private void GunShoot ()
+	{
+		if (attackType == EnemyAttackType.Gun) {
+			enemyScript.fireBullets = enemyScript.FireBullets (fireNum);
+			enemyScript.anim.Shoot ();
+			enemyScript.StartCoroutine (enemyScript.fireBullets);
+			fireDelayTimer = 0;
+		}
+	}
+	
+	private bool IsCoolTimeOver ()
+	{
+		return fireDelayTimer >= fireDelay;
+	}
+
 	public override void OnStateEnter(){
 		fireDelayTimer = fireDelay;	
 		enemyBulletPool = enemyObj.transform.parent.GetChild (0);
 		enemyScript.AimToObject (enemyScript.playerObject.transform.position);
 	}
 
+
 	public override void OnStateStay(){
 		enemyScript.AimToObject (enemyScript.playerObject.transform.position);
 		if (!enemyScript.isAttack) {
 			var bInfo = enemyScript.FindNearestCollisionInBrowseInfos (enemyScript.moveSpeed * 1.2f);
-			if (enemyScript.attackRange <= Vector2.Distance (enemyScript.playerObject.transform.position, enemyObj.transform.position)) {
+			if (IsOnAttackableRange ()) {
 				if (bInfo.layer != LayerMask.NameToLayer ("Collision")) {
 					dir = (enemyScript.playerObject.transform.position - enemyObj.transform.position).normalized;
-					dir.x = (dir.x > 0) ? 1 : ((dir.x < 0 ) ? -1 : 0);
+					dir.x = (dir.x > 0) ? 1 : ((dir.x < 0) ? -1 : 0);
 					Run (enemyObj.transform, dir * enemyScript.moveSpeed * 1.2f);
 				}
-			}
-			else {
+			} else {
 				Idle ();
-				if (fireDelayTimer >= fireDelay) {
-					if (attackType == EnemyAttackType.Gun) {
-						enemyScript.fireBullets = enemyScript.FireBullets (fireNum);
-						enemyScript.anim.Shoot ();
-						enemyScript.StartCoroutine (enemyScript.fireBullets);
-						fireDelayTimer = 0;
-					} else {
-					}
-				} else {
+				if (IsCoolTimeOver ()) {
+					GunShoot ();
+				} 
+				else {
 					fireDelayTimer += Time.deltaTime;
 				}
 			}

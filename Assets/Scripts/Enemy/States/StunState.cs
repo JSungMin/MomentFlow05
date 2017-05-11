@@ -7,8 +7,11 @@ public class StunState : IState
     public StunState(GameObject obj) : base(obj) { }
     
     private float deadVanishTimer = 0.0f;
-    private const float deadVanish = 3.0f;
-    private const float deadVanishComplete = 4.0f;
+    private const float deadVanish = 2.0f;
+    private const float deadVanishComplete = 3.0f;
+
+    // 차라리 부모로 빼던가 할 것
+    private Player player;
     
     public override void OnStateEnter()
     {
@@ -20,6 +23,7 @@ public class StunState : IState
         if (deadVanishTimer >= deadVanishComplete)
         {
             // 아예 사라지는 루틴
+            enemyScript.enemyState = State.Dead;
             enemyScript.SetMaterialAlpha(0.0f);
             enemyScript.DisableGhosting();
         }
@@ -27,11 +31,14 @@ public class StunState : IState
         {
             // 서서히 사라지는 루틴
             enemyScript.SetMaterialAlpha((deadVanishComplete - deadVanishTimer) / (deadVanishComplete - deadVanish));
+            player = GameObject.FindObjectOfType<Player>();
+            if (player.state != MyObject.State.Idle && player.state != MyObject.State.Walk)
+                player.state = MyObject.State.Idle;
         }
         else
         {
             // 스턴 애니메이션하는 루틴
-            // Stun(enemyScript.transform, Vector3.zero);
+            Stun(enemyScript.transform, Vector3.zero);
         }
     }
 

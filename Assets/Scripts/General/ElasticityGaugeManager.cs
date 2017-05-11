@@ -8,10 +8,12 @@ public class ElasticityGaugeManager : MonoBehaviour
     private int nowGauge = 0;
 
     private Player player;
+    private FollowUpCamera followUpCamera;
 
     private void Awake()
     {
         player = GameObject.FindObjectOfType<Player>();
+        followUpCamera = GameObject.FindObjectOfType<FollowUpCamera>();
     }
 
     public void SubGauge(int gauge)
@@ -39,7 +41,7 @@ public class ElasticityGaugeManager : MonoBehaviour
         else
             player.Dead(true);
 
-        // 튕겨나가는 effect
+        followUpCamera.DoElasticEffect();
         // player 행동 undo
     }
 }

@@ -58,6 +58,11 @@ public class AnimationBase : MonoBehaviour
         }
     }
 
+    public bool isLeft()
+    {
+        return Mathf.Sign(transform.localScale.x) == 1.0f ? false : true;
+    }
+
     public void StopAnimation()
     {
         SetAnimationTimeScale(0);
@@ -106,5 +111,10 @@ public class AnimationBase : MonoBehaviour
     public void Stun()
     {
         setAnimation(1, charAnimName + "Stun", false, 1);
+    }
+
+    public void SetStrangle()
+    {
+        setAnimation(1, "Strangle", false, 1);
     }
 }
