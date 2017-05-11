@@ -314,14 +314,18 @@ public class EnemyScript : MonoBehaviour
             if (transform.localScale.x > 0)
             {
                 gBrowseHits[i] = Physics.RaycastAll(
-                    new Vector3(maxX, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
+					new Vector3(minX - 0.2f, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
                     Vector3.right, rayLen, browseMask);
+				Debug.DrawLine (new Vector3 (minX - 0.2f, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
+					new Vector3 (minX - 0.2f, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z) + Vector3.right * rayLen, Color.red);
             }
             else
             {
                 gBrowseHits[i] = Physics.RaycastAll(
-                    new Vector3(minX, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
+					new Vector3(maxX + 0.2f, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
                     Vector3.left, rayLen, browseMask);
+				Debug.DrawLine (new Vector3 (maxX + 0.2f, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
+					new Vector3 (maxX + 0.2f, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z) + Vector3.left * rayLen, Color.red);
             }
 
             bInfos = new BrowseInfo[gBrowseHits[i].Length];

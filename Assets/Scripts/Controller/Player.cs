@@ -113,10 +113,10 @@ public class Player : MyObject
 
 	void SetAirState ()
 	{
-		if (velocity.y > 0.25f) {
+		if (velocity.y > 0f) {
 			state = State.Jump;
 		}
-		else if (velocity.y < -5f){
+		else if (velocity.y < -0f){
 			state = State.Fall;
 		}
 	}
@@ -613,7 +613,7 @@ public class Player : MyObject
                 var newPos = transform.position;
 				newPos.x += (grappingObj.transform.position - transform.position).normalized.x * (pBoxCollider.bounds.extents.x);
                 newPos.y = grappingObj.bounds.max.y;
-                Debug.Log(newPos.y);
+				state = State.Idle;
                 transform.position = newPos;
             }
         }
