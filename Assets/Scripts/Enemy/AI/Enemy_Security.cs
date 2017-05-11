@@ -69,16 +69,13 @@ public class Enemy_Security : EnemyScript
         AddStateToListWithCheckingOverlap(GetStateLayerKey(defaultState));
         InitEnemy();
     }
-
-
-
+    
     private void ProcessTimeEffect()
     {
         if (TimeLayer.EqualTimeLayer(playerObject.ParentTimeLayer, pTimeLayer))
         {
             ((SecurityAnim)anim).PresentColor();
 			skeletonGhost.ghostingEnabled = false;
-
         }
         else
         {

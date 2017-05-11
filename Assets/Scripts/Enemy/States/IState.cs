@@ -71,7 +71,6 @@ public abstract class IState
         enemyScript.velocity = velocity;
         // 단어 통일하자 stun 이랑 strangle이 있다
         enemyScript.anim.SetStrangle();
-        t.localScale = new Vector3(Mathf.Sign(velocity.x) * Mathf.Abs(t.localScale.x), t.localScale.y, t.localScale.z);
     }
 
 	public void LookAround()
