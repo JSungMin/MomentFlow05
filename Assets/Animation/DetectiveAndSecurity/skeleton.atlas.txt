@@ -5,8 +5,8 @@ format: RGBA8888
 filter: Linear,Linear
 repeat: none
 Detective/Bottom
-  rotate: true
-  xy: 1083, 37
+  rotate: false
+  xy: 1244, 112
   size: 80, 20
   orig: 80, 20
   offset: 0, 0
@@ -27,21 +27,28 @@ Detective/Gun
   index: -1
 Detective/Head
   rotate: false
-  xy: 1111, 134
+  xy: 1243, 134
   size: 120, 120
   orig: 120, 120
   offset: 0, 0
   index: -1
+Detective/Head_Drag
+  rotate: false
+  xy: 1111, 134
+  size: 130, 120
+  orig: 130, 120
+  offset: 0, 0
+  index: -1
 Detective/Leg_Straight
   rotate: true
-  xy: 1522, 209
+  xy: 1654, 209
   size: 45, 90
   orig: 45, 90
   offset: 0, 0
   index: -1
 Detective/LowerArm_Left
   rotate: true
-  xy: 1387, 137
+  xy: 1167, 65
   size: 35, 65
   orig: 35, 65
   offset: 0, 0
@@ -62,14 +69,14 @@ Detective/LowerLeg
   index: -1
 Detective/Torso
   rotate: true
-  xy: 1385, 174
+  xy: 1517, 174
   size: 80, 135
   orig: 80, 135
   offset: 0, 0
   index: -1
 Detective/UpperArm_Left
   rotate: true
-  xy: 1233, 132
+  xy: 1736, 172
   size: 35, 75
   orig: 35, 75
   offset: 0, 0
@@ -82,15 +89,15 @@ Detective/UpperArm_Right
   offset: 0, 0
   index: -1
 Detective/UpperLeg
-  rotate: true
-  xy: 1753, 177
+  rotate: false
+  xy: 1326, 87
   size: 30, 45
   orig: 30, 45
   offset: 0, 0
   index: -1
 Security/Bottom
   rotate: false
-  xy: 1111, 112
+  xy: 1244, 90
   size: 80, 20
   orig: 80, 20
   offset: 0, 0
@@ -104,7 +111,7 @@ Security/Head
   index: -1
 Security/Leg_Straight
   rotate: true
-  xy: 1614, 209
+  xy: 1746, 209
   size: 45, 90
   orig: 45, 90
   offset: 0, 0
@@ -125,21 +132,21 @@ Security/Lobo_Face_Idle
   index: -1
 Security/LowerArm_Left
   rotate: true
-  xy: 1454, 137
+  xy: 1061, 5
   size: 35, 65
   orig: 35, 65
   offset: 0, 0
   index: -1
 Security/LowerArm_Right
   rotate: true
-  xy: 1798, 214
+  xy: 1930, 214
   size: 40, 75
   orig: 40, 75
   offset: 0, 0
   index: -1
 Security/LowerLeg
   rotate: true
-  xy: 1521, 125
+  xy: 1524, 127
   size: 45, 65
   orig: 45, 65
   offset: 0, 0
@@ -153,35 +160,35 @@ Security/Rifle
   index: -1
 Security/Torso
   rotate: true
-  xy: 1233, 169
+  xy: 1365, 169
   size: 85, 150
   orig: 85, 150
   offset: 0, 0
   index: -1
 Security/UpperArm_Left
   rotate: true
-  xy: 1522, 172
+  xy: 1813, 172
   size: 35, 75
   orig: 35, 75
   offset: 0, 0
   index: -1
 Security/UpperArm_Right
   rotate: true
-  xy: 1875, 219
+  xy: 1365, 132
   size: 35, 80
   orig: 35, 80
   offset: 0, 0
   index: -1
 Security/UpperLeg
-  rotate: true
-  xy: 1800, 182
+  rotate: false
+  xy: 226, 90
   size: 30, 45
   orig: 30, 45
   offset: 0, 0
   index: -1
 Selma/Bottom
   rotate: false
-  xy: 1105, 90
+  xy: 1234, 68
   size: 80, 20
   orig: 80, 20
   offset: 0, 0
@@ -209,28 +216,28 @@ Selma/Head_norm
   index: -1
 Selma/Leg_Straight
   rotate: true
-  xy: 1706, 209
+  xy: 1838, 209
   size: 45, 90
   orig: 45, 90
   offset: 0, 0
   index: -1
 Selma/LowerArm_Left
-  rotate: true
-  xy: 1105, 53
+  rotate: false
+  xy: 1591, 107
   size: 35, 65
   orig: 35, 65
   offset: 0, 0
   index: -1
 Selma/LowerArm_Right
   rotate: true
-  xy: 1599, 167
+  xy: 1447, 127
   size: 40, 75
   orig: 40, 75
   offset: 0, 0
   index: -1
 Selma/LowerLeg
-  rotate: true
-  xy: 1588, 120
+  rotate: false
+  xy: 1120, 67
   size: 45, 65
   orig: 45, 65
   offset: 0, 0
@@ -250,36 +257,36 @@ Selma/Torso
   offset: 0, 0
   index: -1
 Selma/UpperArm_Left
-  rotate: true
-  xy: 1676, 172
+  rotate: false
+  xy: 1083, 42
   size: 35, 75
   orig: 35, 75
   offset: 0, 0
   index: -1
 Selma/UpperArm_Right
   rotate: true
-  xy: 1957, 219
+  xy: 1654, 172
   size: 35, 80
   orig: 35, 80
   offset: 0, 0
   index: -1
 Selma/UpperLeg
   rotate: false
-  xy: 1655, 120
+  xy: 258, 90
   size: 30, 45
   orig: 30, 45
   offset: 0, 0
   index: -1
 Selma/glass_off
   rotate: false
-  xy: 1105, 26
+  xy: 229, 137
   size: 70, 25
   orig: 70, 25
   offset: 0, 0
   index: -1
 Selma/glass_on
   rotate: false
-  xy: 1310, 137
+  xy: 1167, 102
   size: 75, 30
   orig: 75, 30
   offset: 0, 0
