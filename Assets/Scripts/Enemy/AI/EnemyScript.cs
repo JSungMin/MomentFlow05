@@ -93,8 +93,7 @@ public class EnemyScript : MonoBehaviour
         minY = GetComponent<Collider>().bounds.min.y;
         colXLen = GetComponent<Collider>().bounds.size.x;
         colYLen = GetComponent<Collider>().bounds.size.y;
-
-        InitToTransition();
+        
         GetSpecifiedState<PatrolState>(State.Patrol).InitPatrolInfo(patrolDir, moveSpeed);
     }
 
@@ -140,16 +139,6 @@ public class EnemyScript : MonoBehaviour
     float minX, minY;
     float colXLen;
     float colYLen;
-
-    public void InitToTransition()
-    {
-        transitionDurationTimer = 0;
-    }
-
-    private void BackToStartPoint()
-    {
-
-    }
 
     public void SetDefaultState()
     {

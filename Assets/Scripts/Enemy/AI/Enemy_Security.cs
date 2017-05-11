@@ -114,7 +114,6 @@ public class Enemy_Security : EnemyScript
             patrolDurationTimer = 0;
             DeleteStateToList(GetStateLayerKey(State.Patrol));
             SetDefaultState();
-            InitToTransition();
         }
     }
 

@@ -16,15 +16,16 @@ public class ThrowableObjectScript : InteractInterface
     public LayerMask alertMask;
     public bool applyGravity = true;
     public float flingPower;
-    public int rayDensity;
+    public int rayDensity = 3;
     public Vector2 velocity;
 
-    public float alertRadius;
+    public float alertRadius = 10.0f;
 
-    public float threshold;
+    public float threshold = 1.0f;
 
     public void CalculateThrowVelocity()
     {
+        Debug.Log("???");
         Vector3 mp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 dir = (mp - transform.position).normalized;
         velocity.x = dir.x * flingPower * 2;
@@ -36,16 +37,14 @@ public class ThrowableObjectScript : InteractInterface
     public void AlertToNearEnemy()
     {
 		var colliders = Physics.OverlapSphere(transform.position, alertRadius, alertMask);
-
+        
         for (int i = 0; i < colliders.Length; i++)
         {
             var escr = colliders[i].GetComponent<EnemyScript>();
+            
+            RaycastHit hit;
+            Physics.Raycast(transform.position, (escr.transform.position - transform.position).normalized, out hit, alertRadius, alertMask);
 
-			RaycastHit hit;
-			if (Physics.Raycast (transform.position, (escr.transform.position - transform.position).normalized,out hit, alertRadius, mask)) {
-
-			}
-            Debug.DrawLine(transform.position, transform.position + (escr.transform.position - transform.position).normalized * alertRadius, Color.red);
             if (null != escr)
             {
                 if (TimeLayer.EqualTimeLayer(escr.pTimeLayer, pTimeLayer))
@@ -56,8 +55,6 @@ public class ThrowableObjectScript : InteractInterface
                         {
                             escr.GetSpecifiedState<SuspiciousState>(State.Suspicious).InitSuspiciousInfo(transform.position, escr.moveSpeed * 0.5f);
                             escr.SetState(State.Suspicious);
-                            escr.InitToTransition();
-                            Debug.Log(escr.name + " alerted");
                         }
                     }
                 }
@@ -210,13 +207,13 @@ public class ThrowableObjectScript : InteractInterface
             }
 
             Vector2 reflectVec = Vector2.zero;
-
+            
             var nearestX = FindOutNearestCollider(tmpColsX);
             if (nearestX != null)
             {
                 if (Vector3.Magnitude(velocity) >= threshold)
                     AlertToNearEnemy();
-                velocity += Vector2.Reflect(xDir * Mathf.Abs(velocity.x) * 1.2f, hitsX[i][findOutIndex].normal);
+                velocity += Vector2.Reflect(xDir * Mathf.Abs(velocity.x), hitsX[i][findOutIndex].normal);
             }
 
             var nearestY = FindOutNearestCollider(tmpColsY);
@@ -228,8 +225,7 @@ public class ThrowableObjectScript : InteractInterface
             }
         }
     }
-
-    // Use this for initialization
+    
     void Start()
     {
         pTimeLayer = transform.GetComponentInParent<TimeLayer>();
