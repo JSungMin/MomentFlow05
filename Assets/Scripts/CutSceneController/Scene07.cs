@@ -7,6 +7,10 @@ public class Scene07 : MonoBehaviour {
 	private PlayerAnim playerAnim;
 	public ChatDialogue callingChat;
 
+	public CutSceneUnit alicCutSceneUnit;
+	public CutSceneUnit securityLeftCutSceneUnit;
+	public CutSceneUnit securityRightCutSceneUnit;
+
 	int offset = 0;
 
 	// Use this for initialization
@@ -20,12 +24,14 @@ public class Scene07 : MonoBehaviour {
 	}
 
 	public void StartCutScene(){
+		Debug.Log ("StartCutScene");
 		StartCoroutine(DialogCut());
 	}
 
-	void MakeUserCanPlayable ()
-	{
-		player.enabled = true;
+	public void StartAlicKidnap(){
+		alicCutSceneUnit.StartAction ();
+		securityLeftCutSceneUnit.StartAction ();
+		securityRightCutSceneUnit.StartAction ();
 	}
 
 	private IEnumerator DialogCut(){
@@ -33,7 +39,7 @@ public class Scene07 : MonoBehaviour {
 		yield return WaitForClick ();
 		callingChat.NextPage ();
 		yield return WaitForClick ();
-		MakeUserCanPlayable ();
+		player.enabled = true;
 		callingChat.EndChat ();
 		yield return null;
 	}
