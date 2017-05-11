@@ -20,8 +20,12 @@ public class Scene07 : MonoBehaviour {
 	}
 
 	public void StartCutScene(){
-		Debug.Log ("StartCutScene");
 		StartCoroutine(DialogCut());
+	}
+
+	void MakeUserCanPlayable ()
+	{
+		player.enabled = true;
 	}
 
 	private IEnumerator DialogCut(){
@@ -29,7 +33,7 @@ public class Scene07 : MonoBehaviour {
 		yield return WaitForClick ();
 		callingChat.NextPage ();
 		yield return WaitForClick ();
-		player.enabled = true;
+		MakeUserCanPlayable ();
 		callingChat.EndChat ();
 		yield return null;
 	}
