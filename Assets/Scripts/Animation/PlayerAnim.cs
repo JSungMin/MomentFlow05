@@ -66,10 +66,10 @@ public class PlayerAnim : AnimationBase {
 		setAnimation (0, "Die", false, 1);
 	}
 	public void SetJumpDown(){
-		setAnimation (0, "Jump_Down",false, 1.5f);
+		setAnimation (0, "Jump_Down",false, 3f);
 	}
 	public void SetJumpUp(){
-		setAnimation (0, "Jump_Up", false, 1.5f);
+		setAnimation (0, "Jump_Up", false, 2f);
 	}
 	public void SetGrayColor(){
 		GetComponentInChildren<MeshRenderer> ().material.SetColor("_Color",new Color(125,125,125));

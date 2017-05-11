@@ -81,10 +81,6 @@ public class Enemy_Security : EnemyScript
         {
             ((SecurityAnim)anim).PastColor();
 			skeletonGhost.ghostingEnabled = true;
-			for(int i = 0; i < skeletonGhost.pool.Length; i++) {
-				skeletonGhost.pool [i].meshRenderer.sortingLayerID = anim.skel.GetComponent<MeshRenderer> ().sortingLayerID;
-				skeletonGhost.pool [i].meshRenderer.sortingOrder = 10;
-			}
         }
     }
 
