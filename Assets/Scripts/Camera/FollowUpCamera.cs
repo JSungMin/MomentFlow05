@@ -142,4 +142,44 @@ public class FollowUpCamera : MonoBehaviour
         whiteOut.enabled = false;
         whiteOut.ResetToBeginning();
     }
+	//Be Careful this is 임시방편
+	public void DoDistortionEffect()
+	{
+		StartCoroutine(DoDistortionEffectCo());
+	}
+
+	private IEnumerator DoDistortionEffectCo()
+	{
+		elasticFilter.enabled = true;
+		yield return StartCoroutine(IncreaseDistortion(0.1f));
+		yield return StartCoroutine(DecreaseDistortion(0.0f));
+		elasticFilter.enabled = false;
+	}
+
+	private const float deltaTm = 0.02f;
+	private const float DISTORTION_MAX = 5.0f;
+	private IEnumerator IncreaseDistortion(float excutionTm)
+	{
+		float nowTm = 0.0f;
+		elasticFilter.Distortion = 0.0f;
+		while(nowTm < excutionTm)
+		{
+			elasticFilter.Distortion = (nowTm / excutionTm) * DISTORTION_MAX;
+			nowTm += deltaTm;
+			yield return new WaitForSeconds(deltaTm);
+		}
+	}
+
+	private IEnumerator DecreaseDistortion(float excutionTm)
+	{
+		float nowTm = 0.0f;
+		elasticFilter.Distortion = 5.0f;
+		while (nowTm < excutionTm)
+		{
+			elasticFilter.Distortion = (1 - (nowTm / excutionTm)) * DISTORTION_MAX;
+			nowTm += deltaTm;
+			yield return new WaitForSeconds(deltaTm);
+		}
+	}
+
 }
