@@ -57,7 +57,7 @@ public class Player : MyObject
     private float gravity;
 
     public bool isJump;
-    private bool isAir = false;
+	public bool isAir = false;
     private bool isWalkOnStair = false;
 
 	public float distanceToGround = 0;
@@ -119,11 +119,11 @@ public class Player : MyObject
 	{
 		if (velocity.y > 0.25f) {
 			state = State.Jump;
-		} else if (distanceToGround >= 0.25f) {
+		} else if (distanceToGround >= 0.15f) {
 			state = State.Fall;
 		} else {
 			if (state == State.Fall)
-				state = State.Idle;
+				StartCoroutine (ProcessLanding ());
 		}
 	}
 
@@ -135,6 +135,7 @@ public class Player : MyObject
 
             isJump = false;
             isAir = false;
+			velocity.x = 0;
         }
         else
         {
@@ -151,7 +152,7 @@ public class Player : MyObject
 
     void ProcessMove()
     {
-        if (state == State.Attack)
+		if (state == State.Attack)
         {
             return;
         }
@@ -160,9 +161,13 @@ public class Player : MyObject
 
         timer = input.x == 0 ? 0 : timer + Time.deltaTime;
 
-        velocity.x += input.x * moveSpeed * moveStep.Evaluate(timer);
-        velocity.y += gravity * Time.deltaTime;
-        
+		velocity.y += gravity * Time.deltaTime;
+		if (!isJump) {
+			velocity.x = input.x * moveSpeed * moveStep.Evaluate (timer);
+		}
+		else
+			velocity.x = inputXPrevJump * moveSpeed * 1.2f * moveStep.Evaluate (timer);
+		
 		if(isOnLadder)
 		{
 			if (input.y != 0)
@@ -175,7 +180,7 @@ public class Player : MyObject
 			}
 			return;
 		}
-			
+
         if (input.x != 0)    
 		{
 			if(IsPlayerCompletlyIdle()){
@@ -246,7 +251,8 @@ public class Player : MyObject
     }
 
     float jumpSaveDelay = 0;
-    void ProcessJump()
+	float inputXPrevJump;
+	void ProcessJump()
     {
         if (Input.GetKeyDown(KeyCode.Space) &&
             !isWalkOnStair &&
@@ -256,7 +262,9 @@ public class Player : MyObject
             if (!isJump && velocity.y >= gravity * Time.deltaTime * 7.0f)
             {
                 velocity.y = jumpHeight;
+				velocity.x = moveSpeed * 1.2f;
                 isJump = true;
+				inputXPrevJump = input.x;
             }
         }
     }
@@ -703,6 +711,14 @@ public class Player : MyObject
     {
         ProcessExitStair(col);
     }
+		
+	IEnumerator ProcessLanding()
+	{
+		state = State.Landing;
+		yield return new WaitForSeconds (0.4f);
+		state = State.Idle;
+		velocity.x = 0;
+	}
 
     void Update()
     {
@@ -710,15 +726,18 @@ public class Player : MyObject
             return;
 
         var tmpY = transform.position.y;
-        ProcessGround();
-        ProcessJump();
-        ProcessGrabCorner();
-        ProcessClimbLadder();
-        ProcessTimeSwitching();
-        ProcessMove();
-        ProcessAttack();
 
-        if (!isGrabing && !isOnLadder && state != State.Attack)
+		ProcessGround();
+		ProcessJump();
+		if (state != State.Landing) {
+			ProcessGrabCorner();
+			ProcessClimbLadder();
+			ProcessTimeSwitching();
+			ProcessMove();
+			ProcessAttack();
+		}
+
+		if (!isGrabing && !isOnLadder && state != State.Attack)
         {
             controller.Move(velocity * Time.deltaTime);
             velocity.x = 0;

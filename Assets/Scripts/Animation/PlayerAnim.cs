@@ -71,6 +71,11 @@ public class PlayerAnim : AnimationBase {
 	public void SetJumpUp(){
 		setAnimation (0, "Jump_Up", false, 2f);
 	}
+
+	public void SetLanding(){
+		setAnimation (0, "Landing", false, 1f);
+	}
+
 	public void SetGrayColor(){
 		GetComponentInChildren<MeshRenderer> ().material.SetColor("_Color",new Color(125,125,125));
 	}
@@ -104,6 +109,9 @@ public class PlayerAnim : AnimationBase {
 					break;
 				case MyObject.State.Fall:
 					SetJumpDown ();
+					break;
+				case MyObject.State.Landing:
+					SetLanding ();
 					break;
 				case MyObject.State.Attack:
 					setAnimation (0, "BackAttack", false, 1);
