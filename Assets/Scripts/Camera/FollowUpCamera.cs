@@ -12,6 +12,8 @@ public class FollowUpCamera : MonoBehaviour
     public LayerMask mask;
     private Camera mainCamera;
 
+	public Vector3 centerPosition;
+
     public float followSpeed = 2;
     //if -1 => don't limit distance
     public float maxDis = -1;
@@ -25,56 +27,124 @@ public class FollowUpCamera : MonoBehaviour
 
     private float initOrthosize;
 
-    Vector2 input;
+	public bool isCamLock = true;
 
-    private void Awake()
-    {
-    }
+	Vector2 input;
+
+	public Vector3 offset;
+
+	private Vector3 vHitPos;
+	private Vector3 hHitPos;
+
+	public bool isToLeft = false;
+	public bool isToRight = false;
+
+	public bool isToTop = false;
+	public bool isToBottom = false;
+
+	float colWidth;
+	float colHeight;
+
+
+	public float horizontalRayLength, verticalRayLength; 
 
     void Start()
     {
         mainCamera = GetComponent<Camera>();
         initOrthosize = mainCamera.orthographicSize;
+		horizontalRayLength = Mathf.Abs(Camera.main.ScreenToWorldPoint (new Vector3 (Screen.width, Screen.height, 0)).x) * 0.3f;
+		verticalRayLength = Camera.main.ScreenToWorldPoint (new Vector3 (Screen.width, Screen.height, 0)).y * 0.3f;
     }
 
-    bool isToLeft = false;
-    bool isToRight = false;
+	public void SetHorizontalHitObjectInfo(RaycastHit hit){
+		hHitPos = hit.point;
+		colWidth = hit.collider.bounds.size.x;
+	}
+	public void SetVerticalHitObjectInfo(RaycastHit hit){
+		vHitPos = hit.point;
+		colHeight = hit.collider.bounds.size.y;
+	}
 
     public void RaycastHorizontal()
     {
-        var max = followTarget.GetComponent<BoxCollider>().bounds.max;
-        var min = followTarget.GetComponent<BoxCollider>().bounds.min;
+		var max = followTarget.GetComponent<BoxCollider> ().bounds.max;
+		var min = followTarget.GetComponent<BoxCollider> ().bounds.min;
 
-        var len = max.y - min.y;
+		var len = max.y - min.y;
 
-        for (int i = 0; i < 3; i++)
-        {
-            RaycastHit2D hit = Physics2D.Raycast(new Vector2(max.x, min.y + len * ((float)i / (float)2)), Vector2.right, 1.6f, mask);
-            Debug.DrawLine(new Vector2(max.x, min.y + len * ((float)i / (float)2)), new Vector2(max.x, min.y + len * ((float)i / (float)2)) + Vector2.right * 2);
-            if (hit.collider != null)
-            {
+		for (int i = 0; i < 3; i++) {
+			RaycastHit[] hits = Physics.RaycastAll (new Vector3 (max.x, min.y + len * ((float)i / (float)2), followTarget.position.z), Vector3.right, horizontalRayLength, mask);
+			Debug.DrawLine (new Vector3 (max.x, min.y + len * ((float)i / (float)2), followTarget.position.z), new Vector3 (max.x, min.y + len * ((float)i / (float)2), followTarget.position.z) + Vector3.right * horizontalRayLength);
 
-                isToRight = true;
-            }
-            else
-            {
-                isToRight = false;
-            }
-        }
-        for (int i = 0; i < 3; i++)
-        {
-            RaycastHit2D hit = Physics2D.Raycast(new Vector2(min.x, min.y + len * ((float)i / (float)2)), Vector2.left, 1.6f, mask);
-            Debug.DrawLine(new Vector2(min.x, min.y + len * ((float)i / (float)2)), new Vector2(max.x, min.y + len * ((float)i / (float)2)) + Vector2.left * 2);
-            if (hit.collider != null)
-            {
-                isToLeft = true;
-            }
-            else
-            {
-                isToLeft = false;
-            }
-        }
+			isToRight = false;
+			Debug.Log ("Right length : " + hits.Length);
+			for(int j = 0; j < hits.Length; j++){
+				var hit = hits [j];
+				Debug.Log (hit.collider.name);
+				if (hit.collider != null && hit.collider.CompareTag("Bound")) {
+					SetHorizontalHitObjectInfo (hit);
+					isToRight = true;
+					break;
+				}
+			}
+		}
+		for (int i = 0; i < 3; i++) {
+			RaycastHit[] hits = Physics.RaycastAll (new Vector3 (min.x, min.y + len * ((float)i / (float)2), followTarget.position.z), Vector3.left, horizontalRayLength,mask);
+			Debug.DrawLine (new Vector3 (min.x, min.y + len * ((float)i / (float)2),followTarget.position.z), new Vector3 (max.x, min.y + len * ((float)i / (float)2), followTarget.position.z) + Vector3.left*horizontalRayLength);
+			Debug.Log ("Left length : " + hits.Length);
+			isToLeft = false;
+
+			for(int j = 0; j < hits.Length; j++){
+				var hit = hits [j];
+				if (hit.collider != null && hit.collider.CompareTag("Bound")) {
+					SetHorizontalHitObjectInfo (hit);
+					isToLeft = true;
+					break;
+				}
+			}
+		}
     }
+
+	public void RaycastVertical(){
+		var max = followTarget.GetComponent<BoxCollider> ().bounds.max;
+		var min = followTarget.GetComponent<BoxCollider> ().bounds.min;
+
+		var len = max.x - min.x;
+
+		for (int i = 0; i < 3; i++) {
+			RaycastHit[] hits = Physics.RaycastAll (new Vector3 (min.x + len * ((float)i / (float)2), max.y, followTarget.position.z), Vector3.up, verticalRayLength,mask);
+			Debug.DrawLine (new Vector3 (min.x+ len * ((float)i / (float)2), max.y), new Vector3 (min.x + len * ((float)i / (float)2), max.y) + Vector3.up*verticalRayLength);
+
+			Debug.Log ("Top length : " + hits.Length);
+
+			isToTop = false;
+			for(int j = 0; j < hits.Length; j++){
+				var hit = hits [j];
+				if (hit.collider != null && hit.collider.CompareTag("Bound")) {
+					SetVerticalHitObjectInfo (hit);
+					isToTop = true;
+					break;
+				}
+			}
+		}
+		for (int i = 0; i < 3; i++) {
+			RaycastHit[] hits = Physics.RaycastAll (new Vector3 (min.x + len * ((float)i / (float)2), min.y,followTarget.position.z), Vector3.down, verticalRayLength,mask);
+			Debug.DrawLine (new Vector3 (min.x+ len * ((float)i / (float)2), max.y), new Vector3 (min.x + len * ((float)i / (float)2), max.y) + Vector3.down*verticalRayLength);
+
+
+			Debug.Log ("Bottom length : " + hits.Length);
+
+			isToBottom = false;
+			for(int j = 0; j < hits.Length; j++){
+				var hit = hits [j];
+				if (hit.collider != null && hit.collider.CompareTag("Bound")) {
+					SetVerticalHitObjectInfo (hit);
+					isToBottom = true;
+					break;
+				}
+			}
+		}
+	}
 
     void ProcessZoomIn()
     {
@@ -94,20 +164,78 @@ public class FollowUpCamera : MonoBehaviour
         }
     }
     
+	public void InitCenterPosition(){
+		centerPosition = Vector3.zero;
+		centerPosition = followTarget.position;
+		centerPosition.z = transform.position.z;
+	}
+
+	private void LockCamera(){
+		if ((!isToLeft && !isToRight) &&
+			(!isToTop && !isToBottom)) {
+			transform.position = Vector3.Lerp (transform.position, centerPosition, Time.deltaTime * 4.0f);
+		} else {
+			Vector3 dir = Vector3.zero;
+			if (isToLeft && isToRight) {
+				hHitPos = centerPosition;
+			} else {
+				if (isToLeft) {
+					dir.x = 1f;
+				}
+				else if (isToRight) {
+					dir.x = -1f;
+				}
+				else if(!isToLeft && !isToRight){
+					hHitPos = centerPosition;
+				}
+			}
+
+			if (isToTop && isToBottom) {
+				vHitPos = centerPosition;
+			} else {
+				if (isToTop) {
+					dir.y = -1f;
+				}
+				else if (isToBottom) {
+					dir.y = 1f;
+				}
+				else if(!isToTop && !isToBottom){
+					vHitPos = centerPosition;
+				}
+			}
+
+			var tmpOffset = offset;
+			tmpOffset.x = hHitPos.x + dir.x * (horizontalRayLength - colWidth * 0.5f);
+			tmpOffset.y = vHitPos.y + dir.y * (verticalRayLength - colHeight * 0.5f);
+			tmpOffset.z = transform.position.z;
+			transform.position = Vector3.Lerp (transform.position, tmpOffset, Time.deltaTime * 2.0f);
+		}
+	}
+
     void Update()
     {
         if (null != followTarget)
         {
-            RaycastHorizontal();
-            var targetPos = followTarget.position;
-            targetPos.z = 0;
-            var nowPos = mainCamera.transform.position;
-            nowPos.z = 0;
-            var tmpVector = paddingVector;
-            tmpVector.x *= Input.GetAxis("Horizontal");
-            var pos = Vector3.Lerp(nowPos, targetPos + tmpVector, followSpeed * Time.deltaTime);
-            pos.z = -30;
-            mainCamera.transform.position = pos;
+			RaycastHorizontal ();
+			RaycastVertical ();
+
+			{//Must go in order -> 순서를 지켜야만 함
+				if (isCamLock) {
+					InitCenterPosition ();
+					LockCamera ();
+				} else {
+					InitCenterPosition ();
+					var targetPos = followTarget.position;
+					targetPos.z = 0;
+					var nowPos = centerPosition;
+					nowPos.z = 0;
+					var tmpVector = paddingVector;
+					tmpVector.x *= Input.GetAxis("Horizontal");
+					var pos = Vector3.Lerp(nowPos, targetPos + tmpVector, followSpeed * Time.deltaTime);
+					pos.z = -30;
+					mainCamera.transform.position = pos;
+				}
+			}
 
             ProcessZoomIn();
         }

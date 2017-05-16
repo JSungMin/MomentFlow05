@@ -122,7 +122,8 @@ public class Player : MyObject
 		} else if (distanceToGround >= 0.25f) {
 			state = State.Fall;
 		} else {
-			state = State.Idle;
+			if (state == State.Fall)
+				state = State.Idle;
 		}
 	}
 
