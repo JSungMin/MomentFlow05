@@ -8,7 +8,7 @@ public class TimeLayerManager : MonoBehaviour {
 	public static TimeLayerManager instance;
 
 	public void Awake(){
-		Application.targetFrameRate = 15;
+		Application.targetFrameRate = 30;
 	}
 
 	public static TimeLayerManager GetInstance{

@@ -35,7 +35,7 @@ public class ElasticityGaugeManager : MonoBehaviour
 
     private IEnumerator ThrownOut(UndoDelegate undoDelegate)
     {
-        int toLayer = player.OppositeLayer(player.pTimeLayer.layerNum);
+		int toLayer = player.OppositeLayer(player.ParentTimeLayer.layerNum);
         // 다른 레이어로 갈 수 있다면 시간을 바꾸고
         // 갈 수 없다면 죽인다
         if (player.CanSwitchingTime(toLayer))

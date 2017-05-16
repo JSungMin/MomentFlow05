@@ -7,10 +7,12 @@ public delegate void UndoDelegate();
 
 public class Player : MyObject
 {
-    public TimeLayer pTimeLayer;
-    public float prevZPos;
+	private TimeLayer pTimeLayer;
+
+	public float prevZPos;
     public float deltaY;
-    public TimeLayer ParentTimeLayer
+  
+	public TimeLayer ParentTimeLayer
     {
         get
         {
@@ -51,7 +53,7 @@ public class Player : MyObject
     public AnimationCurve moveStep;
 
     public Vector3 velocity;
-    private float jumpVelocity;
+
     private float velocityXSmoothing;
 
     private float gravity;
@@ -64,15 +66,34 @@ public class Player : MyObject
 
     [HideInInspector]
     public Vector2 input;
-    float saveDelay = 0;
+	float inputXPrevJump;
+	float saveDelay = 0;
 
     float timer;
 
     public AnimationState animationState;
     private InteractiveManager interacitveManager;
 
+	void InitStatePriority ()
+	{
+		statePriority = new State[12];
+		statePriority [11] = State.Idle;
+		statePriority [10] = State.Walk;
+		statePriority [9] = State.Run;
+		statePriority [8] = State.Jump;
+		statePriority [7] = State.Fall;
+		statePriority [6] = State.Landing;
+		statePriority [5] = State.GrabCorner;
+		statePriority [4] = State.ClimbCorner;
+		statePriority [3] = State.Attack;
+		statePriority [2] = State.Dizzy;
+		statePriority [1] = State.Damaged;
+		statePriority [0] = State.Dead;
+	}
+
     void Start()
     {
+		InitStatePriority ();
         pTimeLayer = transform.GetComponentInParent<TimeLayer>();
         pBoxCollider = GetComponent<BoxCollider>();
         animator = GetComponent<Animator>();
@@ -83,11 +104,143 @@ public class Player : MyObject
         INIT_COLLIDER_OFFSET = pBoxCollider.center;
         SIT_COLLIDER_OFFSET = INIT_COLLIDER_OFFSET - Vector3.up * 0.08f;
         gravity = -5;
-        jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
     }
 
+	public void CheckAndAddIdleState ()
+	{
+		if (input.x == 0 && !isAir)
+		{
+			AddToStateQueueWithCheckingOverlap (GetStatePriorityLevel (State.Idle));
+		}
+	}
+
+	public void CheckAndAddRunState ()
+	{
+		if (input.x != 0 && !isAir)
+		{
+			AddToStateQueueWithCheckingOverlap (GetStatePriorityLevel (State.Run));
+		}
+	}
+
+	public void CheckAndAddJumpState ()
+	{
+		if (Input.GetKeyDown(KeyCode.Space) && !isAir && !isJump)
+		{
+			AddToStateQueueWithCheckingOverlap(GetStatePriorityLevel(State.Jump));
+		}
+	}
+
+	public void CheckAndAddFallState ()
+	{
+		if (velocity.y < 0f && isAir && distanceToGround >= 0.1f)
+		{
+			AddToStateQueueWithCheckingOverlap (GetStatePriorityLevel (State.Fall));
+		}
+	}
+
+	public void CheckAndAddLandingState ()
+	{
+		if (isAir && distanceToGround <= 0.25f && velocity.y < -1f)
+		{
+			AddToStateQueueWithCheckingOverlap (GetStatePriorityLevel (State.Landing));
+		}
+	}
+
+	float landingDelay = 0.4f;
+	float landingDelayTimer = 0f;
+
+	public void UpdateAndApplyPlayerState ()
+	{
+		stateQueue.Sort ();
+
+		if(stateQueue.Count != 0)
+			state = statePriority[stateQueue [0]];
+		switch (state) 
+		{
+		case State.Idle:
+			DeleteFromStateQueue (GetStatePriorityLevel (State.Idle));
+			break;
+		case State.Walk:
+			velocity.x = input.x * moveSpeed * moveStep.Evaluate (timer);
+			DeleteFromStateQueue (GetStatePriorityLevel (State.Walk));
+			break;
+		case State.Run:
+			velocity.x = input.x * moveSpeed * moveStep.Evaluate (timer);
+			DeleteFromStateQueue (GetStatePriorityLevel (State.Run));
+			break;
+		case State.Jump:
+			if (!isJump) {
+				inputXPrevJump = input.x;
+				velocity.y = jumpHeight;
+				velocity.x = inputXPrevJump * moveSpeed * 1.2f;
+				isJump = true;
+			} else {
+				velocity.x = inputXPrevJump * moveSpeed * 1.2f;
+			}
+			break;
+		case State.Fall:
+			velocity.x = inputXPrevJump * moveSpeed * 1.2f;
+			isJump = false;
+			DeleteFromStateQueue (GetStatePriorityLevel (State.Jump));
+			DeleteFromStateQueue (GetStatePriorityLevel (State.Fall));
+			break;
+		case State.Landing:
+			if (landingDelayTimer <= landingDelay) {
+				landingDelayTimer += Time.deltaTime;
+				velocity.x = 0;
+			} else {
+				landingDelayTimer = 0;
+				ReleaseLanding ();
+			}
+			break;
+		case State.GrabCorner:
+			if (Mathf.Sign (transform.position.x - grappingObj.transform.position.x) == Mathf.Sign(transform.localScale.x))
+			{
+				isGrabing = false;
+				DeleteFromStateQueue (GetStatePriorityLevel (State.GrabCorner));
+				break;
+			}
+			isGrabing = true;
+			velocity = Vector3.zero;
+
+			var newPos = transform.position;
+			newPos.x = (transform.localScale.x > 0) ? grappingObj.bounds.min.x - pBoxCollider.size.x * 0.5f : grappingObj.bounds.max.x + pBoxCollider.size.x * 0.5f;
+			newPos.y = grappingObj.bounds.max.y - pBoxCollider.size.y;
+			transform.position = newPos;
+			break;
+		case State.ClimbCorner:
+			ClimbCorner ();
+			break;
+		case State.Attack:
+			if (IsPlayerInPast())
+			{
+				GameSceneManager.getInstance.AddElasticityGauge(100, UndoAttack);
+			}
+			else
+			{ 
+				// 위치 맞춤
+				if (anim.isLeft())
+					transform.position = new Vector3(enemyScript.transform.position.x + 0.1f, enemyScript.transform.position.y, transform.position.z);
+				else
+					transform.position = new Vector3(enemyScript.transform.position.x - 0.1f, enemyScript.transform.position.y, transform.position.z);
+					enemyScript.enemyState = global::State.Stun;
+					velocity = Vector2.zero;
+			}
+			break;
+		case State.Dizzy:
+
+			break;
+		case State.Damaged:
+
+			break;
+		case State.Dead:
+
+			break;
+		}
+	}
+
     // 어느쪽에서 데미지를 받는지 결정함
-    public void Damaged(float dAmount, bool isFromLeft)
+    public void Damaged (float dAmount, bool isFromLeft)
     {
         if (state == State.Dead)
             return;
@@ -95,17 +248,17 @@ public class Player : MyObject
         hp -= dAmount;
         if (hp <= 0)
         {
-            Dead(isFromLeft);
+            Dead (isFromLeft);
             return;
         }
     }
 
-    public void Dead(bool isFromLeft)
+    public void Dead (bool isFromLeft)
     {
         state = State.Dead;
-        anim.SetDir(isFromLeft);
-        anim.SetDie();
-        GameSceneManager.getInstance.ReplayCurrentScene();
+        anim.SetDir (isFromLeft);
+        anim.SetDie ();
+        GameSceneManager.getInstance.ReplayCurrentScene ();
     }
 
 	private void ProcessCustomEventTrigger (Collider col)
@@ -115,91 +268,24 @@ public class Player : MyObject
 		}
 	}
 
-	void SetAirState ()
-	{
-		if (velocity.y > 0.25f) {
-			state = State.Jump;
-		} else if (distanceToGround >= 0.15f) {
-			state = State.Fall;
-		} else {
-			if (state == State.Fall)
-				StartCoroutine (ProcessLanding ());
-		}
-	}
-
-    public void ProcessGround()
+    public void ProcessGround ()
     {
         if (controller.collisions.above || controller.collisions.below)
         {
             velocity.y = 0;
-
-            isJump = false;
-            isAir = false;
+		
+			isAir = false;
 			velocity.x = 0;
         }
         else
         {
             isAir = true;
-			distanceToGround = GetDistanceToGround ();
-			SetAirState ();
         }
     }
 
-	bool IsPlayerCompletlyIdle ()
-	{
-		return !isSit && !isGrabing && !isClimb && !isAir;
-	}
-
-    void ProcessMove()
+    private void UndoAttack ()
     {
-		if (state == State.Attack)
-        {
-            return;
-        }
-
-        input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-
-        timer = input.x == 0 ? 0 : timer + Time.deltaTime;
-
-		velocity.y += gravity * Time.deltaTime;
-		if (!isJump) {
-			velocity.x = input.x * moveSpeed * moveStep.Evaluate (timer);
-		}
-		else
-			velocity.x = inputXPrevJump * moveSpeed * 1.2f * moveStep.Evaluate (timer);
-		
-		if(isOnLadder)
-		{
-			if (input.y != 0)
-			{
-				state = State.Walk;
-			}
-			else
-			{
-				state = State.Idle;
-			}
-			return;
-		}
-
-        if (input.x != 0)    
-		{
-			if(IsPlayerCompletlyIdle()){
-				state = State.Walk;
-				anim.SetDir((Mathf.Sign(input.x) > 0) ? false : true);
-			}
-		}  
-		else
-		{
-			if (IsPlayerCompletlyIdle ()) {
-				state = State.Idle;
-			}
-		}
-    }
-   
-
-    private void UndoAttack()
-    {
-        if (isLeft())
+        if (isLeft ())
             transform.position = new Vector3(transform.position.x + 0.1f, transform.position.y, transform.position.z);
         else
             transform.position = new Vector3(transform.position.x - 0.1f, transform.position.y, transform.position.z);
@@ -207,67 +293,28 @@ public class Player : MyObject
         velocity = Vector2.zero;
     }
 
-    private bool isLeft()
-    {
-        return Mathf.Sign(transform.localScale.x) == 1.0f ? false : true;
-    }
+	EnemyScript enemyScript;
 
-    private void ProcessAttack()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            EnemyScript enemyScript = interacitveManager.FindNearestEnemy();
-            if (interacitveManager.FindNearestEnemy() != null)
-            {
-                if (enemyScript.enemyState != global::State.Stun &&
-                    Mathf.Sign(enemyScript.transform.localScale.x) == Mathf.Sign(transform.localScale.x))
-                {
-                    if (IsPlayerInPast())
-                    {
-                        state = State.Attack;
-                        GameSceneManager.getInstance.AddElasticityGauge(100, UndoAttack);
-                    }
-                    else
-                    { 
-                        // 위치 맞춤
-                        if (anim.isLeft())
-                            transform.position = new Vector3(enemyScript.transform.position.x + 0.1f, enemyScript.transform.position.y, transform.position.z);
-                        else
-                            transform.position = new Vector3(enemyScript.transform.position.x - 0.1f, enemyScript.transform.position.y, transform.position.z);
-
-                        state = State.Attack;
-                        enemyScript.enemyState = global::State.Stun;
-                        velocity = Vector2.zero;
-                    }
-                }
-            }
-        }
-    }
+	public void CheckAndAddAttackState ()
+	{
+		if (!isAir && Input.GetKeyDown (KeyCode.E))
+		{
+			enemyScript = interacitveManager.FindNearestEnemy();
+			if (interacitveManager.FindNearestEnemy () != null) {
+				if (enemyScript.enemyState != global::State.Stun &&
+				    Mathf.Sign (enemyScript.transform.localScale.x) == Mathf.Sign (transform.localScale.x)) {
+					Debug.Log ("Add Attack");
+					AddToStateQueueWithCheckingOverlap (GetStatePriorityLevel (State.Attack));
+				}
+			}
+		}
+	}
 
     public void ReleaseAttack()
     {
-        if (state == State.Attack)
-            state = State.Idle;
+		DeleteFromStateQueue (GetStatePriorityLevel (State.Attack));
     }
 
-    float jumpSaveDelay = 0;
-	float inputXPrevJump;
-	void ProcessJump()
-    {
-        if (Input.GetKeyDown(KeyCode.Space) &&
-            !isWalkOnStair &&
-            !isOnLadder &&
-            state != State.Attack)
-        {
-            if (!isJump && velocity.y >= gravity * Time.deltaTime * 7.0f)
-            {
-                velocity.y = jumpHeight;
-				velocity.x = moveSpeed * 1.2f;
-                isJump = true;
-				inputXPrevJump = input.x;
-            }
-        }
-    }
 
 	bool IsPlayerInPast ()
 	{
@@ -348,52 +395,43 @@ public class Player : MyObject
 
     // isGrabing이 true라면 플레이어의 위치를 벽 코너에 고정한다
     public bool isGrabing;
-    // 벽의 모서리를 잡는 함수
-    void ProcessGrabCorner()
-    {
-        // if 벽 모서리와 닿아 있다면 isGrabing = true
-        if (isAir && !isClimb && state != State.Attack)
-        {
-            Vector2 pos = new Vector2(transform.position.x, transform.position.y);
-            var cols = Physics.OverlapBox(pos, new Vector2(0.20f, 0.35f), Quaternion.identity);
-            for (int i = 0; i < cols.Length; i++)
-            {
-                var c = cols[i];
-                if (c.gameObject.layer == LayerMask.NameToLayer("Collision") &&
-                    (c.CompareTag("GrabableObject") && TimeLayer.EqualTimeLayer(pTimeLayer, c.transform.GetComponentInParent<TimeLayer>())) ||
-                    (c.CompareTag("GrabableGround")))
-                {
-                    bool isFoward = (Mathf.Sign((c.transform.position - transform.position).x) == Mathf.Sign(transform.localScale.x)) ? true : false;
 
-                    if (isFoward)
-                    {
-                        if (pBoxCollider.bounds.min.y < c.bounds.max.y)
-                        {
-                            if (pBoxCollider.bounds.max.y >= c.bounds.max.y - 0.1f)
-                            {
-                                isGrabing = true;
-                                state = State.GrabCorner;
-                                grappingObj = c;
-                                velocity = Vector3.zero;
-                                var newPos = transform.position;
-								newPos.x = (transform.localScale.x > 0) ? c.bounds.min.x - pBoxCollider.size.x * 0.3f : c.bounds.max.x + pBoxCollider.size.x * 0.3f;
-                                newPos.y = c.bounds.max.y - pBoxCollider.size.y;
-                                transform.position = newPos;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        isGrabing = false;
-                        Debug.Log("Is Not Forward");
-                        state = State.Idle;
-                        grappingObj = null;
-                    }
-                }
-            }
-        }
-        ClimbCorner();
-    }
+	public LayerMask grabableLayer;
+	public void CheckAndAddGrabCornerState ()
+	{
+		if (isAir && !isClimb)
+		{
+			var cols = Physics.OverlapBox (transform.position, new Vector3 (0.20f, 0.35f,0.1f), Quaternion.identity, grabableLayer);
+			for (int i = 0; i < cols.Length; i++)
+			{
+				var c = cols [i];
+
+
+				if (!c.tag.Contains ("Grabable"))
+				{
+					continue;
+				}
+
+				if (TimeLayer.EqualTimeLayer(pTimeLayer, c.transform.GetComponentInParent<TimeLayer>()))
+				{
+					if (pBoxCollider.bounds.min.y < c.bounds.max.y && 
+						pBoxCollider.bounds.max.y >= c.bounds.max.y - 0.1f)
+					{
+						grappingObj = c;
+						AddToStateQueueWithCheckingOverlap (GetStatePriorityLevel (State.GrabCorner));
+					}
+				}
+			}
+		}
+	}
+
+	public void CheckAndAddClimbCornerState ()
+	{
+		if (isGrabing && Input.GetKeyDown (KeyCode.Space))
+		{
+			AddToStateQueueWithCheckingOverlap (GetStatePriorityLevel(State.ClimbCorner));
+		}
+	}
 
     public bool isOnLadder = false;
 
@@ -429,7 +467,7 @@ public class Player : MyObject
 
                     if (!isOnLadder)
                         isOnLadder = true;
-                    state = State.ClimbLadder;
+                    //state = State.ClimbLadder;
 					var newPos = transform.position + Vector3.up * moveSpeed * Time.deltaTime;
 					newPos.x = col.bounds.center.x;
 					transform.position = newPos;
@@ -461,7 +499,7 @@ public class Player : MyObject
                     }
                     if (!isOnLadder)
                         isOnLadder = true;
-                    state = State.ClimbLadder;
+//                    state = State.ClimbLadder;
 					var newPos = transform.position - Vector3.up * moveSpeed * Time.deltaTime;
 					newPos.x = col.bounds.center.x;
 					transform.position = newPos;
@@ -471,9 +509,7 @@ public class Player : MyObject
             }
         }
     }
-
-    public bool isSit = false;
-
+		
     private void ProcessEnterStair(Collider col)
     {
         if (col.CompareTag("Stair"))
@@ -513,20 +549,6 @@ public class Player : MyObject
             {
                 ExitStair(col);
             }
-        }
-    }
-
-    void Sit()
-    {
-        if (isSit)
-        {
-            pBoxCollider.center = SIT_COLLIDER_OFFSET;
-            pBoxCollider.size = SIT_COLLIDER_SIZE;
-        }
-        else
-        {
-            pBoxCollider.center = INIT_COLLIDER_OFFSET;
-            pBoxCollider.size = INIT_COLLIDER_SIZE;
         }
     }
 
@@ -593,6 +615,9 @@ public class Player : MyObject
         climbDurationTimer = 0;
         tClimbHeight = 0;
         tClimbSpeed = 0;
+
+		DeleteFromStateQueue (GetStatePriorityLevel (State.GrabCorner));
+		DeleteFromStateQueue (GetStatePriorityLevel (State.ClimbCorner));
     }
 
     private void InitClimbInfo()
@@ -635,7 +660,7 @@ public class Player : MyObject
 
     private void ClimbCorner()
     {
-        if (isGrabing && Input.GetKeyDown(KeyCode.Space) && !isClimb)
+        if (isGrabing && !isClimb)
         {
             InitClimbInfo();
         }
@@ -646,7 +671,6 @@ public class Player : MyObject
                 climbDurationTimer += Time.deltaTime;
 
 				transform.position += (Vector3.up * tClimbSpeed) * Time.deltaTime;
-                state = State.ClimbCorner;
             }
             else
             {
@@ -688,8 +712,6 @@ public class Player : MyObject
 	{
 		return null != col.GetComponent<CustomEventTrigger> () && TimeLayer.EqualTimeLayer(gameObject, col.gameObject);
 	}
-
-
     
     private void OnTriggerEnter(Collider col)
     {
@@ -711,36 +733,40 @@ public class Player : MyObject
     {
         ProcessExitStair(col);
     }
-		
-	IEnumerator ProcessLanding()
+
+	public void ReleaseLanding()
 	{
-		state = State.Landing;
-		yield return new WaitForSeconds (0.4f);
-		state = State.Idle;
-		velocity.x = 0;
+		DeleteFromStateQueue (GetStatePriorityLevel (State.Jump));
+		DeleteFromStateQueue (GetStatePriorityLevel (State.Fall));
+		DeleteFromStateQueue (GetStatePriorityLevel (State.Landing));
+		isJump = false;
 	}
 
     void Update()
     {
-        if (state == State.Dead)
-            return;
+		ProcessGround ();
+		ProcessTimeSwitching ();
+		input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-        var tmpY = transform.position.y;
+		velocity.y += gravity * Time.deltaTime;
 
-		ProcessGround();
-		ProcessJump();
-		if (state != State.Landing) {
-			ProcessGrabCorner();
-			ProcessClimbLadder();
-			ProcessTimeSwitching();
-			ProcessMove();
-			ProcessAttack();
-		}
+		distanceToGround = GetDistanceToGround ();
 
-		if (!isGrabing && !isOnLadder && state != State.Attack)
-        {
-            controller.Move(velocity * Time.deltaTime);
-            velocity.x = 0;
-        }
+		CheckAndAddIdleState ();
+		CheckAndAddRunState ();
+		CheckAndAddJumpState ();
+		CheckAndAddFallState ();
+		CheckAndAddLandingState ();
+		CheckAndAddGrabCornerState ();
+		CheckAndAddClimbCornerState ();
+		CheckAndAddAttackState ();
+
+		UpdateAndApplyPlayerState ();
+
+		if (velocity.x != 0)
+			anim.SetDir (Mathf.Sign(velocity.x) < 0);
+
+        controller.Move(velocity * Time.deltaTime);
+		velocity.x = 0;
     }
 }

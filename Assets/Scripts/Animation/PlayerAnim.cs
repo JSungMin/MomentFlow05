@@ -11,10 +11,23 @@ public class PlayerAnim : AnimationBase {
 	bool isAttack;
 	bool isDamaged;
 
+	void HandleEvent (Spine.TrackEntry entry, Spine.Event e){
+		//Attack 처리
+		if (entry.animation.name.Contains("Attack"))
+		{
+			if (e.Data.name == "End") {
+				player.ReleaseAttack ();
+				Debug.Log ("Attack ENd");
+			}
+		}
+
+	}
+
     private new void Awake()
     {
         base.Awake();
-        player = GetComponent<Player>();
+		skel.state.Event += HandleEvent;
+		player = GetComponent<Player>();
         audioSource = GetComponent<AudioSource>();
     }
 
@@ -35,11 +48,7 @@ public class PlayerAnim : AnimationBase {
 	}
 
 	public void SetDefaultWalk(){
-		if (player.isSit) {
-			SetDefaultSitWalk ();
-		} else {
-			setAnimation (0, "Run", true, 1);
-		}
+		setAnimation (0, "Run", true, 1);
     }
 
 	//TODO: Run -> GrabCorner
@@ -95,11 +104,14 @@ public class PlayerAnim : AnimationBase {
         if (!isCutScene) {
 			if(player.enabled){
 				switch(player.state){
+				case MyObject.State.Idle:
+					setAnimation (0, "Idle", true, 1);
+					break;
 				case MyObject.State.Walk:
 					setAnimation (0, "Run", true, 1);
 					break;
-				case MyObject.State.Idle:
-					setAnimation (0, "Idle", true, 1);
+				case MyObject.State.Run:
+					setAnimation (0, "Run", true, 1);
 					break;
 				case MyObject.State.Sit:
 					setAnimation (0, "Sit", true, 1);
@@ -118,9 +130,6 @@ public class PlayerAnim : AnimationBase {
 					break;
 				case MyObject.State.GrabCorner:
 					SetGrabCorner ();
-					break;
-				case MyObject.State.ClimbLadder:
-					setAnimation (0,"Run", true, 1);
 					break;
 				case MyObject.State.ClimbCorner:
 					SetClimb ();

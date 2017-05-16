@@ -35,16 +35,6 @@ public class StunState : IState
             enemyScript.SetMaterialAlpha((deadVanishComplete - deadVanishTimer) / (deadVanishComplete - deadVanish));
 
         }
-        else if (deadVanishTimer >= playerFinishAttack)
-        {
-            // 플레이어의 공격 모션이 끝나는 루틴
-            if (!isPlayerFinishedAttack)
-            {
-                player = GameObject.FindObjectOfType<Player>();
-                player.state = MyObject.State.Idle;
-                isPlayerFinishedAttack = true;
-            }
-        }
         else
         {
             // 스턴 애니메이션하는 루틴

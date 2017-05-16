@@ -52,8 +52,8 @@ public class FollowUpCamera : MonoBehaviour
     {
         mainCamera = GetComponent<Camera>();
         initOrthosize = mainCamera.orthographicSize;
-		horizontalRayLength = Mathf.Abs(Camera.main.ScreenToWorldPoint (new Vector3 (Screen.width, Screen.height, 0)).x) * 0.3f;
-		verticalRayLength = Camera.main.ScreenToWorldPoint (new Vector3 (Screen.width, Screen.height, 0)).y * 0.3f;
+		horizontalRayLength = Mathf.Abs(Camera.main.ScreenToWorldPoint (new Vector3 (Screen.width, Screen.height, 0)).x) * 0.25f;
+		verticalRayLength = Camera.main.ScreenToWorldPoint (new Vector3 (Screen.width, Screen.height, 0)).y * 0.25f;
     }
 
 	public void SetHorizontalHitObjectInfo(RaycastHit hit){
@@ -77,10 +77,8 @@ public class FollowUpCamera : MonoBehaviour
 			Debug.DrawLine (new Vector3 (max.x, min.y + len * ((float)i / (float)2), followTarget.position.z), new Vector3 (max.x, min.y + len * ((float)i / (float)2), followTarget.position.z) + Vector3.right * horizontalRayLength);
 
 			isToRight = false;
-			Debug.Log ("Right length : " + hits.Length);
 			for(int j = 0; j < hits.Length; j++){
 				var hit = hits [j];
-				Debug.Log (hit.collider.name);
 				if (hit.collider != null && hit.collider.CompareTag("Bound")) {
 					SetHorizontalHitObjectInfo (hit);
 					isToRight = true;
@@ -91,7 +89,6 @@ public class FollowUpCamera : MonoBehaviour
 		for (int i = 0; i < 3; i++) {
 			RaycastHit[] hits = Physics.RaycastAll (new Vector3 (min.x, min.y + len * ((float)i / (float)2), followTarget.position.z), Vector3.left, horizontalRayLength,mask);
 			Debug.DrawLine (new Vector3 (min.x, min.y + len * ((float)i / (float)2),followTarget.position.z), new Vector3 (max.x, min.y + len * ((float)i / (float)2), followTarget.position.z) + Vector3.left*horizontalRayLength);
-			Debug.Log ("Left length : " + hits.Length);
 			isToLeft = false;
 
 			for(int j = 0; j < hits.Length; j++){
@@ -115,8 +112,6 @@ public class FollowUpCamera : MonoBehaviour
 			RaycastHit[] hits = Physics.RaycastAll (new Vector3 (min.x + len * ((float)i / (float)2), max.y, followTarget.position.z), Vector3.up, verticalRayLength,mask);
 			Debug.DrawLine (new Vector3 (min.x+ len * ((float)i / (float)2), max.y), new Vector3 (min.x + len * ((float)i / (float)2), max.y) + Vector3.up*verticalRayLength);
 
-			Debug.Log ("Top length : " + hits.Length);
-
 			isToTop = false;
 			for(int j = 0; j < hits.Length; j++){
 				var hit = hits [j];
@@ -130,9 +125,6 @@ public class FollowUpCamera : MonoBehaviour
 		for (int i = 0; i < 3; i++) {
 			RaycastHit[] hits = Physics.RaycastAll (new Vector3 (min.x + len * ((float)i / (float)2), min.y,followTarget.position.z), Vector3.down, verticalRayLength,mask);
 			Debug.DrawLine (new Vector3 (min.x+ len * ((float)i / (float)2), max.y), new Vector3 (min.x + len * ((float)i / (float)2), max.y) + Vector3.down*verticalRayLength);
-
-
-			Debug.Log ("Bottom length : " + hits.Length);
 
 			isToBottom = false;
 			for(int j = 0; j < hits.Length; j++){

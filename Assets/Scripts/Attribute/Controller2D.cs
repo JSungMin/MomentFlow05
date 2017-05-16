@@ -147,7 +147,8 @@ public class Controller2D : MonoBehaviour {
 			if (Physics.Raycast(rayOrigin, Vector3.right * directionX ,out hit ,rayLength, collisionMask)) {
 				if (TimeLayer.EqualTimeLayer (hit.collider.transform.GetComponentInParent<TimeLayer>(), pTimeLayer)||
 					hit.collider.CompareTag("Ground")||
-					hit.collider.CompareTag("Bound")||hit.collider.CompareTag("Stair")
+					hit.collider.CompareTag("Bound")||hit.collider.CompareTag("Stair")||
+					hit.collider.CompareTag("GrabbableGround")
 				) 
 				{
 					if(isWalkOnStair){
