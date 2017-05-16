@@ -60,6 +60,8 @@ public class Player : MyObject
     private bool isAir = false;
     private bool isWalkOnStair = false;
 
+	public float distanceToGround = 0;
+
     [HideInInspector]
     public Vector2 input;
     float saveDelay = 0;
@@ -80,7 +82,7 @@ public class Player : MyObject
 
         INIT_COLLIDER_OFFSET = pBoxCollider.center;
         SIT_COLLIDER_OFFSET = INIT_COLLIDER_OFFSET - Vector3.up * 0.08f;
-        gravity = -9.8f;
+        gravity = -5;
         jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
     }
 
@@ -115,11 +117,12 @@ public class Player : MyObject
 
 	void SetAirState ()
 	{
-		if (velocity.y > 0f) {
+		if (velocity.y > 0.25f) {
 			state = State.Jump;
-		}
-		else if (velocity.y < -0f){
+		} else if (distanceToGround >= 0.25f) {
 			state = State.Fall;
+		} else {
+			state = State.Idle;
 		}
 	}
 
@@ -135,6 +138,7 @@ public class Player : MyObject
         else
         {
             isAir = true;
+			distanceToGround = GetDistanceToGround ();
 			SetAirState ();
         }
     }
@@ -527,13 +531,36 @@ public class Player : MyObject
                 var hit = hits[j];
                 if (hit.collider != null &&
                     TimeLayer.EqualTimeLayer(hit.collider.GetComponentInParent<TimeLayer>(), pTimeLayer))
-                {
+				{
                     return true;
                 }
             }
         }
         return false;
     }
+
+	public float GetDistanceToGround()
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			var origin = Vector3.up * pBoxCollider.bounds.min.y + Vector3.right * pBoxCollider.bounds.min.x + Vector3.right * pBoxCollider.size.x * (i / 2);
+			Debug.DrawLine (Vector3.up * pBoxCollider.bounds.min.y + Vector3.right * pBoxCollider.bounds.min.x + Vector3.right * pBoxCollider.size.x * (i / 2),
+				Vector3.up * pBoxCollider.bounds.min.y + Vector3.right * pBoxCollider.bounds.min.x + Vector3.right * pBoxCollider.size.x * (i / 2) + Vector3.down * 3,
+				Color.red);
+			var hits = Physics.RaycastAll(origin, Vector2.down, 3, controller.collisionMask);
+			for (int j = 0; j < hits.Length; j++)
+			{
+				var hit = hits[j];
+				if (hit.collider != null &&
+					TimeLayer.EqualTimeLayer(hit.collider.GetComponentInParent<TimeLayer>(), pTimeLayer) ||
+					hit.collider.tag.Contains("Ground"))
+				{
+					return hit.distance;
+				}
+			}
+		}
+		return -1;
+	}
 
     Collider grappingObj;
 

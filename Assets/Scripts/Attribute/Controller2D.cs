@@ -19,6 +19,8 @@ public class Controller2D : MonoBehaviour {
 	float horizontalRaySpacing;
 	float verticalRaySpacing;
 
+	public float distanceToGround;
+
 	BoxCollider col;
 	RaycastOrigins raycastOrigins;
 	public CollisionInfo collisions;

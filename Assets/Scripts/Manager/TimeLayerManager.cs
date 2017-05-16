@@ -7,6 +7,10 @@ public class TimeLayerManager : MonoBehaviour {
 	public List<Transform> layers = new List<Transform>();
 	public static TimeLayerManager instance;
 
+	public void Awake(){
+		Application.targetFrameRate = 15;
+	}
+
 	public static TimeLayerManager GetInstance{
 		get{
 			if (instance == null) {
