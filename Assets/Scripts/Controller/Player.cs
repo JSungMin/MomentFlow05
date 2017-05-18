@@ -76,15 +76,16 @@ public class Player : MyObject
 
 	void InitStatePriority ()
 	{
-		statePriority = new State[12];
-		statePriority [11] = State.Idle;
-		statePriority [10] = State.Walk;
-		statePriority [9] = State.Run;
-		statePriority [8] = State.Jump;
-		statePriority [7] = State.Fall;
-		statePriority [6] = State.Landing;
-		statePriority [5] = State.GrabCorner;
-		statePriority [4] = State.ClimbCorner;
+		statePriority = new State[13];
+		statePriority [12] = State.Idle;
+		statePriority [11] = State.Walk;
+		statePriority [10] = State.Run;
+		statePriority [9] = State.Jump;
+		statePriority [8] = State.Fall;
+		statePriority [7] = State.Landing;
+		statePriority [6] = State.GrabCorner;
+		statePriority [5] = State.ClimbCorner;
+		statePriority [4] = State.ClimbLadder;
 		statePriority [3] = State.Attack;
 		statePriority [2] = State.Dizzy;
 		statePriority [1] = State.Damaged;
@@ -166,6 +167,7 @@ public class Player : MyObject
 			break;
 		case State.Run:
 			velocity.x = input.x * moveSpeed * moveStep.Evaluate (timer);
+			inputXPrevJump = input.x;
 			DeleteFromStateQueue (GetStatePriorityLevel (State.Run));
 			break;
 		case State.Jump:
@@ -189,6 +191,7 @@ public class Player : MyObject
 				landingDelayTimer += Time.deltaTime;
 				velocity.x = 0;
 			} else {
+				
 				landingDelayTimer = 0;
 				ReleaseLanding ();
 			}
@@ -225,6 +228,38 @@ public class Player : MyObject
 					transform.position = new Vector3(enemyScript.transform.position.x - 0.1f, enemyScript.transform.position.y, transform.position.z);
 					enemyScript.enemyState = global::State.Stun;
 					velocity = Vector2.zero;
+			}
+			break;
+		case State.ClimbLadder:
+			velocity = Vector3.zero;
+			lMaxX = nearLadder.bounds.max.x;
+			lMaxY = nearLadder.bounds.max.y;
+			lMinX = nearLadder.bounds.min.x;
+			lMinY = nearLadder.bounds.min.y;
+			if (input.y > 0)
+			{
+				if (pBoxCollider.bounds.min.y >= lMaxY) {
+					velocity = Vector3.zero;
+					DeleteFromStateQueue (GetStatePriorityLevel (State.GrabCorner));
+					DeleteFromStateQueue (GetStatePriorityLevel (State.ClimbLadder));
+					break;
+				}
+				var tmpPos = transform.position + Vector3.up * moveSpeed * Time.deltaTime;
+				tmpPos.x = nearLadder.bounds.center.x;
+				transform.position = tmpPos;
+			}
+			else if (input.y < 0)
+			{
+				if (pBoxCollider.bounds.min.y <= lMinY)
+				{
+					velocity = Vector3.zero;
+					DeleteFromStateQueue (GetStatePriorityLevel (State.GrabCorner));
+					DeleteFromStateQueue (GetStatePriorityLevel (State.ClimbLadder));
+					break;
+				}
+				var tmpPos = transform.position - Vector3.up * moveSpeed * Time.deltaTime;
+				tmpPos.x = nearLadder.bounds.center.x;
+				transform.position = tmpPos;
 			}
 			break;
 		case State.Dizzy:
@@ -292,23 +327,6 @@ public class Player : MyObject
         state = State.Idle;
         velocity = Vector2.zero;
     }
-
-	EnemyScript enemyScript;
-
-	public void CheckAndAddAttackState ()
-	{
-		if (!isAir && Input.GetKeyDown (KeyCode.E))
-		{
-			enemyScript = interacitveManager.FindNearestEnemy();
-			if (interacitveManager.FindNearestEnemy () != null) {
-				if (enemyScript.enemyState != global::State.Stun &&
-				    Mathf.Sign (enemyScript.transform.localScale.x) == Mathf.Sign (transform.localScale.x)) {
-					Debug.Log ("Add Attack");
-					AddToStateQueueWithCheckingOverlap (GetStatePriorityLevel (State.Attack));
-				}
-			}
-		}
-	}
 
     public void ReleaseAttack()
     {
@@ -405,8 +423,6 @@ public class Player : MyObject
 			for (int i = 0; i < cols.Length; i++)
 			{
 				var c = cols [i];
-
-
 				if (!c.tag.Contains ("Grabable"))
 				{
 					continue;
@@ -414,11 +430,16 @@ public class Player : MyObject
 
 				if (TimeLayer.EqualTimeLayer(pTimeLayer, c.transform.GetComponentInParent<TimeLayer>()))
 				{
+					
 					if (pBoxCollider.bounds.min.y < c.bounds.max.y && 
 						pBoxCollider.bounds.max.y >= c.bounds.max.y - 0.1f)
 					{
-						grappingObj = c;
-						AddToStateQueueWithCheckingOverlap (GetStatePriorityLevel (State.GrabCorner));
+						Debug.Log (Mathf.Sign(c.transform.position.x - transform.position.x) + " : " + Mathf.Sign(transform.localScale.x));
+						if (Mathf.Sign(c.transform.position.x - transform.position.x) == Mathf.Sign(transform.localScale.x))
+						{
+							grappingObj = c;
+							AddToStateQueueWithCheckingOverlap (GetStatePriorityLevel (State.GrabCorner));
+						}
 					}
 				}
 			}
@@ -433,82 +454,63 @@ public class Player : MyObject
 		}
 	}
 
+
+	EnemyScript enemyScript;
+
+	public void CheckAndAddAttackState ()
+	{
+		if (!isAir && Input.GetKeyDown (KeyCode.E))
+		{
+			enemyScript = interacitveManager.FindNearestEnemy();
+			if (interacitveManager.FindNearestEnemy () != null) {
+				if (enemyScript.enemyState != global::State.Stun &&
+					Mathf.Sign (enemyScript.transform.localScale.x) == Mathf.Sign (transform.localScale.x)) {
+					Debug.Log ("Add Attack");
+					AddToStateQueueWithCheckingOverlap (GetStatePriorityLevel (State.Attack));
+				}
+			}
+		}
+	}
+
     public bool isOnLadder = false;
 
     float lMaxX, lMaxY;
     float lMinX, lMinY;
 
-    private void ProcessClimbLadder()
-    {
-        if (Input.GetKey(KeyCode.W) && state != State.Attack)
-        {
-            var cols = Physics.OverlapBox(transform.position,
-                new Vector3(pBoxCollider.bounds.extents.x, pBoxCollider.bounds.extents.y, pBoxCollider.bounds.extents.z),
-                Quaternion.identity,
-                1 << LayerMask.NameToLayer("Trigger"));
+	Collider[] nearTriggers;
+	Collider nearLadder;
 
+	public Collider[] FindNearTriggers ()
+	{
+		return Physics.OverlapBox(transform.position,
+			new Vector3(pBoxCollider.bounds.extents.x, pBoxCollider.bounds.extents.y, pBoxCollider.bounds.extents.z),
+			Quaternion.identity,
+			1 << LayerMask.NameToLayer("Trigger"));
+	}
 
-            for (int i = 0; i < cols.Length; i++)
-            {
-                var col = cols[i];
-                if (col.CompareTag("Ladder"))
-                {
-                    lMaxX = col.bounds.max.x;
-                    lMaxY = col.bounds.max.y;
-                    lMinX = col.bounds.min.x;
-                    lMinY = col.bounds.min.y;
+	private Collider GetNearLadderAndClimb ()
+	{
+		nearTriggers = FindNearTriggers ();
+		for (int i = 0; i < nearTriggers.Length; i++) {
+			if (nearTriggers [i].CompareTag ("Ladder")) {
+				AddToStateQueueWithCheckingOverlap (GetStatePriorityLevel (State.ClimbLadder));
+				return nearTriggers [i];
+			}
+		}
+		return null;
+	}
 
-                    if (pBoxCollider.bounds.min.y >= lMaxY)
-                    {
-                        isOnLadder = false;
-                        velocity = Vector3.zero;
-                        break;
-                    }
-
-                    if (!isOnLadder)
-                        isOnLadder = true;
-                    //state = State.ClimbLadder;
-					var newPos = transform.position + Vector3.up * moveSpeed * Time.deltaTime;
-					newPos.x = col.bounds.center.x;
-					transform.position = newPos;
-                }
-            }
-        }
-        else if (Input.GetKey(KeyCode.S) && state != State.Attack)
-        {
-            var cols = Physics.OverlapBox(transform.position,
-                new Vector3(pBoxCollider.bounds.extents.x, pBoxCollider.bounds.extents.y, pBoxCollider.bounds.extents.z),
-                Quaternion.identity,
-                1 << LayerMask.NameToLayer("Trigger"));
-
-            for (int i = 0; i < cols.Length; i++)
-            {
-                var col = cols[i];
-                if (col.CompareTag("Ladder"))
-                {
-                    lMaxX = col.bounds.max.x;
-                    lMaxY = col.bounds.max.y;
-                    lMinX = col.bounds.min.x;
-                    lMinY = col.bounds.min.y;
-
-                    if (pBoxCollider.bounds.min.y <= lMinY)
-                    {
-                        velocity = Vector3.zero;
-                        isOnLadder = false;
-                        break;
-                    }
-                    if (!isOnLadder)
-                        isOnLadder = true;
-//                    state = State.ClimbLadder;
-					var newPos = transform.position - Vector3.up * moveSpeed * Time.deltaTime;
-					newPos.x = col.bounds.center.x;
-					transform.position = newPos;
-
-					transform.position = newPos;
-                }
-            }
-        }
-    }
+	public void CheckAndAddClimbLadder ()
+	{
+		if (Input.GetKey (KeyCode.W))
+		{
+			nearLadder = GetNearLadderAndClimb ();
+		}
+		else if (Input.GetKey (KeyCode.S))
+		{
+			nearLadder = GetNearLadderAndClimb ();
+		}
+	}
 		
     private void ProcessEnterStair(Collider col)
     {
@@ -760,6 +762,7 @@ public class Player : MyObject
 		CheckAndAddGrabCornerState ();
 		CheckAndAddClimbCornerState ();
 		CheckAndAddAttackState ();
+		CheckAndAddClimbLadder ();
 
 		UpdateAndApplyPlayerState ();
 

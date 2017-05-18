@@ -27,6 +27,7 @@ public class MyObject : MonoBehaviour {
 		Landing,
 		GrabCorner,
 		ClimbCorner,
+		ClimbLadder,
 		Dizzy
 	}
 
