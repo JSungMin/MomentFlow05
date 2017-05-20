@@ -429,12 +429,10 @@ public class Player : MyObject
 				}
 
 				if (TimeLayer.EqualTimeLayer(pTimeLayer, c.transform.GetComponentInParent<TimeLayer>()))
-				{
-					
+				{					
 					if (pBoxCollider.bounds.min.y < c.bounds.max.y && 
 						pBoxCollider.bounds.max.y >= c.bounds.max.y - 0.1f)
 					{
-						Debug.Log (Mathf.Sign(c.transform.position.x - transform.position.x) + " : " + Mathf.Sign(transform.localScale.x));
 						if (Mathf.Sign(c.transform.position.x - transform.position.x) == Mathf.Sign(transform.localScale.x))
 						{
 							grappingObj = c;
@@ -465,7 +463,7 @@ public class Player : MyObject
 			if (interacitveManager.FindNearestEnemy () != null) {
 				if (enemyScript.enemyState != global::State.Stun &&
 					Mathf.Sign (enemyScript.transform.localScale.x) == Mathf.Sign (transform.localScale.x)) {
-					Debug.Log ("Add Attack");
+					enemyScript.AlertToNearEnemy (10, 1 << LayerMask.NameToLayer ("Enemy"));
 					AddToStateQueueWithCheckingOverlap (GetStatePriorityLevel (State.Attack));
 				}
 			}

@@ -7,6 +7,9 @@ public class SuspiciousState : IState
 
     public Vector3 targetPos;
 
+	public float suspiciousTimer = 0f;
+	public float suspiciousDuration = 5f;
+
     public SuspiciousState(GameObject obj) : base(obj) { }
 
     public void InitSuspiciousInfo(Vector3 t, float s)
@@ -17,6 +20,15 @@ public class SuspiciousState : IState
     }
     public void CalculateDirection()
     {
+		suspiciousTimer += Time.deltaTime;
+
+		if (suspiciousTimer > suspiciousDuration) 
+		{
+			suspiciousTimer = 0;
+			enemyScript.DeleteStateToList (enemyScript.GetStateLayerKey (State.Suspicious));
+			return;
+		}
+
         dir = (targetPos - enemyObj.transform.position).normalized;
         dir.y = 0;
         dir.x = Mathf.Sign(dir.x) * 1;

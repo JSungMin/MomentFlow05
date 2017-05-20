@@ -8,7 +8,6 @@ public class DetectionState : IState {
 	public DetectionState(GameObject obj) : base(obj){}
 
 	public override void OnStateEnter(){
-		isDetection = true;
 		Hold ();
 	}
 

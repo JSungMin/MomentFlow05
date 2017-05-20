@@ -312,6 +312,36 @@ public class EnemyScript : MonoBehaviour
         return false;
     }
 
+	public void AlertToNearEnemy(float alertRadius, LayerMask alertMask)
+	{
+		Debug.Log ("Alert");
+		var colliders = Physics.OverlapSphere(transform.position, alertRadius, alertMask);
+
+		for (int i = 0; i < colliders.Length; i++)
+		{
+			var escr = colliders[i].GetComponent<EnemyScript>();
+
+			RaycastHit hit;
+			Physics.Raycast(transform.position, (escr.transform.position - transform.position).normalized, out hit, alertRadius, alertMask);
+
+			if (null != escr && escr != this)
+			{
+				if (TimeLayer.EqualTimeLayer(escr.pTimeLayer, pTimeLayer))
+				{
+					if (!escr.GetSpecifiedState<DetectionState>(State.Detection).isDetection)
+					{
+							var targetPos = transform.position;
+							targetPos.y = escr.transform.position.y;
+							escr.GetSpecifiedState<SuspiciousState>(State.Suspicious).InitSuspiciousInfo(
+								Vector3.Lerp(escr.transform.position,targetPos,0.9f)
+								, escr.moveSpeed * 1.0f);
+							escr.AddStateToListWithCheckingOverlap(escr.GetStateLayerKey(State.Suspicious));
+					}
+				}
+			}
+		}
+	}
+
     RaycastHit[][] gBrowseHits;
     //만약 탐지 가능한 객체(EqualTimeLayer == true)가 있으면 !null 요소가 만약 객체가 없으면 null
     public BrowseInfo[] Browse(float rayLen)
@@ -329,14 +359,14 @@ public class EnemyScript : MonoBehaviour
             if (transform.localScale.x > 0)
             {
                 gBrowseHits[i] = Physics.RaycastAll(
-                    new Vector3(maxX, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
-                    Vector3.right, rayLen, browseMask);
+					new Vector3(minX - 0.1f, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
+					Vector3.right, rayLen + colXLen, browseMask);
             }
             else
             {
                 gBrowseHits[i] = Physics.RaycastAll(
-                    new Vector3(minX, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
-                    Vector3.left, rayLen, browseMask);
+					new Vector3(maxX + 0.1f, maxY - colYLen * (i / (browseDensity - 1)), transform.position.z),
+					Vector3.left, rayLen + colXLen, browseMask);
             }
 
             bInfos = new BrowseInfo[gBrowseHits[i].Length];

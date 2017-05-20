@@ -165,7 +165,7 @@ public class FollowUpCamera : MonoBehaviour
 	private void LockCamera(){
 		if ((!isToLeft && !isToRight) &&
 			(!isToTop && !isToBottom)) {
-			transform.position = Vector3.Lerp (transform.position, centerPosition, Time.deltaTime * 4.0f);
+			transform.position = Vector3.Lerp (transform.position, centerPosition + paddingVector, Time.deltaTime * 4.0f);
 		} else {
 			Vector3 dir = Vector3.zero;
 			if (isToLeft && isToRight) {
@@ -200,6 +200,7 @@ public class FollowUpCamera : MonoBehaviour
 			tmpOffset.x = hHitPos.x + dir.x * (horizontalRayLength - colWidth * 0.5f);
 			tmpOffset.y = vHitPos.y + dir.y * (verticalRayLength - colHeight * 0.5f);
 			tmpOffset.z = transform.position.z;
+			tmpOffset += paddingVector;
 			transform.position = Vector3.Lerp (transform.position, tmpOffset, Time.deltaTime * 2.0f);
 		}
 	}

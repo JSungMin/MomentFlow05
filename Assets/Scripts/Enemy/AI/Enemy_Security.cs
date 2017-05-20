@@ -11,6 +11,8 @@ public class Enemy_Security : EnemyScript
     public float stateChange = 2;
     private float stateChangeTimer = 0;
 
+	private float targetFoundOutGauge = 0;
+
 	SkeletonGhost skeletonGhost;
 
     private void InitStates()
@@ -53,6 +55,7 @@ public class Enemy_Security : EnemyScript
         SetStatesLevel();
         AddStateToListWithCheckingOverlap(GetStateLayerKey(defaultState));
         InitEnemy();
+		GetSpecifiedState<DetectionState> (State.Detection).isDetection = false;
     }
     
     private void ProcessTimeEffect()
@@ -115,7 +118,7 @@ public class Enemy_Security : EnemyScript
 
     private void IncreaseFindOutGauge()
     {
-        if (IsFindPlayer(findOutSight))
+		if (isFindPlayer)
         {
             var pPos = playerObject.transform.position;
             pPos.z = 0;
@@ -134,7 +137,7 @@ public class Enemy_Security : EnemyScript
 
     private void DecreaseFindOutGauge()
     {
-        if (!IsFindPlayer(findOutSight) && !GetSpecifiedState<DetectionState>(State.Detection).isDetection)
+		if (!isFindPlayer && !GetSpecifiedState<DetectionState>(State.Detection).isDetection)
         {
             var pPos = playerObject.transform.position;
             pPos.z = 0;
@@ -148,68 +151,41 @@ public class Enemy_Security : EnemyScript
 
     private void CheckIdleState()
     {
-        if (enemyState == State.Idle)
-        {
-            if (!IsFindPlayer(findOutSight))
-            {
-                AddStateToListWithCheckingOverlap(GetStateLayerKey(State.Idle));
-            }
-            else if (IsFindPlayer(findOutSight))
-            {
-                AddStateToListWithCheckingOverlap(GetStateLayerKey(State.Suspicious));
-                GetSpecifiedState<SuspiciousState>(State.Suspicious).InitSuspiciousInfo(playerObject.transform.position, moveSpeed * 0.5f);
-            }
-        }
+		if (!isFindPlayer) {
+			AddStateToListWithCheckingOverlap (GetStateLayerKey (State.Idle));
+		}
     }
 
     private void CheckPatrolState()
     {
-        if (enemyState == State.Patrol)
-        {
-            if (IsFindPlayer(findOutSight))
-            {
-                AddStateToListWithCheckingOverlap(GetStateLayerKey(State.Suspicious));
-                GetSpecifiedState<SuspiciousState>(State.Suspicious).InitSuspiciousInfo(playerObject.transform.position, moveSpeed * 0.5f);
-            }
-            else
-            {
-                AddStateToListWithCheckingOverlap(GetStateLayerKey(State.Patrol));
-            }
-        }
+		if (!isFindPlayer) {
+			AddStateToListWithCheckingOverlap (GetStateLayerKey (State.Patrol));
+		}
     }
 
     private void CheckSuspiciousState()
     {
-        if (enemyState == State.Suspicious)
-        {
-            if (findOutGauge >= 100)
-            {
-                AddStateToListWithCheckingOverlap(GetStateLayerKey(State.Detection));
-            }
-            else if (findOutGauge <= 0 && Vector3.Distance(transform.position, GetSpecifiedState<SuspiciousState>(State.Suspicious).targetPos) < 0.25f)
-            {
-                AddStateToListWithCheckingOverlap(GetStateLayerKey(State.Patrol));
-                DeleteStateToList(GetStateLayerKey(State.Suspicious));
-            }
-        }
+		if (isFindPlayer) {
+			AddStateToListWithCheckingOverlap (GetStateLayerKey (State.Suspicious));
+			GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo (playerObject.transform.position, moveSpeed * 0.5f);
+		}	
     }
 
     private void CheckDetectionState()
     {
-        if (enemyState == State.Detection)
-        {
-            AddStateToListWithCheckingOverlap(GetStateLayerKey(State.Attack));
-            GetSpecifiedState<AttackState>(State.Attack).InitAttackInfo(EnemyAttackType.Gun, bullet, 3);
-        }
+		if (findOutGauge >= 100)
+		{
+			GetSpecifiedState<DetectionState> (State.Detection).isDetection = true;
+			AddStateToListWithCheckingOverlap(GetStateLayerKey(State.Detection));
+		}
     }
 
     private void CheckAttackState()
     {
-        if (enemyState == State.Attack)
-        {
-            if (!GetSpecifiedState<DetectionState>(State.Detection).isDetection)
-                DeleteStateToList(GetStateLayerKey(State.Attack));
-        }
+		if (GetSpecifiedState<DetectionState> (State.Detection).isDetection) {
+			GetSpecifiedState<AttackState> (State.Attack).InitAttackInfo (EnemyAttackType.Gun, bullet, 3);
+			AddStateToListWithCheckingOverlap (GetStateLayerKey (State.Attack));
+		}
     }
 
     // player가 state를 stun으로 바꿔줘야 함
@@ -233,6 +209,7 @@ public class Enemy_Security : EnemyScript
     // Update is called once per frame
     void Update()
     {
+		isFindPlayer = IsFindPlayer (findOutSight);
         //이 부분 이후에 리펙토링 필요 => Clear
         ProcessTimeEffect();
         //ProcessDead ();
@@ -250,7 +227,7 @@ public class Enemy_Security : EnemyScript
         DecreaseFindOutGauge();
 
         CheckIdleState();
-        CheckPatrolState();
+        //CheckPatrolState();
         CheckSuspiciousState();
         CheckDetectionState();
         CheckAttackState();
