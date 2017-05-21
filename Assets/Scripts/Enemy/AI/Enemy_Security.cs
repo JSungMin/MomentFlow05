@@ -151,21 +151,24 @@ public class Enemy_Security : EnemyScript
 
     private void CheckIdleState()
     {
-		if (!isFindPlayer) {
+		if (!isFindPlayer) 
+		{
 			AddStateToListWithCheckingOverlap (GetStateLayerKey (State.Idle));
 		}
     }
 
     private void CheckPatrolState()
     {
-		if (!isFindPlayer) {
+		if (!isFindPlayer)
+		{
 			AddStateToListWithCheckingOverlap (GetStateLayerKey (State.Patrol));
 		}
     }
 
     private void CheckSuspiciousState()
     {
-		if (isFindPlayer) {
+		if (isFindPlayer)
+		{
 			AddStateToListWithCheckingOverlap (GetStateLayerKey (State.Suspicious));
 			GetSpecifiedState<SuspiciousState> (State.Suspicious).InitSuspiciousInfo (playerObject.transform.position, moveSpeed * 0.5f);
 		}	
