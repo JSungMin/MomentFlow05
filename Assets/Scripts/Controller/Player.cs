@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public delegate void UndoDelegate();
-
+[System.Serializable]
 public class Player : MyObject
 {
 	private TimeLayer pTimeLayer;
@@ -744,6 +744,8 @@ public class Player : MyObject
 
     void Update()
     {
+		if (GameObject.FindObjectOfType<ReplayController> ().skillState != PlayerSkillState.None)
+			return;
 		ProcessGround ();
 		ProcessTimeSwitching ();
 		input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));

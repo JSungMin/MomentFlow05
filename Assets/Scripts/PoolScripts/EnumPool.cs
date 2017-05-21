@@ -16,6 +16,13 @@ public enum State
 	Sit,  
 }
 
+public enum PlayerSkillState
+{
+	None,
+	Replay,
+	Stop
+}
+
 public enum EnemyAttackType
 {
 	Gun = 0,
